@@ -7,8 +7,13 @@ changes small, and verify in the browser.
 
 ## What lives where
 
-- `modelers.json` is the single source of truth: every modeler, its repo, tier and category. The pages,
-  the gate and the pull script all read it.
+- `modelers.json` is the single source of truth: every modeler, its repo (or `path` for one that lives
+  in this repo under `modelers/`), tier and category. The pages, the gate and the pull script all read it.
+- `modelers/<id>/` holds modelers that have not moved to their own repo yet (`box-modeler`). Same rules
+  as a separate repo: a Vite app with its own package.json and tests; `npm run pull <id>` builds it.
+- `docs/` holds the product strategy: `BLITCH_GAP_ANALYSIS.md` (what competitors offer vs what we
+  have, with code evidence), `GENERATOR_ROADMAP.md` (ranked plan and status), `GENERATOR_ARCHITECTURE.md`
+  (how a Generation 2 engine is laid out) and `PRINT_VALIDATION.md` (checks, verified fits, test log).
 - `scripts/pull.mjs` clones each modeler repo, runs `vite build --base=/m/<id>/` into `public/m/<id>/`,
   and refreshes `vendor/docs/<id>/` (README, CLAUDE.md, MakerWorld .scad) and `.claude/skills/<id>--*`.
   `public/m/` and `vendor/repos/` are gitignored build products; `vendor/docs/` and the copied skills are

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" width="100mm" height="115mm">
+  <!-- Generic shield with a star cut out (original artwork for the default upload). -->
+  <path fill-rule="evenodd" fill="#000" d="M5 5 H95 V65 L50 110 L5 65 Z
+    M50 22 L57.6 43.5 L80.4 44.1 L62.3 58 L68.8 79.9 L50 67 L31.2 79.9 L37.7 58 L19.6 44.1 L42.4 43.5 Z"/>
+</svg>

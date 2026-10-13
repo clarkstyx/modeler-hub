@@ -1,0 +1,101 @@
+MAKERWORLD LISTING: CUSTOM NAME TAG WITH LOGO
+==============================================================
+Copy each section into the matching field of the MakerWorld upload form.
+Upload steps are in makerworld/README.md.
+
+
+MODEL NAME
+--------------------------------------------------------------
+Custom Name Tag with Logo - Personalized Multicolor Name Badge (Customizable)
+
+
+SUMMARY (short description, if the form asks for one)
+--------------------------------------------------------------
+Personalized name badge with your company logo, name and job title. Upload a logo, type the text, pick your colors and download a multicolor 3MF ready for the AMS. Cut-out, raised and inlay styles, optional magnets.
+
+
+CATEGORY (pick the closest one in the dropdown)
+--------------------------------------------------------------
+First choice: Fashion > Accessories (or Office, if listed)
+Second choice: Hobby & DIY
+
+
+TAGS (MakerWorld may limit how many you can add; use them in this order)
+--------------------------------------------------------------
+name tag, name badge, custom name tag, personalized name tag, name tag with logo, company logo, employee badge, staff name tag, work badge, magnetic name tag, multicolor, AMS, customizable, parametric, business, office, event badge, gift, openscad
+
+
+LICENSE (your choice; suggestion)
+--------------------------------------------------------------
+Suggested: Creative Commons BY-NC-SA (people may share and remix with credit, but not sell).
+Pick "Standard Digital File License" instead if you don't want remixes shared.
+
+
+DESCRIPTION (paste everything between the lines)
+--------------------------------------------------------------
+Make a professional, personalized name tag with your own company logo for work, staff, events or your team. Press "Customize", upload your logo, type the name and job title, pick your colors and download a multicolor 3MF that is ready for the AMS.
+
+WHAT YOU GET
+- Your company logo on the left: upload a PNG (split into up to 3 colors) or an SVG (1 color)
+- Name in bold over the job title, both centered next to the logo
+- Three styles: Cut-out (letters and logo set into the face so the colors show through), Raised (letters and logo stand up), or Inlay (filled flush for a smooth face)
+- Logo depth: Flat (all logo colors level) or Layered (details like eyes or lettering stand higher than the logo's base color)
+- Multicolor: the tag face, the lettering and every logo color are separate parts, so each one gets its own filament (up to 5 colors)
+- Matching tags for a whole team: the job title stays the same size on every tag, and a long name is squeezed narrower to fit instead of shrinking everything
+- The plate grows with the text and logo (60 to 100 mm long by default), or set a fixed length for a matching batch
+- Optional thin border around the face and optional recesses on the back for two round badge magnets
+
+HOW TO USE
+1. Click "Customize" (Parametric Model Maker).
+2. In the "Logo" tab, upload your logo with the upload button. A PNG with a plain WHITE background works best; crop it tightly around the logo. Choose "No logo" for a text-only tag.
+3. Set "logo_colors" to how many colors your logo has (not counting the white background), then pick the filament for each one in the "Logo colors" tab. Color 1 is the darkest part of the logo.
+4. Set "logo_height", and set "logo_width" to the space the logo takes: the same as the height for a round or square logo, wider for a wide logo.
+5. In the "Text" tab, type the name and the job title. Leave the job title empty for a name only.
+6. In the "Style" tab, choose Cut-out, Raised or Inlay, and set the face and lettering colors.
+7. In the "Plate" tab, keep "auto_length" on, or turn it off and set your own length. A standard badge is 76 x 25 mm.
+8. In the "Back" tab, turn on "magnet_holes" if you want to use badge magnets.
+9. Click Generate, check the preview, and download the 3MF.
+
+TIPS FOR GOOD RESULTS
+- Logo colors are separated by brightness (dark to light). Logos with clearly different light and dark colors work best. Two colors with the same brightness (for example a medium red and a medium green) end up as one color.
+- If a logo color lands in the wrong group, move the "logo_cut_1" to "logo_cut_3" sliders (0 = black, 100 = white). The last cut in use splits the logo from the white background.
+- Transparent PNGs: transparent areas count as black. Save your logo on a white background first.
+- Layered logos: "logo_base_color" is the color that stays low (usually the biggest one, like a smiley's face); the others stand "logo_detail_height" higher.
+- SVG logos print in one color (logo color 1).
+- Very large pictures are slow. About 200 to 600 pixels tall is plenty.
+- Small text: if the job title looks thin, raise "thicken" to 0.1 to 0.2 mm. It makes every letter's strokes fatter so they print solid.
+- Making tags for a team: turn off "auto_length" and set one length (for example 76 mm) so every tag is the same size. Long names are squeezed down to "max_squeeze" (80%) first; set it to 100 if you prefer them smaller instead of narrower.
+- If a font is not available on MakerWorld it falls back to a default font. Try Poppins or Montserrat for a modern look.
+- The plate length is estimated from the text, because OpenSCAD can't measure text. If the margins look uneven, turn off "auto_length" and set the length yourself.
+- Cut-out style: the middles of letters like A, O and R belong to the top layer and print fused to the bottom layer, so print the whole tag as one print.
+
+PRINT SETTINGS
+- 0.4 mm nozzle, 0.2 mm layer height (0.12 mm for small text)
+- PLA, no supports, print flat as generated, face up
+- 2 walls, 15% infill
+- Wall generator: Arachne (handles thin letters much better than Classic)
+- Ironing: optional for the Cut-out and Inlay styles (the big flat face irons nicely). Leave it OFF for the Raised style; ironing roughens the tops of small raised letters.
+- Default size: about 81 x 25 mm, 2.8 mm thick, about 6.5 g of filament
+
+SINGLE-COLOR PRINTER?
+Cut-out style: print the lettering color first and add a filament change (pause) at the top of the bottom layer (1.6 mm by default), then finish in the face color. The logo then comes out in the face color; set every logo color to the same filament. For the Raised style, put the pause at the top of the plate (1.6 mm) and print the lettering and logo in the second color.
+
+FULL VERSION
+There is also a free web app with hue-based logo color detection (not just brightness), company name and divider, a live 3D preview and direct 3MF export:
+https://github.com/clarkstyx/name-tag-modeler
+--------------------------------------------------------------
+
+
+PRINT PROFILE NOTES (for the "print profile" step)
+--------------------------------------------------------------
+- Printer: any Bambu Lab printer with AMS (or another multi-material setup); single extruder works with a filament change
+- Plate: 1 name tag, centered, flat side down
+- Filaments: white (face), black (lettering and logo details), yellow (logo) in the sample; the customer's colors replace them
+- MakerWorld requires at least one PHOTO OF A REAL PRINT. Use the photo of your printed tag.
+- The renders in makerworld/ (preview-cutout.png, preview-raised.png, preview-inlay.png, preview-back-magnets.png) can be added as extra pictures.
+
+
+BILL OF MATERIALS
+--------------------------------------------------------------
+- Filament: about 6.5 g of PLA in total (2 to 5 colors, depending on the logo)
+- Optional: 2 round magnets, 10 mm x 2 mm (or a badge magnet / pin back glued on)
