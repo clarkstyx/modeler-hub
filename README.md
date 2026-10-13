@@ -1,5 +1,8 @@
 # Modeler Hub
 
+**Start with [MANUAL.md](MANUAL.md)**: the ordered to-do list from accounts to the first paying patron,
+plus which features go on MakerWorld and which stay members-only.
+
 The home site for all of Clark's parametric 3D-print modelers. It pulls every modeler repo,
 builds it, and serves it at `/m/<id>/` behind a Patreon membership gate. Free modelers are open,
 Maker and Seller modelers need a logged-in patron on that tier.
