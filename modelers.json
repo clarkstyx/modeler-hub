@@ -1,0 +1,131 @@
+{
+  "site": {
+    "name": "Valencia Modelers",
+    "tagline": "Parametric 3D-print designers that run in your browser. Type, slide, export, print.",
+    "patreonUrl": "https://www.patreon.com/REPLACE_ME",
+    "makerworldProfile": "https://makerworld.com/en/@REPLACE_ME",
+    "contactEmail": "clarkvalencia@gmail.com"
+  },
+  "tiers": {
+    "free":   { "label": "Free",   "level": 0, "blurb": "Open to everyone." },
+    "maker":  { "label": "Maker",  "level": 1, "blurb": "All modelers, multi-colour 3MF, SVG upload, saved settings." },
+    "seller": { "label": "Seller", "level": 2, "blurb": "Everything in Maker plus a commercial licence to sell prints, batch plates, early access and requests." }
+  },
+  "modelers": [
+    {
+      "id": "name-keychain",
+      "name": "Name Keychain",
+      "repo": "clarkstyx/keychain-modeler",
+      "tagline": "Your name as a chunky keychain, 20 fonts, ring hole where you want it.",
+      "category": "Keychains",
+      "tier": "free",
+      "status": "live",
+      "makerworld": "",
+      "scad": "keychainv2.scad"
+    },
+    {
+      "id": "letter-beads",
+      "name": "Letter Beads",
+      "repo": "clarkstyx/letter_bead_creator",
+      "tagline": "Stackable letter blocks for bead keychains and bracelets.",
+      "category": "Keychains",
+      "tier": "free",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "name-tag",
+      "name": "Name Tag",
+      "repo": "clarkstyx/name-tag-modeler",
+      "tagline": "Two-colour name tags and bag tags with icons and a slot for a strap.",
+      "category": "Tags & signs",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": "",
+      "scad": "makerworld"
+    },
+    {
+      "id": "jerry-can",
+      "name": "Jerry Can Keychain",
+      "repo": "clarkstyx/jerry-can-modeler",
+      "tagline": "Three-colour jerry can with arched text, maple leaf and a knurled cap.",
+      "category": "Keychains",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "bubble-keychain",
+      "name": "Bubble Keychain",
+      "repo": "clarkstyx/bubble-keychain-maker",
+      "tagline": "Puffy bubble-letter keychains in any font.",
+      "category": "Keychains",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "icon-beads",
+      "name": "Icon Beads",
+      "repo": "clarkstyx/icon-bead-modeler",
+      "tagline": "Charm beads from thousands of icons that clip onto the letter-bead system.",
+      "category": "Keychains",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "desktop-sign",
+      "name": "Desktop Sign",
+      "repo": "clarkstyx/desktop-sign-modeler",
+      "tagline": "Desk nameplates and small signs with a built-in stand.",
+      "category": "Tags & signs",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": "",
+      "scad": "desktop-sign.scad"
+    },
+    {
+      "id": "trinket-tray",
+      "name": "Trinket Tray",
+      "repo": "clarkstyx/Trinket-Tray-Generator",
+      "tagline": "Catch-all trays with custom text and shapes, sized to your shelf.",
+      "category": "Home",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": "",
+      "scad": "makerworld"
+    },
+    {
+      "id": "image-keychain",
+      "name": "Image Keychain",
+      "repo": "clarkstyx/image-keychain-modeler",
+      "tagline": "Upload a logo or drawing and get a multi-colour keychain, colours pre-split for the AMS.",
+      "category": "Keychains",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": "",
+      "scad": "makerworld"
+    },
+    {
+      "id": "grinch-ornament",
+      "name": "Grinch Ornament",
+      "repo": "clarkstyx/grinch-ornament-generator",
+      "tagline": "Personalised Grinch ornaments with poses and names.",
+      "category": "Seasonal",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "dumpling-ornament",
+      "name": "Dumpling Ornament",
+      "repo": "clarkstyx/dumpling-ornament-generator",
+      "tagline": "Cute dumpling ornaments with accessories and a name.",
+      "category": "Seasonal",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    }
+  ]
+}

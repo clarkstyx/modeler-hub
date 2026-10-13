@@ -1,0 +1,9 @@
+# Copy to .dev.vars for `npm run pages:dev`. Never commit .dev.vars.
+SITE_URL=http://localhost:8788
+SESSION_SECRET=change-me-to-a-long-random-string
+PATREON_CLIENT_ID=
+PATREON_CLIENT_SECRET=
+PATREON_CAMPAIGN_ID=
+OWNER_EMAILS=clarkvalencia@gmail.com
+# Set to 1 to skip the membership gate while developing
+DEV_BYPASS=1

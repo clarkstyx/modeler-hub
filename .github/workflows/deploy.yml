@@ -1,0 +1,35 @@
+name: Pull modelers, build, deploy
+
+# Runs on every push to main, nightly, and by hand. Each run clones every
+# modeler repo at its latest commit, builds it, and deploys the whole site to
+# Cloudflare Pages. To trigger it from a modeler repo, add a step there that
+# calls `repository_dispatch` with event_type "modeler-updated".
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+  repository_dispatch:
+    types: [modeler-updated]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Pull and build every modeler
+        env:
+          MODELER_PAT: ${{ secrets.MODELER_PAT }}
+        run: npm run pull
+      - run: npm run build
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name modeler-hub

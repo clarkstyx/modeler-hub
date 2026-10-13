@@ -1,0 +1,8 @@
+node_modules/
+dist/
+vendor/repos/
+public/m/
+public/build-info.json
+.dev.vars
+.wrangler/
+.DS_Store

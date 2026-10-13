@@ -1,0 +1,9 @@
+name = "modeler-hub"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "dist"
+
+# Secrets (PATREON_CLIENT_SECRET, SESSION_SECRET, …) are set in the Cloudflare
+# dashboard or in .dev.vars for local runs. Non-secret defaults can live here.
+[vars]
+MAKER_MIN_CENTS = "400"
+SELLER_MIN_CENTS = "1200"

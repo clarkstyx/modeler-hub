@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in · Valencia Modelers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/"><span class="dot"></span><span data-site-name>Modelers</span></a>
+        <nav>
+          <a href="/">Modelers</a>
+          <a href="/pricing/">Pricing</a>
+          <a data-makerworld href="#" target="_blank" rel="noopener">MakerWorld</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="panel">
+        <h1>Members only</h1>
+        <p class="muted" id="why">This modeler is part of a membership tier.</p>
+        <p class="err" id="err" hidden></p>
+        <a class="btn primary" id="login" href="/auth/login">Log in with Patreon</a>
+        <a class="btn" href="/pricing/">See plans</a>
+        <p class="muted">Not a member yet? Join on Patreon first, then log in here with the same account.</p>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>© <span data-year></span> <span data-site-name></span></span>
+        <span>Questions: <a data-email href="#"></a></span>
+      </div>
+    </footer>
+    <script type="module">
+      import { fillChrome } from '/src/site.js';
+      fillChrome();
+      const q = new URLSearchParams(location.search);
+      const next = q.get('next') || '/';
+      document.getElementById('login').href = '/auth/login?next=' + encodeURIComponent(next);
+      const need = q.get('need');
+      const why = document.getElementById('why');
+      if (q.get('upgrade')) why.textContent = `Your current tier does not include this modeler. It needs the ${need} tier.`;
+      else if (need) why.textContent = `This modeler is in the ${need} tier.`;
+      const errors = {
+        state: 'The login link expired. Please try again.',
+        token: 'Patreon did not accept the login. Please try again.',
+        identity: 'Could not read your Patreon membership. Please try again.',
+        notier: 'You are logged in to Patreon but not a member of this page yet. Join a tier, then log in again.',
+      };
+      const e = q.get('error');
+      if (e) { const el = document.getElementById('err'); el.textContent = errors[e] || 'Login failed.'; el.hidden = false; }
+    </script>
+  </body>
+</html>
