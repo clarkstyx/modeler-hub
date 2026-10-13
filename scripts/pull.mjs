@@ -10,6 +10,10 @@
 // Private repos: set MODELER_PAT (a GitHub token with read access) and the
 // script uses it for cloning. Locally your normal git credentials work too.
 //
+// Local modelers: an entry with "path" (e.g. "modelers/box-modeler") instead of
+// "repo" is built straight from that folder inside this repo. Nothing is cloned.
+// Moving one to its own repo later is a one-line change in modelers.json.
+//
 // Also copies each repo's README.md, CLAUDE.md and .claude/skills/* into the
 // hub so Claude sessions in this repo know every modeler's conventions.
 
@@ -42,10 +46,13 @@ function cloneUrl(repo) {
 
 const results = [];
 for (const m of list) {
-  const dir = join(REPOS, m.id);
-  console.log(`\n=== ${m.name} (${m.repo}) → /m/${m.id}/`);
+  const local = !!m.path;
+  const dir = local ? join(ROOT, m.path) : join(REPOS, m.id);
+  console.log(`\n=== ${m.name} (${local ? m.path : m.repo}) → /m/${m.id}/`);
   try {
-    if (!existsSync(join(dir, '.git'))) {
+    if (local) {
+      if (!existsSync(join(dir, 'package.json'))) throw new Error(`local modeler folder ${m.path} has no package.json`);
+    } else if (!existsSync(join(dir, '.git'))) {
       sh(`git clone --depth 1 ${cloneUrl(m.repo)} "${dir}"`);
     } else if (!noFetch) {
       sh('git fetch --depth 1 origin && git reset --hard origin/HEAD', dir);
@@ -79,7 +86,7 @@ for (const m of list) {
       cpSync(join(dir, m.scad), join(docDir, 'makerworld', m.scad.split('/').pop()), { recursive: true });
     }
 
-    if (!keep) rmSync(join(dir, 'node_modules'), { recursive: true, force: true });
+    if (!keep && !local) rmSync(join(dir, 'node_modules'), { recursive: true, force: true });
     const sha = execSync('git rev-parse --short HEAD', { cwd: dir }).toString().trim();
     results.push({ id: m.id, ok: true, sha });
   } catch (e) {

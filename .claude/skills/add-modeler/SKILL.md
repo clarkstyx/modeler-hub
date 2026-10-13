@@ -10,7 +10,7 @@ description: Add one of Clark's modeler repos to the hub (modelers.json entry, p
 2. Add an entry to `modelers.json`:
    - `id`: short, lowercase, hyphenated; it becomes the URL `/m/<id>/`. Never change an id later,
      links on MakerWorld and in videos point at it.
-   - `repo`: `owner/name` on GitHub.
+   - `repo`: `owner/name` on GitHub, or `path`: `modelers/<id>` for a modeler kept in this repo.
    - `tagline`: one plain sentence a buyer understands, 60 to 110 characters.
    - `category`: reuse an existing one (Keychains, Tags & signs, Home, Seasonal) unless a new one is clearly needed.
    - `tier`: `free` for funnel pieces (simple, popular, single colour), `maker` for the full multi-colour

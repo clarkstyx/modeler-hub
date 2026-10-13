@@ -1,0 +1,89 @@
+MAKERWORLD LISTING: IMAGE KEYCHAIN MAKER
+==============================================================
+Copy each section into the matching field of the MakerWorld upload form.
+Upload steps are in makerworld/README.md.
+
+
+MODEL NAME
+--------------------------------------------------------------
+Image Keychain Maker - Your Picture + Name, Multicolor (Customizable)
+
+
+SUMMARY (short description, if the form asks for one)
+--------------------------------------------------------------
+Upload any logo or drawing and get a multicolor keychain with your text, an outline border and a keyring hole. Ready for AMS.
+
+
+CATEGORY (pick the closest one in the dropdown)
+--------------------------------------------------------------
+First choice: Fashion > Accessories (or Keychains, if listed)
+Second choice: Hobby & DIY
+
+
+TAGS
+--------------------------------------------------------------
+keychain, customizable, parametric, multicolor, AMS, name tag, logo, image to keychain, gift, openscad
+
+
+LICENSE (your choice; suggestion)
+--------------------------------------------------------------
+Suggested: Creative Commons BY-NC-SA (people may share and remix with credit, but not sell).
+Pick "Standard Digital File License" instead if you don't want remixes shared.
+
+
+DESCRIPTION (paste everything between the lines)
+--------------------------------------------------------------
+Turn your own picture into a multicolor keychain in a few clicks. Press "Customize", upload a PNG or SVG, type a name, pick your colors and download a 3MF that is ready for the AMS.
+
+WHAT YOU GET
+- Up to 4 picture colors, taken from your PNG automatically
+- Optional text above or below the picture, with any Google font
+- Raised outline border in its own color
+- Base plate that follows the shape of your picture, with a keyring hole
+- Every color is a separate part, so each one gets its own filament
+
+HOW TO USE
+1. Click "Customize" (Parametric Model Maker).
+2. In the "Picture" tab, upload your image. A PNG with a plain WHITE background works best. Crop it tightly around the logo.
+3. Set "color_count" to how many colors your logo has (not counting the white background).
+4. Open the "Picture colors" tab and pick the filament color for each one. Color 1 is the darkest part of your picture, color 4 the lightest.
+5. Add your text, choose a font and turn the border on or off.
+6. Click Generate, check the preview, and download the 3MF.
+
+TIPS FOR GOOD RESULTS
+- Colors are separated by brightness (dark to light). Logos with clearly different light and dark colors work best. Two colors with the same brightness (for example a medium red and a medium green) end up as one color.
+- If a color lands in the wrong group, move the "cut_1" to "cut_4" sliders (0 = black, 100 = white). cut_1 splits color 1 from color 2, cut_2 splits color 2 from color 3, and so on.
+- Transparent PNGs: transparent areas count as black. Save your picture on a white background first.
+- White parts of your picture are not printed in color; the base shows through, so a white base makes them white.
+- Lines thinner than "min_detail" are removed so they print cleanly. Make the picture bigger to keep more detail.
+- SVG files are printed in one color (color 1).
+- Very large pictures (thousands of pixels) are slow. About 300 to 600 pixels tall is plenty.
+
+PRINT SETTINGS
+- 0.4 mm nozzle, 0.2 mm layer height (0.12 to 0.16 mm for small text)
+- PLA, no supports, print flat as generated
+- 2 walls, 15% infill
+- Default size: about 44 x 64 mm, 2.6 mm thick, about 6 g of filament
+
+SINGLE-COLOR PRINTER?
+Make every raised color the same (picture colors, text color and border color), then add a filament change (pause) at the top of the base (2.0 mm by default). You get a two-color keychain without an AMS.
+
+FULL VERSION
+There is also a free web app with automatic color detection by hue (not just brightness), a 2D/3D preview and direct 3MF export:
+https://github.com/clarkstyx/image-keychain-modeler
+--------------------------------------------------------------
+
+
+PRINT PROFILE NOTES (for the "print profile" step)
+--------------------------------------------------------------
+- Printer: any Bambu Lab printer with AMS (or another multi-material setup)
+- Plate: 1 keychain, centered, flat side down
+- Filaments: base (white), black, green, gold in the sample; the customer's colors replace them
+- MakerWorld requires at least one PHOTO OF A REAL PRINT. Print makerworld/sample-keychain.3mf and take a photo before publishing.
+- The preview-iso.png and preview-top.png renders can be added as extra pictures.
+
+
+BILL OF MATERIALS
+--------------------------------------------------------------
+- Filament: about 6 g of PLA in total (mostly the base color)
+- Keyring: 25 mm split ring or a ball chain, through the 5 mm hole

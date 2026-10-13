@@ -8,7 +8,9 @@ builds it, and serves it at `/m/<id>/` behind a Patreon membership gate. Free mo
 Maker and Seller modelers need a logged-in patron on that tier.
 
 ```
-modelers.json          the list: id, repo, tagline, category, tier  ← edit this to add a modeler
+modelers.json          the list: id, repo (or path), tagline, category, tier  ← edit this to add a modeler
+modelers/<id>/         modelers that live in this repo for now (box-modeler); built like any other
+docs/                  gap analysis vs Create.Blitch, roadmap, engine architecture, print validation
 scripts/pull.mjs       clones + builds every modeler into public/m/<id>/ (also copies their docs + skills)
 index.html             home page: cards grouped by category, locked/unlocked per tier
 pricing/, login/       plans page, members-only page
@@ -53,7 +55,8 @@ npm run build && npm run pages:dev     # http://localhost:8788
 ## Add a modeler
 
 Add an entry to `modelers.json` (the `add-modeler` skill walks through it), run `npm run pull <id>`,
-check it at `/m/<id>/`, commit. The modeler repo itself needs nothing special beyond being a Vite app;
+check it at `/m/<id>/`, commit. An entry can point at a folder in this repo with `"path": "modelers/<id>"`
+instead of `"repo"`; the pull script builds it in place. The modeler repo itself needs nothing special beyond being a Vite app;
 the pull script passes `--base=/m/<id>/` so asset paths work.
 
 To redeploy when a modeler changes, run the "Pull modelers, build, deploy" workflow by hand, or add this

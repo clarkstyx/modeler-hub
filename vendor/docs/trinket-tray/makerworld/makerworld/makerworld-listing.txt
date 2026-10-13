@@ -1,0 +1,105 @@
+MAKERWORLD LISTING: TRINKET TRAY & COASTER MAKER
+==============================================================
+Copy each section into the matching field of the MakerWorld upload form.
+Upload steps are in makerworld/README.md.
+
+Note for you (don't paste this): the "FULL VERSION" link at the end of the description only
+works for buyers if the GitHub repo is public. If it stays private, delete that paragraph or
+replace the link with your shared Claude artifact link.
+
+
+MODEL NAME
+--------------------------------------------------------------
+Trinket Tray & Coaster Maker - Your Logo Inlaid, Multicolor (Customizable)
+
+
+SUMMARY (short description, if the form asks for one)
+--------------------------------------------------------------
+Upload any logo and get a multicolor trinket tray or coaster with your picture inlaid flat, text around the edge, patterns and a matching coaster holder. Ready for AMS.
+
+
+CATEGORY (pick the closest one in the dropdown)
+--------------------------------------------------------------
+First choice: Household > Kitchen & Dining (coasters) or Household > Decor
+Second choice: Household > Organization (trays)
+
+
+TAGS
+--------------------------------------------------------------
+coaster, trinket tray, ring dish, customizable, parametric, multicolor, AMS, logo, coaster holder, openscad
+
+
+LICENSE (your choice; suggestion)
+--------------------------------------------------------------
+Suggested: Creative Commons BY-NC-SA (people may share and remix with credit, but not sell).
+Pick "Standard Digital File License" instead if you don't want remixes shared.
+
+
+DESCRIPTION (paste everything between the lines)
+--------------------------------------------------------------
+Make a trinket tray or a coaster with your own logo inlaid in it. Press "Customize", upload a PNG or SVG, choose tray or coaster, pick a shape and colors, and download a 3MF that is ready for the AMS.
+
+WHAT YOU GET
+- Up to 4 picture colors, taken from your PNG automatically and inlaid flush (or raised)
+- Trays: follow the outline of your picture, round, oval, rounded rectangle, hexagon or octagon, with adjustable walls and an optional colored rim
+- Coasters: round, rounded square, hexagon, octagon or the outline of your picture, with a low drip lip, a drip groove and an optional colored rim
+- Text around the edge (or straight above and below the picture), with any Google font
+- Background patterns: rings, dots, grid, stripes or honeycomb, in their own color
+- Underneath: pockets for stick-on rubber or felt feet, or a recess for a cork / felt pad
+- Face-down printing for a glossy or textured top straight from the build plate
+- A matching coaster holder, placed on the same plate
+- Every color is a separate part, so each one gets its own filament
+
+HOW TO USE
+1. Click "Customize" (Parametric Model Maker).
+2. In "What to make", choose Trinket tray or Coaster.
+3. In the "Picture" tab, upload your image. A PNG with a plain WHITE background works best. Crop it tightly around the logo.
+4. Set "color_count" to how many colors your logo has (not counting the white background).
+5. Open the "Picture colors" tab and pick the filament color for each one. Color 1 is the darkest part of your picture, color 4 the lightest.
+6. Set the shape and size in the "Tray settings" or "Coaster settings" tab.
+7. Optional: add text, a background pattern, feet pockets, face-down printing or a coaster holder in their tabs.
+8. Click Generate, check the preview, and download the 3MF.
+
+TIPS FOR GOOD RESULTS
+- Colors are separated by brightness (dark to light). Logos with clearly different light and dark colors work best. Two colors with the same brightness (for example a medium red and a medium green) end up as one color.
+- If a color lands in the wrong group, move the "cut_1" to "cut_4" sliders (0 = black, 100 = white). cut_1 splits color 1 from color 2, cut_2 splits color 2 from color 3, and so on.
+- Transparent PNGs: transparent areas count as black. Save your picture on a white background first.
+- White parts of your picture are not inlaid; the floor shows through, so a white body makes them white.
+- "art_height" (trays) and "coaster_art_height" (coasters) set the height of the picture. Keep it smaller than the piece, or the picture gets trimmed at the edge. Leave room for text if you add some.
+- Long text: if letters run into the edge, shorten the text or lower "text_size".
+- If a picture-outline shape has holes in its floor, raise "outline_smoothing".
+- SVG files are inlaid in one color (color 1).
+- The cork recess always prints face down. Face-down pieces have no lip or wall, so the top is perfectly flat.
+- Hot mugs: print coasters in PETG. PLA softens around 60 °C; it is fine for cold drinks.
+
+PRINT SETTINGS
+- 0.4 mm nozzle, 0.2 mm layer height
+- PLA (trays, cold-drink coasters) or PETG (hot mugs), no supports, print as generated
+- 2 to 3 walls, 15% infill
+- Default coaster: 100 x 100 x 4.4 mm, about 15 g; holder for 6 coasters about 25 g
+- Default tray: about 101 x 116 x 8.4 mm, about 30 g
+- The picture colors only change in a few floor layers (and the rim), so filament waste is low.
+
+NEEDS A MULTICOLOR PRINTER
+The picture is inlaid into the floor, so its colors share layers with the body. Use an AMS or another multi-material setup. For a single-color printer, choose art_source "none".
+
+FULL VERSION
+There is also a free web app with automatic color detection by hue (not just brightness), a 2D/3D preview, a palette editor and direct 3MF/STL export:
+https://github.com/clarkstyx/Trinket-Tray-Generator
+--------------------------------------------------------------
+
+
+PRINT PROFILE NOTES (for the "print profile" step)
+--------------------------------------------------------------
+- Printer: any Bambu Lab printer with AMS (or another multi-material setup)
+- Plate: 1 tray, or 1 coaster (plus its holder behind it when the holder is on)
+- Filaments: white, green, black and gold in the samples; the customer's colors replace them
+- MakerWorld requires at least one PHOTO OF A REAL PRINT. Print makerworld/sample-coaster.3mf and/or makerworld/sample-tray.3mf and take a photo before publishing.
+- The preview-*.png renders can be added as extra pictures.
+
+
+BILL OF MATERIALS
+--------------------------------------------------------------
+- Filament: about 15 g per coaster, 25 g per holder, 30 g per tray (mostly the body color)
+- Coasters with feet pockets: stick-on rubber or felt bumpers, 10 mm across (or the size you set)
+- Coasters with a recess: a cork or felt sheet as thick as the recess depth (1.2 mm by default), cut to shape

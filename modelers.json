@@ -7,9 +7,21 @@
     "contactEmail": "clarkvalencia@gmail.com"
   },
   "tiers": {
-    "free":   { "label": "Free",   "level": 0, "blurb": "Open to everyone." },
-    "maker":  { "label": "Maker",  "level": 1, "blurb": "All modelers, multi-colour 3MF, SVG upload, saved settings." },
-    "seller": { "label": "Seller", "level": 2, "blurb": "Everything in Maker plus a commercial licence to sell prints, batch plates, early access and requests." }
+    "free": {
+      "label": "Free",
+      "level": 0,
+      "blurb": "Open to everyone."
+    },
+    "maker": {
+      "label": "Maker",
+      "level": 1,
+      "blurb": "All modelers, multi-colour 3MF, SVG upload, saved settings."
+    },
+    "seller": {
+      "label": "Seller",
+      "level": 2,
+      "blurb": "Everything in Maker plus a commercial licence to sell prints, batch plates, early access and requests."
+    }
   },
   "modelers": [
     {
@@ -75,6 +87,16 @@
       "makerworld": ""
     },
     {
+      "id": "phone-grip",
+      "name": "Phone Grip Topper",
+      "repo": "clarkstyx/popsocket-text-modeler",
+      "tagline": "Puffy bubble-letter toppers with gem inlays that glue onto a pop socket. Print the fit test first.",
+      "category": "Keychains",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "desktop-sign",
       "name": "Desktop Sign",
       "repo": "clarkstyx/desktop-sign-modeler",
@@ -95,6 +117,16 @@
       "status": "live",
       "makerworld": "",
       "scad": "makerworld"
+    },
+    {
+      "id": "box-modeler",
+      "name": "Sliding-Lid Box",
+      "path": "modelers/box-modeler",
+      "tagline": "Gift tins, jewellery boxes and sorting trays with a sliding lid and your name on top.",
+      "category": "Home",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
     },
     {
       "id": "image-keychain",
