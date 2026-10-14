@@ -8,6 +8,7 @@ import { validateMesh } from "../shared/mesh";
 import { buildBatch, buildFitTest, type Plate } from "../geometry/buildLabels";
 import { buildThreeMF } from "../export/threeMF";
 import { partsToStl } from "../shared/stl";
+import { toCsv } from "../shared/batch";
 
 export interface GenerateResult {
   plates: Plate[];
@@ -59,18 +60,13 @@ export function plateStl(result: GenerateResult, plateIndex: number, title: stri
   return partsToStl(plate.parts, `${title} plate ${plateIndex}`);
 }
 
-const csvCell = (s: string | number) => {
-  const v = String(s);
-  return /[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
-};
-
 /** Order → plate manifest: one row per label. */
 export function manifestCsv(result: GenerateResult): string {
   const rows = [["label", "plate", "object", "text", "icon", "width_mm", "height_mm", "x_mm", "y_mm", "letter_mm", "source_line", "order"]];
   for (const plate of result.plates)
     for (const l of plate.labels)
       rows.push([String(l.index), String(plate.index), l.object, l.spec.text.replace(/\n/g, " / "), l.spec.icon, l.width.toFixed(1), l.height.toFixed(1), l.x.toFixed(1), l.y.toFixed(1), l.textSize.toFixed(1), String(l.spec.line), l.spec.order]);
-  return rows.map((r) => r.map(csvCell).join(",")).join("\n") + "\n";
+  return toCsv(rows);
 }
 
 /** Every plate as its own 3MF, plus manifest.csv and a README, in one ZIP. */

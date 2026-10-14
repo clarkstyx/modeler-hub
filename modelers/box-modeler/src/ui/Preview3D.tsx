@@ -3,17 +3,22 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { GenerateResult } from "../pipeline/generate";
 
+/** What the preview draws: the single box (a GenerateResult) or one batch plate. */
+export type PreviewModel = Pick<GenerateResult, "parts" | "lidPrintOffset" | "lidClosedOffset"> & { kind: string };
+
 export type ViewMode = "print" | "closed";
 
 interface Props {
-  result: GenerateResult | null;
+  result: PreviewModel | null;
   view: ViewMode;
   bedSize: number;
   resetToken: number;
+  /** The camera re-frames when this changes (a new size, kind or plate). */
+  frameKey: string;
 }
 
 /** Live preview built from the exact meshes that will be exported. */
-export function Preview3D({ result, view, bedSize, resetToken }: Props) {
+export function Preview3D({ result, view, bedSize, resetToken, frameKey }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<{ scene: THREE.Scene; camera: THREE.PerspectiveCamera; controls: OrbitControls; renderer: THREE.WebGLRenderer; group: THREE.Group; bed: THREE.Group } | null>(null);
 
@@ -107,7 +112,7 @@ export function Preview3D({ result, view, bedSize, resetToken }: Props) {
     s.camera.updateProjectionMatrix();
     s.controls.update();
     // only re-frame when the model changes size or the user asks
-  }, [resetToken, view, result?.derived.outerL, result?.derived.outerW, result?.derived.outerH, result?.kind]);
+  }, [resetToken, view, frameKey]);
 
   return <div ref={host} className="preview" />;
 }

@@ -11,6 +11,7 @@ The engine code every Generation 2 modeler uses, kept in one place:
 | `threeMF.ts` | colour-ready 3MF: colour group per colour, mesh per part, object per printed object, Bambu/Orca slot config, embedded settings (`app` names the file) |
 | `stl.ts` | binary STL of one mesh, of many parts, or a ZIP with one STL per part |
 | `textShapes.ts` | text → outlines in the four bundled three.js fonts, auto-fit, missing-glyph check |
+| `batch.ts` | order lists: CSV read/write, shelf packing onto bed-sized plates, accent-safe object names |
 
 ## How modelers get it
 

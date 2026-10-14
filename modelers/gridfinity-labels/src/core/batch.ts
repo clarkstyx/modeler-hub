@@ -1,4 +1,7 @@
 import { ICON_LABELS, LIMITS, type IconId, type LabelSpec } from "./params";
+import { csvHeaders, findHeader, splitCsvRow } from "../shared/batch";
+
+export { csvHeaders, splitCsvRow };
 
 const ICON_IDS = Object.keys(ICON_LABELS) as IconId[];
 const ICON_ALIASES: Record<string, IconId> = {
@@ -58,25 +61,6 @@ export function parseList(text: string, defaultIcon: IconId): ParseResult {
   return { specs, warnings };
 }
 
-/** Splits one CSV row, honouring double quotes ("a, b" and doubled "" escapes). */
-export function splitCsvRow(row: string): string[] {
-  const out: string[] = [];
-  let cur = "";
-  let q = false;
-  for (let i = 0; i < row.length; i++) {
-    const c = row[i];
-    if (q) {
-      if (c === '"' && row[i + 1] === '"') { cur += '"'; i++; }
-      else if (c === '"') q = false;
-      else cur += c;
-    } else if (c === '"') q = true;
-    else if (c === ",") { out.push(cur); cur = ""; }
-    else cur += c;
-  }
-  out.push(cur);
-  return out;
-}
-
 export interface CsvMapping {
   text: string;
   icon: string;
@@ -95,13 +79,8 @@ export const CSV_GUESSES: Record<keyof CsvMapping, string[]> = {
   quantity: ["quantity", "qty", "count"],
 };
 
-export function csvHeaders(csv: string): string[] {
-  const first = csv.replace(/\r/g, "").split("\n").find((l) => l.trim()) ?? "";
-  return splitCsvRow(first).map((h) => h.trim());
-}
-
 export function guessMapping(headers: string[]): CsvMapping {
-  const find = (names: string[]) => headers.find((h) => names.includes(h.toLowerCase())) ?? "";
+  const find = (names: string[]) => findHeader(headers, names);
   return {
     text: find(CSV_GUESSES.text) || headers[0] || "",
     icon: find(CSV_GUESSES.icon),
