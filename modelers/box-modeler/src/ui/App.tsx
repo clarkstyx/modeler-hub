@@ -4,14 +4,21 @@ import { PRESETS, presetParams } from "../core/presets";
 import { parseRecipe, toRecipe } from "../core/recipe";
 import type { Artwork } from "../core/types";
 import { GeometryClient } from "../pipeline/client";
-import type { GenerateResult } from "../pipeline/generate";
+import type { BatchResult, GenerateResult } from "../pipeline/generate";
+import { BATCH_WHAT_LABELS, csvHeaders, guessMapping, parseNames, parseOrdersCsv, MAX_BATCH, type BatchWhat, type CsvMapping } from "../core/batch";
 import { readProjectFrom3MF } from "../export/threeMF";
 import { parseSvgArtwork } from "./loadArtwork";
 import { downloadBytes, safeName } from "./download";
 import { Choice, Colour, Num, Section } from "./controls";
-import { Preview3D, type ViewMode } from "./Preview3D";
+import { Preview3D, type PreviewModel, type ViewMode } from "./Preview3D";
 
 const STORAGE_KEY = "box-modeler:params";
+const BATCH_KEY = "box-modeler:batch-list";
+const SAMPLE_BATCH = "Ava\nNoah\nMia | 2\nHappy\\nBirthday";
+
+function loadBatchList(): string {
+  try { return localStorage.getItem(BATCH_KEY) ?? SAMPLE_BATCH; } catch { return SAMPLE_BATCH; }
+}
 
 function loadSaved(): BoxParams {
   try {
@@ -30,6 +37,12 @@ export default function App() {
   const [view, setView] = useState<ViewMode>("print");
   const [resetToken, setResetToken] = useState(0);
   const [activePreset, setActivePreset] = useState<string | null>("gift-tin");
+  const [batchList, setBatchList] = useState(loadBatchList);
+  const [csv, setCsv] = useState<{ name: string; text: string; headers: string[]; mapping: CsvMapping } | null>(null);
+  const [what, setWhat] = useState<BatchWhat>("lids");
+  const [batch, setBatch] = useState<BatchResult | null>(null);
+  const [plateNo, setPlateNo] = useState(1);
+  const [showBatch, setShowBatch] = useState(false);
   const client = useMemo(() => new GeometryClient(), []);
   const seq = useRef(0);
   const d = useMemo(() => derive(params), [params]);
@@ -60,6 +73,40 @@ export default function App() {
   }, [params, art, client]);
 
   useEffect(() => () => client.dispose(), [client]);
+
+  // Batch: parsed input, and a built batch goes stale when anything it used changes.
+  const parsed = useMemo(() => (csv ? parseOrdersCsv(csv.text, csv.mapping) : parseNames(batchList)), [csv, batchList]);
+  useEffect(() => { setBatch(null); setShowBatch(false); }, [params, art, parsed, what]);
+  useEffect(() => { try { localStorage.setItem(BATCH_KEY, batchList); } catch { /* ignore */ } }, [batchList]);
+  const buildBatch = async () => {
+    setBusy(true);
+    try {
+      const r = await client.batch(params, art, parsed.items, what);
+      setBatch(r.result);
+      setPlateNo(1);
+      setShowBatch(true);
+      setError(null);
+    } catch (e) { setError((e as Error).message); }
+    finally { setBusy(false); }
+  };
+  const openCsv = async (file: File) => {
+    const text = await file.text();
+    const headers = csvHeaders(text);
+    setCsv({ name: file.name, text, headers, mapping: guessMapping(headers) });
+  };
+  const batchTitle = safeName(csv ? csv.name.replace(/\.csv$/i, "") : "lids");
+  const downloadBatchPlate = async () => {
+    const r = await client.exportBatch3mf(params, batchTitle, plateNo);
+    downloadBytes(r.bytes, `${batchTitle}-plate-${String(plateNo).padStart(2, "0")}.3mf`, "model/3mf");
+  };
+  const downloadBatchZip = async () => {
+    const r = await client.exportBatchZip(params, batchTitle);
+    downloadBytes(r.bytes, `${batchTitle}-all-plates.zip`, "application/zip");
+  };
+  const plate = showBatch && batch ? batch.plates[plateNo - 1] ?? null : null;
+  const model: PreviewModel | null = plate ? { parts: plate.parts, lidPrintOffset: [0, 0, 0], lidClosedOffset: [0, 0, 0], kind: "batch" } : result;
+  const frameKey = plate ? `batch:${plateNo}:${batch!.plates.length}` : result ? `${result.kind}:${result.derived.outerL}:${result.derived.outerW}:${result.derived.outerH}` : "";
+  const batchErrors = batch?.issues.filter((i) => i.severity === "error") ?? [];
 
   const title = safeName(params.text.split("\n")[0] || activePreset || "box");
 
@@ -209,18 +256,58 @@ export default function App() {
           </div>
           <small className="hint">The 3MF opens in Bambu Studio / OrcaSlicer as two objects (box, lid) with every colour already on its own filament slot, and carries your settings so you can reopen it here. Print both flat as placed, no supports.</small>
         </Section>
+        <Section title="9 · Batch: one lid per name" open={false}>
+          {!csv ? <>
+            <label className="field"><span>Names, one lid per line</span>
+              <textarea className="list" value={batchList} onChange={(e) => setBatchList(e.target.value)} rows={6} /></label>
+            <small className="hint">Add <code>| 3</code> after a name for three of it, <code>\n</code> for a second line, <code>#</code> for a comment. {parsed.items.length} lid{parsed.items.length === 1 ? "" : "s"} (up to {MAX_BATCH}).</small>
+          </> : <>
+            <div className="row"><span>{csv.name}: {parsed.items.length} lid{parsed.items.length === 1 ? "" : "s"}</span><button onClick={() => setCsv(null)}>Use a typed list</button></div>
+            {(["text", "order", "quantity"] as (keyof CsvMapping)[]).map((k) => (
+              <Choice key={k} label={k === "text" ? "Lid text column" : k === "order" ? "Order id column" : "Quantity column"} value={csv.mapping[k]}
+                set={(v) => setCsv({ ...csv, mapping: { ...csv.mapping, [k]: v } })}
+                options={[...(k === "text" ? [] : [{ value: "", label: "(none)" }]), ...csv.headers.map((h) => ({ value: h, label: h }))]} />
+            ))}
+          </>}
+          <label className="field"><span>Import orders (CSV)</span><br />
+            <input type="file" accept=".csv,text/csv" onChange={(e) => { const f = e.target.files?.[0]; if (f) openCsv(f); e.target.value = ""; }} /></label>
+          <Choice label="Print for every name" value={what} set={(v) => setWhat(v as BatchWhat)} options={(Object.keys(BATCH_WHAT_LABELS) as BatchWhat[]).map((w) => ({ value: w, label: BATCH_WHAT_LABELS[w] }))} />
+          {parsed.warnings.map((w, k) => <div key={k} className="issue warning">⚠ {w}</div>)}
+          <div className="btns"><button className="primary" onClick={buildBatch} disabled={busy || !parsed.items.length || !result?.exportable}>Build batch plates</button></div>
+          {batch && <>
+            {batch.plates.length > 1 && <Choice label="Plate" value={String(plateNo)} set={(v) => { setPlateNo(Number(v)); setShowBatch(true); }}
+              options={batch.plates.map((pl) => ({ value: String(pl.index), label: `Plate ${pl.index} · ${pl.objects.length} object${pl.objects.length === 1 ? "" : "s"}` }))} />}
+            <div className="btns">
+              <button onClick={downloadBatchPlate} disabled={busy || !batch.exportable}>3MF of plate {plateNo}</button>
+              <button className="primary" onClick={downloadBatchZip} disabled={busy || !batch.exportable}>All plates + manifest (ZIP)</button>
+              <button onClick={() => setShowBatch((s) => !s)}>{showBatch ? "Show the single box" : "Show the batch"}</button>
+            </div>
+          </>}
+          <small className="hint">Every lid uses the settings and artwork above; only the text changes. The ZIP holds one 3MF per plate and a manifest.csv saying which name and order is where.</small>
+        </Section>
         <p className="footer-note">Lid fit depends on your printer. Treat the first print of a new size as the test print, or use the fit test above.</p>
       </aside>
 
       <main className="main">
-        <Preview3D result={result} view={view} bedSize={params.bedSize} resetToken={resetToken} />
+        <Preview3D result={model} view={plate ? "print" : view} bedSize={params.bedSize} resetToken={resetToken} frameKey={frameKey} />
         <div className="toolbar">
-          <button className={view === "print" ? "on" : ""} onClick={() => setView("print")}>Print layout</button>
-          <button className={view === "closed" ? "on" : ""} onClick={() => setView("closed")}>Lid closed</button>
+          {!plate && <>
+            <button className={view === "print" ? "on" : ""} onClick={() => setView("print")}>Print layout</button>
+            <button className={view === "closed" ? "on" : ""} onClick={() => setView("closed")}>Lid closed</button>
+          </>}
           <button onClick={() => setResetToken((t) => t + 1)}>Reset view</button>
         </div>
         {(busy || error) && <div className="status">{error ? `Error: ${error}` : "Building…"}</div>}
-        <div className="readout">
+        {plate && batch ? <div className="readout">
+          <b>Batch</b>
+          <table><tbody>
+            <tr><td>Lids</td><td className="v">{batch.itemCount} on {batch.plates.length} plate{batch.plates.length === 1 ? "" : "s"} ({params.bedSize} mm bed)</td></tr>
+            {batch.boxesNeeded > 0 && <tr><td>Boxes</td><td className="v">{batch.boxesNeeded} plain boxes still to print</td></tr>}
+            <tr><td>Plate {plate.index}</td><td className="v">{plate.objects.map((o) => o.item.text.replace(/\n/g, " ")).filter((t, i, a) => a.indexOf(t) === i).join(" · ")}</td></tr>
+            <tr><td>Checks</td><td className="v">{batch.meshesFailed === 0 && batchErrors.length === 0 ? `✓ ${batch.meshesChecked} parts watertight` : "✗ see problems"}</td></tr>
+            <tr><td>Built in</td><td className="v">{(batch.elapsedMs / 1000).toFixed(1)} s</td></tr>
+          </tbody></table>
+        </div> : <div className="readout">
           <b>{params.sizeMode === "inner" ? "Outside" : "Inside"} size</b>
           <table><tbody>
             <tr><td>Box</td><td className="v">{params.sizeMode === "inner" ? `${d.outerL.toFixed(1)} × ${d.outerW.toFixed(1)} × ${d.outerH.toFixed(1)} mm` : `${d.innerL.toFixed(1)} × ${d.innerW.toFixed(1)} × ${d.innerH.toFixed(1)} mm inside`}</td></tr>
@@ -230,8 +317,13 @@ export default function App() {
             {result && <tr><td>Checks</td><td className="v">{result.meshReports.every((m) => m.ok) && errors.length === 0 ? "✓ watertight, no overlaps" : "✗ see problems"}</td></tr>}
           </tbody></table>
           {result && <div style={{ marginTop: 6 }}>{result.parts.map((p) => <div key={p.name}><span className="swatch" style={{ background: p.hex }} />{p.object}/{p.name} <span style={{ color: "var(--muted)" }}>{(p.volume / 1000).toFixed(1)} cm³</span></div>)}</div>}
-        </div>
-        {result && result.issues.length > 0 && (
+        </div>}
+        {plate && batch && batch.issues.length > 0 && (
+          <div className="issues">
+            {batch.issues.map((i, k) => <div key={k} className={`issue ${i.severity}`}>{i.severity === "error" ? "✗ " : i.severity === "warning" ? "⚠ " : "ℹ "}{i.message}</div>)}
+          </div>
+        )}
+        {!plate && result && result.issues.length > 0 && (
           <div className="issues">
             {result.issues.map((i, k) => <div key={k} className={`issue ${i.severity}`}>{i.severity === "error" ? "✗ " : i.severity === "warning" ? "⚠ " : "ℹ "}{i.message}</div>)}
           </div>

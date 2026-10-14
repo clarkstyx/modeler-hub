@@ -1,5 +1,6 @@
 import type { BoxParams } from "../core/params";
 import type { Artwork } from "../core/types";
+import type { BatchItem, BatchWhat } from "../core/batch";
 import type { Kind, WorkerRequest, WorkerResponse } from "./protocol";
 
 type Ok<T extends string> = Extract<WorkerResponse, { ok: true; type: T }>;
@@ -40,6 +41,15 @@ export class GeometryClient {
   }
   exportStl(title: string, zip: boolean) {
     return this.send<"exportStl">({ type: "exportStl", title, zip });
+  }
+  batch(params: BoxParams, art: Artwork | null, items: BatchItem[], what: BatchWhat) {
+    return this.send<"batch">({ type: "batch", params, art, items, what });
+  }
+  exportBatch3mf(params: BoxParams, title: string, plate: number) {
+    return this.send<"exportBatch3mf">({ type: "exportBatch3mf", params, title, plate });
+  }
+  exportBatchZip(params: BoxParams, title: string) {
+    return this.send<"exportBatchZip">({ type: "exportBatchZip", params, title });
   }
   dispose() {
     this.worker.terminate();

@@ -1,13 +1,14 @@
 /// <reference lib="webworker" />
 import wasmUrl from "manifold-3d/manifold.wasm?url";
 import { initKernel } from "../shared/kernel";
-import { export3MF, exportStl, exportStlZip, generate, type GenerateResult } from "./generate";
+import { batchPlate3MF, batchZip, export3MF, exportStl, exportStlZip, generate, generateBatch, type BatchResult, type GenerateResult } from "./generate";
 import type { WorkerRequest, WorkerResponse } from "./protocol";
 
 // All geometry runs here so the sliders never freeze the page. The last result
 // is kept so exports need no rebuild.
 const ready = initKernel(() => wasmUrl);
 let last: GenerateResult | null = null;
+let lastBatch: BatchResult | null = null;
 const post = (msg: WorkerResponse, transfer: Transferable[] = []) => (self as unknown as DedicatedWorkerGlobalScope).postMessage(msg, transfer);
 
 self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
@@ -30,6 +31,23 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
         if (!last) throw new Error("Build the model first.");
         const bytes = req.zip ? exportStlZip(last, req.title) : exportStl(last, req.title);
         post({ id: req.id, ok: true, type: "exportStl", bytes }, [bytes.buffer]);
+        break;
+      }
+      case "batch": {
+        lastBatch = generateBatch(req.params, req.items, req.art, req.what);
+        post({ id: req.id, ok: true, type: "batch", result: lastBatch });
+        break;
+      }
+      case "exportBatch3mf": {
+        if (!lastBatch) throw new Error("Build the batch first.");
+        const bytes = batchPlate3MF(lastBatch, req.plate, req.params, req.title);
+        post({ id: req.id, ok: true, type: "exportBatch3mf", bytes }, [bytes.buffer]);
+        break;
+      }
+      case "exportBatchZip": {
+        if (!lastBatch) throw new Error("Build the batch first.");
+        const bytes = batchZip(lastBatch, req.params, req.title);
+        post({ id: req.id, ok: true, type: "exportBatchZip", bytes }, [bytes.buffer]);
         break;
       }
     }

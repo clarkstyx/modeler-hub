@@ -22,6 +22,10 @@ It is a normal Vite app and can move to its own repository by changing `path` to
 - **Lid fit test**: a short box section plus three lids at your clearance ±0.1 mm, each labelled.
 - Exports: 3MF (box and lid as two objects, every colour on its own filament slot, settings
   embedded so the file reopens here), single-colour STL, STL per part (ZIP), settings JSON.
+- **Batch** (section 9): a typed list of names (`Noah | 2` for two) or an order CSV (pick the text,
+  order id and quantity columns) becomes one personalised lid per name, or a box beside every lid,
+  packed onto plates that fit your bed. Download one plate as 3MF, or every plate plus a
+  `manifest.csv` (name → order → plate → position) as a ZIP. Up to 200 lids.
 
 Presets: gift tin, jewellery box (2 × 3), business-card box, storage box (3 × 2), personalised gift
 box, pencil box, 7-day pill box, pet treat tin.

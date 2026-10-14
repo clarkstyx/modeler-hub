@@ -4,6 +4,7 @@ import { layoutText, missingCharacters } from "../shared/textShapes";
 import { type CrossSection, type Manifold, kernel } from "../shared/kernel";
 import { manifoldToMesh } from "../shared/mesh";
 import { artworkIcon, builtinIcon } from "./icons";
+import { objectSlug, shelfPack } from "../shared/batch";
 import { cs, csBounds, csOpening, csTranslate, csUnion, mIntersect, mSubtract, mTranslate, prism, rect } from "../shared/shapes";
 
 /** Clear border between the labels and the edge of the build plate. */
@@ -40,7 +41,7 @@ interface LabelSolids {
   issues: Issue[];
 }
 
-const slug = (s: string) => s.replace(/\s+/g, " ").trim().toUpperCase().replace(/[^A-Z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 24) || "LABEL";
+const slug = (s: string) => objectSlug(s, "LABEL");
 
 /** Text block (rings centred on the origin) shrunk to fit `w` × `h`. */
 function fitText(text: string, p: LabelParams, w: number, h: number): { section: CrossSection | null; size: number; blockW: number } {
@@ -131,35 +132,19 @@ export function buildLabel(spec: LabelSpec, p: LabelParams, art: Artwork | null)
  */
 export function layoutPlates(specs: LabelSpec[], p: LabelParams): { plates: Omit<PlacedLabel, "textSize">[][]; issues: Issue[] } {
   const issues: Issue[] = [];
-  const plates: Omit<PlacedLabel, "textSize">[][] = [[]];
-  const max = p.bedSize - PLATE_BORDER;
-  let x = PLATE_BORDER;
-  let y = PLATE_BORDER;
-  let rowH = 0;
-  specs.forEach((spec, i) => {
-    const w = labelWidth(p, spec.units);
-    const h = p.height;
-    if (w > p.bedSize - 2 * PLATE_BORDER) {
+  const plates: Omit<PlacedLabel, "textSize">[][] = [];
+  const sizes = specs.map((spec) => ({ w: labelWidth(p, spec.units), h: p.height }));
+  shelfPack(sizes, p.bedSize, PLATE_BORDER, p.plateGap).forEach((at, i) => {
+    const spec = specs[i];
+    const { w, h } = sizes[i];
+    if (!at) {
       issues.push({ severity: "error", message: `Line ${spec.line}: a ${w.toFixed(0)} mm label does not fit a ${p.bedSize} mm bed.` });
       return;
     }
-    if (x + w > max) {
-      x = PLATE_BORDER;
-      y += rowH + p.plateGap;
-      rowH = 0;
-    }
-    if (y + h > max) {
-      plates.push([]);
-      x = PLATE_BORDER;
-      y = PLATE_BORDER;
-      rowH = 0;
-    }
     const index = i + 1;
-    plates[plates.length - 1].push({ index, spec, object: `L${String(index).padStart(2, "0")}_${slug(spec.text)}`, width: w, height: h, x, y });
-    x += w + p.plateGap;
-    rowH = Math.max(rowH, h);
+    (plates[at.plate] ??= []).push({ index, spec, object: `L${String(index).padStart(2, "0")}_${slug(spec.text)}`, width: w, height: h, x: at.x, y: at.y });
   });
-  return { plates: plates.filter((pl) => pl.length), issues };
+  return { plates: plates.filter((pl) => pl?.length), issues };
 }
 
 /** Builds every label of a batch, placed on its plate. */

@@ -107,7 +107,7 @@ keeps every modeler a standalone app that can move to its own repo; the hub's `n
 copy drifts. App-specific values are passed in (the 3MF `app` id, STL headers), never hard-coded.
 Trinket Tray (own repo) is not synced yet.
 
-## Batch production (first engine built: gridfinity-labels)
+## Batch production (built: gridfinity-labels, box-modeler)
 
 Seller-tier feature. Reusable interface every engine should be able to expose:
 
@@ -125,9 +125,16 @@ Built first in `modelers/gridfinity-labels`: `core/batch.ts` parses the list (`t
 or a CSV with a column mapping (text, icon, width, order id, quantity; 500-label cap),
 `geometry/buildLabels.ts` `layoutPlates()` shelf-packs labels in list order onto bed-sized plates,
 and `pipeline/generate.ts` `batchZip()` writes `plate-NN.3mf` + `manifest.csv` (label, plate,
-object, text, icon, size, x/y, letter height, source line, order id) + README. Not yet done: grouping
-by colour set (every label in one batch shares the same colours), and the same flow for box lids or
-name keychains.
+object, text, icon, size, x/y, letter height, source line, order id) + README.
+
+box-modeler follows the same shape (`core/batch.ts`, `geometry/buildBatch.ts`, `generateBatch()` /
+`batchZip()` in `pipeline/generate.ts`): one lid per name, or a box beside every lid, 200-lid cap.
+The engine-neutral pieces live in `packages/geometry/src/batch.ts`: CSV reading (`splitCsvRow`,
+`csvHeaders`, `findHeader`), CSV writing (`toCsv`), `shelfPack()` and `objectSlug()` (accent-safe
+object names). A new engine's batch needs only its own list format and per-item build.
+
+Not yet done: grouping by colour set (every item in one batch shares the same colours), rotating
+items to pack tighter, and name keychains (own repo, not on the shared package).
 
 ## Printer profiles (design)
 

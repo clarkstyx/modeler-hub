@@ -1,4 +1,6 @@
+import { strToU8, zipSync } from "fflate";
 import type { BoxParams, Derived } from "../core/params";
+import type { BatchItem, BatchWhat } from "../core/batch";
 import type { Artwork, Issue, Part } from "../core/types";
 import { hasErrors, validateParams } from "../core/validateParams";
 import { withArena } from "../shared/kernel";
@@ -7,6 +9,8 @@ import { buildBox, buildCalibration } from "../geometry/buildBox";
 import { buildThreeMF } from "../export/threeMF";
 import { partsToStl, partsToStlZip } from "../shared/stl";
 import { toRecipe } from "../core/recipe";
+import { toCsv } from "../shared/batch";
+import { buildBoxBatch, type BatchPlate } from "../geometry/buildBatch";
 
 export interface GenerateResult {
   parts: Part[];
@@ -56,3 +60,73 @@ export function export3MF(result: GenerateResult, params: BoxParams, title: stri
 }
 export const exportStl = (result: GenerateResult, title: string) => partsToStl(result.parts, title);
 export const exportStlZip = (result: GenerateResult, title: string) => partsToStlZip(result.parts, title);
+
+export interface BatchResult {
+  plates: BatchPlate[];
+  issues: Issue[];
+  itemCount: number;
+  boxesNeeded: number;
+  meshesChecked: number;
+  meshesFailed: number;
+  exportable: boolean;
+  elapsedMs: number;
+}
+
+/** A list of lid texts → validated plates. Requires initKernel(). */
+export function generateBatch(params: BoxParams, items: BatchItem[], art: Artwork | null, what: BatchWhat): BatchResult {
+  const t0 = Date.now();
+  const issues = validateParams(params);
+  const empty = (extra: Issue[] = []): BatchResult => ({ plates: [], issues: [...issues, ...extra], itemCount: 0, boxesNeeded: 0, meshesChecked: 0, meshesFailed: 0, exportable: false, elapsedMs: Date.now() - t0 });
+  if (hasErrors(issues)) return empty();
+  if (!items.length) return empty([{ severity: "info", message: "Type at least one name in the batch list." }]);
+  return withArena(() => {
+    const built = buildBoxBatch(params, items, art, what);
+    issues.push(...built.issues);
+    let checked = 0;
+    let failed = 0;
+    for (const plate of built.plates)
+      for (const part of plate.parts) {
+        checked++;
+        const r = validateMesh(`${part.object}/${part.name}`, part.mesh);
+        if (!r.ok) {
+          failed++;
+          for (const e of r.errors) issues.push({ severity: "error", message: `${r.name}: ${e}` });
+        }
+      }
+    const itemCount = new Set(built.plates.flatMap((pl) => pl.objects.map((o) => o.index))).size;
+    return { plates: built.plates, issues, itemCount, boxesNeeded: built.boxesNeeded, meshesChecked: checked, meshesFailed: failed, exportable: !hasErrors(issues) && itemCount > 0, elapsedMs: Date.now() - t0 };
+  });
+}
+
+export function batchPlate3MF(result: BatchResult, plateIndex: number, params: BoxParams, title: string): Uint8Array {
+  const plate = result.plates[plateIndex - 1];
+  if (!plate) throw new Error(`There is no plate ${plateIndex}.`);
+  return buildThreeMF(plate.parts, { title: `${title} plate ${plateIndex}`, project: JSON.stringify(toRecipe({ ...params, text: "" }), null, 2) });
+}
+
+/** One row per printed object: which name and order is on which plate, where. */
+export function batchManifest(result: BatchResult): string {
+  const rows: (string | number)[][] = [["item", "plate", "object", "kind", "text", "order", "x_mm", "y_mm", "width_mm", "depth_mm", "letter_mm", "source_line"]];
+  for (const plate of result.plates)
+    for (const o of plate.objects)
+      rows.push([o.index, plate.index, o.object, o.kind, o.item.text.replace(/\n/g, " / "), o.item.order, o.x.toFixed(1), o.y.toFixed(1), o.width.toFixed(1), o.depth.toFixed(1), o.textSize.toFixed(1), o.item.line]);
+  return toCsv(rows);
+}
+
+/** Every plate as its own 3MF, plus manifest.csv and a README, in one ZIP. */
+export function batchZip(result: BatchResult, params: BoxParams, title: string): Uint8Array {
+  const files: Record<string, Uint8Array> = {};
+  for (const plate of result.plates) files[`${title}-plate-${String(plate.index).padStart(2, "0")}.3mf`] = batchPlate3MF(result, plate.index, params, title);
+  files["manifest.csv"] = strToU8(batchManifest(result));
+  const boxes = result.boxesNeeded
+    ? `This batch holds lids only. Print ${result.boxesNeeded} plain box${result.boxesNeeded === 1 ? "" : "es"} with the same settings (the normal 3MF, lid text empty).\n`
+    : `Every name has its box beside its lid.\n`;
+  files["README.txt"] = strToU8(
+    `${title}: ${result.itemCount} personalised lid${result.itemCount === 1 ? "" : "s"} on ${result.plates.length} plate(s).\n\n` +
+      `Each plate-NN.3mf opens in Bambu Studio / OrcaSlicer with every lid as its own object and each colour on its own filament slot.\n` +
+      boxes +
+      `manifest.csv says which name (and order, if the CSV had one) is on which plate, at which position.\n` +
+      `Lid fit depends on your printer: print the lid fit test from the app before a big batch.\n`,
+  );
+  return zipSync(files, { level: 6 });
+}

@@ -10,7 +10,8 @@ import { unzipSync, strFromU8 } from "fflate";
 import { initKernel } from "../src/shared/kernel";
 import { DEFAULT_PARAMS, type BoxParams } from "../src/core/params";
 import { PRESETS, presetParams } from "../src/core/presets";
-import { export3MF, generate } from "../src/pipeline/generate";
+import { batchZip, export3MF, generate, generateBatch } from "../src/pipeline/generate";
+import { parseNames } from "../src/core/batch";
 
 await initKernel();
 mkdirSync("out", { recursive: true });
@@ -50,5 +51,26 @@ const calOk = cal.exportable && cal.meshReports.every((m) => m.ok);
 console.log(`${calOk ? "ok  " : "FAIL"} calibration set      ${cal.parts.map((p) => p.name).join(", ")}`);
 if (calOk) writeFileSync("out/calibration.3mf", export3MF(cal, DEFAULT_PARAMS, "calibration"));
 if (!calOk) failed = true;
+const names = parseNames(Array.from({ length: 24 }, (_, i) => `NAME ${i + 1}`).join("\n") + "\nZoë & Łukasz\nHappy\\nBirthday").items;
+for (const [name, what, p] of [
+  ["batch-lids-26", "lids", presetParams("gift-tin")],
+  ["batch-sets-26-engraved", "sets", { ...presetParams("gift-tin"), relief: "engraved" }],
+  ["batch-lids-inlay-180bed", "lids", { ...presetParams("gift-tin"), relief: "inlay", bedSize: 180 }],
+] as [string, "lids" | "sets", BoxParams][]) {
+  const r = generateBatch(p, names, null, what);
+  const errors = r.issues.filter((i) => i.severity === "error").map((i) => i.message);
+  const ok = r.exportable && r.meshesFailed === 0 && errors.length === 0;
+  if (!ok) failed = true;
+  console.log(`${ok ? "ok  " : "FAIL"} ${name.padEnd(24)} ${r.itemCount} lids, ${r.plates.length} plate(s), ${r.meshesChecked} parts, ${r.elapsedMs} ms${errors.length ? "  " + errors.join(" | ") : ""}`);
+  if (!ok) continue;
+  const zipBytes = batchZip(r, p, name);
+  const zip = unzipSync(zipBytes);
+  const plates = Object.keys(zip).filter((f) => f.endsWith(".3mf"));
+  const rows = strFromU8(zip["manifest.csv"]).trim().split("\n").length - 1;
+  const objects = r.plates.reduce((n, pl) => n + pl.objects.length, 0);
+  const items = plates.reduce((n, f) => n + (strFromU8(unzipSync(zip[f])["3D/3dmodel.model"]).match(/<item /g) ?? []).length, 0);
+  if (plates.length !== r.plates.length || rows !== objects || items !== objects) { console.log(`     ZIP mismatch: ${plates.length} plates, ${rows} rows, ${items} items, ${objects} objects`); failed = true; }
+  writeFileSync(`out/${name}.zip`, zipBytes);
+}
 console.log(failed ? "\nSome cases FAILED." : "\nAll cases passed. 3MF files are in out/.");
 process.exit(failed ? 1 : 0);
