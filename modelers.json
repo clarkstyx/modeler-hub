@@ -139,6 +139,16 @@
       "makerworld": ""
     },
     {
+      "id": "cookie-cutter",
+      "name": "Cookie Cutter",
+      "path": "modelers/cookie-cutter",
+      "tagline": "Cookie cutters from shapes, letters, words or your own SVG, with a thin cutting edge and a sturdy flange.",
+      "category": "Kitchen",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "image-keychain",
       "name": "Image Keychain",
       "repo": "clarkstyx/image-keychain-modeler",

@@ -110,9 +110,9 @@ four marked P0; they take effect on the hub once those PRs merge.
 |---|---|---|---|---|---|---|
 | Image Tracer | image-keychain (traced SVG download, `ImageKeychainModeler.jsx:1629`), trinket-tray segmentation | **EXISTING** | standalone page | – | – | – |
 | Image to Keychain | image-keychain | **EXISTING** | – | – | – | – |
-| Image to Cookie Cutter | none | **MISSING** | wall offset, cutting rim, flange, bridging rules, food-contact warning | trinket-tray silhouette + offset ops | P2 | M |
-| Cookie Cutter | none | **MISSING** | shape library, same engine | same | P2 | S after above |
-| Letter & Number Cutters | none | **MISSING** | glyph outlines → cutter walls | box-modeler text + cutter engine | P2 | S after above |
+| Image to Cookie Cutter | **cookie-cutter** (`modelers/cookie-cutter`, Maker): SVG outline → wall, stepped taper, cutting edge, flange; holes filled, islands joined, food-contact note | **PARTIAL** (2026-10-14) | PNG/JPG tracing (use an SVG for now; Trinket Tray / Image Keychain have tracers), press-in stamp | cookie-cutter | P2 | S |
+| Cookie Cutter | **cookie-cutter**: circle, scalloped circle, heart, star, rounded square, egg | **EXISTING** (2026-10-14) | more shapes (seasonal), dough test | cookie-cutter | P2 ✅ | – |
+| Letter & Number Cutters | **cookie-cutter** letters mode (one cutter per character, 4 fonts, plates) and word mode (one cutter around a word) | **EXISTING** (2026-10-14) | inner counters cut by a second piece | cookie-cutter | P2 ✅ | – |
 | Cake Pop Mold & Tray Set | none | **DEFER** | two-part molds, food-contact, untested fits | – | – | L |
 | Stencil | none (name-tag cut-out style is the inverse) | **MISSING** | bridges for counters, inversion | name-tag cutout + image-keychain bridges (`buildBridges`) | P4 | M |
 | Image to Ornament | image-keychain (hole anywhere, top loop) | **PRESET** | ornament preset: larger, loop on top, no plate text | image-keychain | P2 | S |

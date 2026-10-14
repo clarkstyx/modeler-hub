@@ -11,7 +11,7 @@ observed.
 - Minimum printable wall: 2 nozzle widths (0.8 mm). Minimum visible detail: 1 nozzle width.
 - Letters under 5 mm cap height get a warning; strokes under 1 nozzle width are reported as lost.
 
-## Automatic checks (box-modeler, gridfinity-labels, trinket-tray, phone-grip)
+## Automatic checks (box-modeler, gridfinity-labels, cookie-cutter, trinket-tray, phone-grip)
 
 | Check | How | Result |
 |---|---|---|
@@ -40,6 +40,7 @@ Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler`
 | Trinket Tray coaster holder clearance | 0.8 mm | design choice | unverified |
 | Letter Beads cord hole | 5 mm | design choice | printed by Clark (per MANUAL) |
 | Jerry Can keyring hole | 5.5 mm, chamfered | design choice | printed by Clark (per MANUAL) |
+| Cookie cutter wall / edge / flange | 1.2 mm wall, 0.8 mm edge, 4 mm × 1.6 mm flange, 15 mm tall | common choices for FDM cutters | **Untested on dough.** |
 | Gridfinity label width | grid units × 42 mm − 6 mm end clearance (1 unit = 36 mm) | 42 mm pitch is the published Gridfinity grid; the clearance is a design choice | unverified |
 | Gridfinity label slot | 12 mm high × 1.2 mm thick | a common size, **not** a standard: slots differ between bin designs | **Unverified.** The app's fit-test strip prints 11.6 / 12.0 / 12.4 mm; record the one that fits your bins here. |
 
@@ -54,8 +55,9 @@ Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler`
   tag batch.
 - **QR codes**: module ≥ 1.0 mm raised (2.5 nozzle widths) and a 4-module quiet zone; scan the
   printed sample with two phones before shipping.
-- **Cookie cutters**: wall 0.8 mm, cutting edge chamfer, 2 mm flange; print and cut dough. Always
-  show the food-contact note; never claim food safety.
+- **Cookie cutters** (cookie-cutter): defaults 15 mm tall, 1.2 mm wall, 0.8 mm cutting edge (two
+  nozzle widths), 4 × 1.6 mm flange are design choices. Print one and cut dough before claiming they
+  cut cleanly. Always show the food-contact note; never claim food safety.
 
 ## Slicer verification
 
@@ -90,5 +92,8 @@ Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler`
 | 2026-10-14 | box-modeler | batch: 9 vitest cases (list/CSV parsing, quantities, packing inside the bed without overlap, lids/sets, oversized lids, per-line warnings, 3MF/ZIP/manifest) + 3 validate batches of 26 names (raised/engraved/inlay, 180 mm bed → 13 plates) | vitest + `npm run validate` | 32 tests pass, all watertight, ZIP plates / manifest rows / 3MF items match |
 | 2026-10-14 | box-modeler | batch in the app: typed list → lid plate, order CSV → box + lid sets on 2 plates, ZIP with manifest, single-box export unchanged | headless Chromium | pass, 0 page errors, 0 external requests |
 | 2026-10-14 | name keychain | batch (keychain-modeler#3): 6 headless tests; geometry refactor checked by comparing the single 3MF from main and the branch | `npm test`, Chromium | tests pass; single 3MF byte-identical (default, accented name, outline); 22 names → 2 plates, CSV → ZIP + manifest, filament slots 1–2, 0 page errors |
+| 2026-10-14 | cookie-cutter | 17 vitest (6 shapes, edge thinner than wall, letters incl. joined i-dot, word size, plate spill, missing glyph, SVG hole filled, spike smoothing, rules, 3MF/ZIP/food note, settings) + 26 validate cases (every A–Z, a–z, 0–9, & in 4 fonts = 252 cutters, words, edge settings) | vitest, `npm run validate` | all watertight. Getting there needed: cutter built as solid layers minus the outline (was stacked rings: open edges on ~20 glyphs), sub-0.0001 mm edges collapsed, outline pinch points fused |
+| 2026-10-14 | cookie-cutter | app under `/m/cookie-cutter/`: heart, scalloped, letters ABCi, word LOVE, SVG bunny, thin-edge rule, 3MF + ZIP | headless Chromium | pass, food note shown and in README, 0 page errors, 0 external requests |
 | – | box-modeler | physical lid fit | – | **not yet printed** |
 | – | gridfinity-labels | fit-test strip in real bins; 3MF opened in Bambu Studio | – | **not yet printed / not opened** |
+| – | cookie-cutter | print a heart and the letters, cut dough | – | **not yet printed** |
