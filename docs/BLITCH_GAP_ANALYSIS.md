@@ -43,16 +43,20 @@ Grinch 103 pass, Dumpling 156 pass, Desktop Sign 22 pass, Jerry Can smoke test p
 | grinch-ornament | grinch-ornament-generator | manifold-3d kernel, opentype.js, zod, zustand | basematerials only, separate items (`src/engine/export/threeMf.ts`) | none (poses traced offline) | 1 font | thin feature, gap, off-support | JSON, undo/redo |
 | dumpling-ornament | dumpling-ornament-generator | same engine as Grinch (byte-identical bar slot names) | same | none | 1 font | same | same |
 
-Defects found during the audit that affect products below (all documented, not yet fixed unless noted):
+Defects found during the audit that affect products below. Batch 2 (2026-10-14) opened a fix for each of the
+four marked P0; they take effect on the hub once those PRs merge.
 
 - **Ornament fonts 404 on the hub**: both ornament apps load `/fonts/FredokaOne-Regular.woff` with a
   root-absolute path (`src/app/useEngine.ts:17`), which breaks under `/m/<id>/`; the name becomes a
-  blocking error and export is disabled. One-line fix (`import.meta.env.BASE_URL`). **P0.**
+  blocking error and export is disabled. One-line fix (`import.meta.env.BASE_URL`). **P0, fixed in
+  grinch-ornament-generator#1 and dumpling-ornament-generator#2.**
 - **Name Keychain exports the preview rotation**: STL/3MF bake the live group's `matrixWorld`
-  after the user drags the view (`KeychainModeler.jsx:352,181`). **P0.**
+  after the user drags the view (`KeychainModeler.jsx:352,181`). **P0, fixed in keychain-modeler#1.**
 - **Name Tag raised-text race**: text mesh is appended in an un-cancelled async import
-  (`NameTagModeler.jsx:899-903`), so fast typing can leave stale or missing text in exports. **P0.**
-- **Jerry Can 3MF** does not XML-escape the title/part names and has no slot config. **P0.**
+  (`NameTagModeler.jsx:899-903`), so fast typing can leave stale or missing text in exports. **P0, fixed in
+  name-tag-modeler#9.**
+- **Jerry Can 3MF** does not XML-escape the title/part names and has no slot config. **P0, fixed in
+  jerry-can-modeler#2.**
 - Name Keychain, Name Tag and Desktop Sign fetch fonts from jsDelivr at runtime (offline = no text).
 - No modeler generates QR codes, stands with slots, stencils, cutters, threads, MX-switch pockets.
 
@@ -138,14 +142,14 @@ Defects found during the audit that affect products below (all documented, not y
 | Product | Valencia equivalent | Status | Missing | Engine | Priority | Effort |
 |---|---|---|---|---|---|---|
 | Trinket Tray | trinket-tray | **EXISTING** | – | – | – | – |
-| Heart Ring Dish | trinket-tray (shapes: silhouette, roundedRect, circle, oval, hexagon, octagon; `src/core/params.ts:6`) | **PRESET** | heart footprint in `geometry2d/footprint.ts`, text-only build (needs no image) | trinket-tray | P1 | S |
-| Cloud Tray | trinket-tray | **PRESET** | cloud footprint (union of circles) | trinket-tray | P2 | S |
+| Heart Ring Dish | trinket-tray: `heart` shape + Heart Ring Dish preset (Trinket-Tray-Generator#7, open) | **EXISTING** once #7 merges | – | trinket-tray | P1 done | – |
+| Cloud Tray | trinket-tray: `cloud` shape + Cloud Tray preset (#7) | **EXISTING** once #7 merges | – | trinket-tray | P1 done | – |
 | Woven Tray | none | **MISSING** | woven wall pattern | trinket-tray wall | P4 | M |
 | Divided Tray | trinket-tray (no dividers) / box-modeler (dividers, lid removable) | **PARTIAL** | divider grid in trinket-tray; today use box-modeler with `lidGrip` none and skip the lid | box-modeler | P1 | S |
 | Flower Compartment Tray | none | **MISSING** | petal compartments | trinket-tray | P2 | M |
 | Pet Image Compartment Tray | trinket-tray silhouette + image | **PARTIAL** | compartments | trinket-tray | P2 | M |
 | Shaped Art Tray | trinket-tray silhouette mode | **EXISTING** | – | – | – | – |
-| Name Tray | trinket-tray text (needs an image today: `ROADMAP.md` item 7) | **PARTIAL** | text-only build, name-shaped outline | trinket-tray | P1 | S |
+| Name Tray | trinket-tray: text as the artwork + Silhouette = tray in the outline of the name; Name Tray preset (#7) | **EXISTING** once #7 merges | – | trinket-tray | P1 done | – |
 
 ### G. Baskets and containers (4)
 
@@ -202,13 +206,13 @@ from memory (see `PRINT_VALIDATION.md`).
 
 ## Totals
 
-| Status | Count |
-|---|---|
-| EXISTING | 16 |
-| PARTIAL | 17 |
-| PRESET | 20 |
-| MISSING | 30 |
-| DEFER | 3 |
+| Status | Count (2026-10-13 audit) | After the batch 2 PRs merge |
+|---|---|---|
+| EXISTING | 16 | 19 |
+| PARTIAL | 17 | 16 |
+| PRESET | 20 | 18 |
+| MISSING | 30 | 30 |
+| DEFER | 3 | 3 |
 
 Of the 30 MISSING products, 17 collapse into five engines: QR/NFC (6), medals (5 → 1 engine + presets),
 lattice containers (4), cookie cutters (3), clickers (5). That is the whole point of the engine +
@@ -258,3 +262,11 @@ they are scheduled right after this batch so the hub change set stays reviewable
    with embedded settings, STL and per-part STL ZIP, 23 unit tests, 18-case export validation.
 3. Documentation: this file, `GENERATOR_ROADMAP.md`, `GENERATOR_ARCHITECTURE.md`,
    `PRINT_VALIDATION.md`.
+
+## What was done in batch 2 (2026-10-14)
+
+1. Fix PRs for the four P0 defects above, each reproduced in a browser before and verified after.
+2. Trinket-Tray-Generator#7: heart and cloud outlines, text as the artwork, and the Heart Ring Dish,
+   Cloud Tray and Name Tray presets. That moves three trays-and-household rows from PRESET/PARTIAL to
+   EXISTING once merged. It also fixes one-colour designs vanishing into the floor and zero-area
+   triangles when oversized artwork is clipped at a curved wall.
