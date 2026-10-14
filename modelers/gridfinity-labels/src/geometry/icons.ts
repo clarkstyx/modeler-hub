@@ -1,8 +1,8 @@
 import type { IconId } from "../core/params";
 import type { Artwork, Ring } from "../core/types";
-import { type CrossSection } from "./kernel";
-import { cs, csScale, csTranslate, csUnion, csSubtract, rect, csBounds } from "./shapes";
-import { kernel, track } from "./kernel";
+import { type CrossSection } from "../shared/kernel";
+import { cs, csScale, csTranslate, csUnion, csSubtract, rect, csBounds } from "../shared/shapes";
+import { kernel, track } from "../shared/kernel";
 
 /**
  * Built-in hardware icons, drawn to fill an `s` × `s` box centred on the

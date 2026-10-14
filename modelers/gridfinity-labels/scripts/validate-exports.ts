@@ -8,7 +8,7 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { unzipSync, strFromU8 } from "fflate";
-import { initKernel } from "../src/geometry/kernel";
+import { initKernel } from "../src/shared/kernel";
 import { DEFAULT_PARAMS, type LabelParams } from "../src/core/params";
 import { parseCsv, guessMapping, csvHeaders, parseList } from "../src/core/batch";
 import { batchZip, generate, plate3MF } from "../src/pipeline/generate";

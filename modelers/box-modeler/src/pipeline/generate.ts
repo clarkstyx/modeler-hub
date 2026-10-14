@@ -1,11 +1,11 @@
 import type { BoxParams, Derived } from "../core/params";
 import type { Artwork, Issue, Part } from "../core/types";
 import { hasErrors, validateParams } from "../core/validateParams";
-import { withArena } from "../geometry/kernel";
-import { validateMesh, type MeshReport } from "../geometry/mesh";
+import { withArena } from "../shared/kernel";
+import { validateMesh, type MeshReport } from "../shared/mesh";
 import { buildBox, buildCalibration } from "../geometry/buildBox";
 import { buildThreeMF } from "../export/threeMF";
-import { partsToStl, partsToStlZip } from "../export/stl";
+import { partsToStl, partsToStlZip } from "../shared/stl";
 import { toRecipe } from "../core/recipe";
 
 export interface GenerateResult {

@@ -1,6 +1,9 @@
+// GENERATED from packages/geometry/src/textShapes.ts by `npm run sync-shared` in the hub. Edit the source there, not this copy.
 import { Font } from "three/examples/jsm/loaders/FontLoader.js";
-import type { FontId } from "../core/params";
-import type { Ring } from "../core/types";
+import type { Ring } from "./types";
+
+/** The bundled three.js typeface fonts (MIT / Apache 2.0, shipped with three). */
+export type FontId = "sans" | "rounded" | "serif" | "droidSans";
 // three.js typeface JSON fonts (MgOpen / Droid licences allow redistribution), so text works offline.
 import rounded from "three/examples/fonts/optimer_bold.typeface.json";
 import sans from "three/examples/fonts/helvetiker_bold.typeface.json";

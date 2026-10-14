@@ -63,7 +63,7 @@ imported models.
 | Batch production (text list / CSV → variations → plates → ZIP + manifest) | 🟡 | Built in gridfinity-labels (list/CSV, quantity, order ids, plates, ZIP + manifest). Next: box-modeler lids and name keychains. Design in `GENERATOR_ARCHITECTURE.md`. |
 | Shared printer profiles | 🟡 | box-modeler and phone-grip expose nozzle/layer/bed; a shared `printer.json` schema is specified in the architecture doc. |
 | Saved templates | 🟡 | Every newer modeler saves JSON and embeds it in the 3MF; the hub does not store them server-side yet. |
-| Shared geometry package | ⬜ next | gridfinity-labels is the third engine with the same kernel/mesh/threeMF/stl/textShapes files, the trigger the architecture doc set for extracting `@valencia/geometry`. Do it as its own change. |
+| Shared geometry package | ✅ | `packages/geometry/` in the hub, copied into `modelers/*/src/shared/` by `npm run sync-shared`; `npm test` fails on drift. box-modeler and gridfinity-labels use it (23 + 16 tests, both validate suites, Chromium export + reopen check). Trinket Tray (own repo) not synced. |
 | Slicer round-trip CI | ⬜ | OrcaSlicer CLI in a container, as planned in the Trinket Tray roadmap. |
 
 ## Dependencies

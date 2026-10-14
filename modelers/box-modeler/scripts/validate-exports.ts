@@ -7,7 +7,7 @@
  */
 import { mkdirSync, writeFileSync } from "node:fs";
 import { unzipSync, strFromU8 } from "fflate";
-import { initKernel } from "../src/geometry/kernel";
+import { initKernel } from "../src/shared/kernel";
 import { DEFAULT_PARAMS, type BoxParams } from "../src/core/params";
 import { PRESETS, presetParams } from "../src/core/presets";
 import { export3MF, generate } from "../src/pipeline/generate";

@@ -9,7 +9,8 @@
 export type SizeMode = "inner" | "outer";
 export type ReliefMode = "raised" | "engraved" | "inlay";
 export type TextDirection = "along" | "across";
-export type FontId = "sans" | "rounded" | "serif" | "droidSans";
+import type { FontId } from "../shared/textShapes";
+export type { FontId };
 export type LidGrip = "none" | "thumbNotch" | "ridge";
 
 export interface BoxParams {

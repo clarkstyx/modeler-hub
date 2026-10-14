@@ -84,13 +84,13 @@ PrusaSlicer users take the STL ZIP (one STL per part, same frame) instead.
 
 | Capability | Best implementation today | Reuse plan |
 |---|---|---|
-| Text → polygons, cap-height layout, multi-line | box-modeler `text/textShapes.ts` (from trinket-tray) | copy into new engines until a package exists |
+| Text → polygons, cap-height layout, multi-line | `packages/geometry/src/textShapes.ts` (from trinket-tray) | `npm run sync-shared` into new engines |
 | Arc text | trinket-tray `textShapes.ts` `arcText`, ornaments `arcText.ts` (opentype) | medals, coasters |
 | SVG → colour layers | box-modeler `ui/loadArtwork.ts` (three SVGLoader); icon-beads `iconSource.js` (strokes too) | all image products |
 | Raster → colour regions | trinket-tray `image/*` (Lab k-means, bg removal, palette editing); image-keychain tracer | cutters, ornaments, clicker caps |
-| Rounded footprints | box-modeler `shapes.ts` `rectRing` (per-corner radii); trinket-tray `footprint.ts` | trays, boxes, medals |
-| Colour-separated 3MF | box-modeler `export/threeMF.ts` (multi-object) ≥ trinket-tray ≥ phone-grip | the template for the shared writer |
-| Mesh validation | box-modeler/trinket-tray `mesh.ts` | all |
+| Rounded footprints | `packages/geometry/src/shapes.ts` `rectRing` (per-corner radii); trinket-tray `footprint.ts` | trays, boxes, medals |
+| Colour-separated 3MF | `packages/geometry/src/threeMF.ts` (multi-object) ≥ trinket-tray ≥ phone-grip | the shared writer |
+| Mesh validation | `packages/geometry/src/mesh.ts` (trinket-tray has its own) | all |
 | Keyring loop / hole placement | image-keychain (anywhere, chamfered rim), bubble-keychain (drag) | tags, medals |
 | Dome / pillow | phone-grip layer stack, jerry-can torus hull | badges, clicker caps |
 | Hardware presets with verification status | phone-grip `hardware.js` | clickers, stamps, NFC pockets |
@@ -100,9 +100,12 @@ PrusaSlicer users take the STL ZIP (one STL per part, same frame) instead.
 module shapes and near-identical `mesh.ts`, `threeMF.ts`, `textShapes.ts`. When a third engine
 (cookie cutters or gridfinity labels) copies them again, lift those four files into
 `@valencia/geometry` as an independently licensed internal package and point all three at it.
-`modelers/gridfinity-labels` (2026-10-14) is that third copy (kernel, mesh, threeMF, stl,
-textShapes copied unchanged from box-modeler); the extraction is the next platform step, done in its
-own change so no engine's behaviour moves at the same time.
+`modelers/gridfinity-labels` (2026-10-14) was that third copy, so the files now live once in
+`packages/geometry/src/` (types, kernel, shapes, mesh, threeMF, stl, textShapes) and
+`npm run sync-shared` copies them into each modeler's `src/shared/`. A copy rather than an npm link
+keeps every modeler a standalone app that can move to its own repo; the hub's `npm test` fails if a
+copy drifts. App-specific values are passed in (the 3MF `app` id, STL headers), never hard-coded.
+Trinket Tray (own repo) is not synced yet.
 
 ## Batch production (first engine built: gridfinity-labels)
 

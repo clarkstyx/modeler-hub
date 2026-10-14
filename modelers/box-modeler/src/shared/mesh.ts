@@ -1,4 +1,5 @@
-import type { TriMesh } from "../core/types";
+// GENERATED from packages/geometry/src/mesh.ts by `npm run sync-shared` in the hub. Edit the source there, not this copy.
+import type { TriMesh } from "./types";
 import type { Manifold } from "./kernel";
 
 /** 3MF writes 7 decimals; positions are snapped to it so validation sees exactly what is exported. */

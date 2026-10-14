@@ -1,12 +1,12 @@
 import { derive, type BoxParams, type Derived } from "../core/params";
 import type { Artwork, Issue, Part, Ring } from "../core/types";
-import { layoutText, missingCharacters } from "../text/textShapes";
-import { manifoldToMesh } from "./mesh";
-import { type CrossSection, type Manifold, kernel, track } from "./kernel";
+import { layoutText, missingCharacters } from "../shared/textShapes";
+import { manifoldToMesh } from "../shared/mesh";
+import { type CrossSection, type Manifold, kernel, track } from "../shared/kernel";
 import {
   box, cs, csBounds, csIntersect, csOffset, csOpening, csRotate, csScale, csSubtract, csTranslate, csUnion,
   mIntersect, mSubtract, mTranslate, mUnion, prism, rect, rectRing,
-} from "./shapes";
+} from "../shared/shapes";
 
 /** Gap between the box and the lid on the print bed. */
 export const PLATE_GAP = 10;

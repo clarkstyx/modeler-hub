@@ -3,11 +3,11 @@ import type { LabelParams, LabelSpec } from "../core/params";
 import type { Artwork, Issue } from "../core/types";
 import { hasErrors, validateParams } from "../core/validateParams";
 import { toRecipe } from "../core/recipe";
-import { withArena } from "../geometry/kernel";
-import { validateMesh } from "../geometry/mesh";
+import { withArena } from "../shared/kernel";
+import { validateMesh } from "../shared/mesh";
 import { buildBatch, buildFitTest, type Plate } from "../geometry/buildLabels";
 import { buildThreeMF } from "../export/threeMF";
-import { partsToStl } from "../export/stl";
+import { partsToStl } from "../shared/stl";
 
 export interface GenerateResult {
   plates: Plate[];

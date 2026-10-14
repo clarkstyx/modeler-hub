@@ -13,7 +13,8 @@
 export const GRID_PITCH = 42;
 
 export type ReliefMode = "raised" | "inlay" | "engraved";
-export type FontId = "sans" | "rounded" | "serif" | "droidSans";
+import type { FontId } from "../shared/textShapes";
+export type { FontId };
 export type IconId = "none" | "screw" | "bolt" | "nut" | "washer" | "insert" | "custom";
 export type WidthMode = "units" | "mm";
 

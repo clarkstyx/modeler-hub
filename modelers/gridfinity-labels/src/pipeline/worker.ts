@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 import wasmUrl from "manifold-3d/manifold.wasm?url";
-import { initKernel } from "../geometry/kernel";
+import { initKernel } from "../shared/kernel";
 import { batchZip, generate, plate3MF, plateStl, type GenerateResult } from "./generate";
 import type { WorkerRequest, WorkerResponse } from "./protocol";
 
