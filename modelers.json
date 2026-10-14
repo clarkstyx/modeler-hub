@@ -129,6 +129,16 @@
       "makerworld": ""
     },
     {
+      "id": "gridfinity-labels",
+      "name": "Gridfinity Labels",
+      "path": "modelers/gridfinity-labels",
+      "tagline": "Bin labels with text and hardware icons, a whole drawer on one plate. Print the fit-test strip first.",
+      "category": "Home",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "image-keychain",
       "name": "Image Keychain",
       "repo": "clarkstyx/image-keychain-modeler",

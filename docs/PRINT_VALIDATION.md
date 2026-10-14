@@ -11,7 +11,7 @@ observed.
 - Minimum printable wall: 2 nozzle widths (0.8 mm). Minimum visible detail: 1 nozzle width.
 - Letters under 5 mm cap height get a warning; strokes under 1 nozzle width are reported as lost.
 
-## Automatic checks (box-modeler, trinket-tray, phone-grip)
+## Automatic checks (box-modeler, gridfinity-labels, trinket-tray, phone-grip)
 
 | Check | How | Result |
 |---|---|---|
@@ -26,8 +26,8 @@ observed.
 | Colour count | distinct hex > 4 | warning |
 | Missing glyphs | font has no outline | warning |
 
-Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler` (the latter
-writes `out/*.3mf` for a slicer check).
+Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler` or
+`modelers/gridfinity-labels` (the latter writes `out/*.3mf` for a slicer check).
 
 ## Fit data
 
@@ -40,6 +40,8 @@ writes `out/*.3mf` for a slicer check).
 | Trinket Tray coaster holder clearance | 0.8 mm | design choice | unverified |
 | Letter Beads cord hole | 5 mm | design choice | printed by Clark (per MANUAL) |
 | Jerry Can keyring hole | 5.5 mm, chamfered | design choice | printed by Clark (per MANUAL) |
+| Gridfinity label width | grid units × 42 mm − 6 mm end clearance (1 unit = 36 mm) | 42 mm pitch is the published Gridfinity grid; the clearance is a design choice | unverified |
+| Gridfinity label slot | 12 mm high × 1.2 mm thick | a common size, **not** a standard: slots differ between bin designs | **Unverified.** The app's fit-test strip prints 11.6 / 12.0 / 12.4 mm; record the one that fits your bins here. |
 
 ## Required before claiming a fit (future engines)
 
@@ -54,7 +56,6 @@ writes `out/*.3mf` for a slicer check).
   printed sample with two phones before shipping.
 - **Cookie cutters**: wall 0.8 mm, cutting edge chamfer, 2 mm flange; print and cut dough. Always
   show the food-contact note; never claim food safety.
-- **Gridfinity labels**: 42 mm pitch and the label-holder slot from the published spec; coupon.
 
 ## Slicer verification
 
@@ -80,4 +81,10 @@ writes `out/*.3mf` for a slicer check).
 | 2026-10-14 | name tag | fast typing with a slow chunk | Chromium, count of Text parts in the 3MF | 11 before, 1 after |
 | 2026-10-14 | jerry can | name with `& < " '` | smoke test + Python XML parser + Chromium export | invalid XML before, valid with slot config after |
 | 2026-10-14 | trinket tray | heart, cloud, text artwork, 3 presets | vitest (134), Chromium walkthrough, `scripts/scanSizes.ts` | pass; ~1 % of size/scale combos fail on a pre-existing 2D pinch (export blocked, base branch same) |
+| 2026-10-14 | trinket tray | 2D pinch | `scripts/scanSizes.ts` + new regression test | ~1 % of combos failed before, 0 after (Trinket-Tray-Generator#8) |
+| 2026-10-14 | name keychain, name tag, desktop sign | fonts with the CDN unreachable | Chromium with every non-local request blocked | 28/28, 7/7, 21/21 fonts failed before, 0 after |
+| 2026-10-14 | gridfinity-labels | 16 unit tests (list/CSV parsing, quantities, widths, raised/inlay/engraved, icons, SVG, plate spill, fit test, 3MF/STL/ZIP/manifest, recipe) | vitest in Node | pass |
+| 2026-10-14 | gridfinity-labels | 11 export cases (1u default, 8 hardware labels × 3 reliefs, two lines, fixed mm, 9 mm high, unicode, CSV quantity, 120 labels on a 180 mm bed → 3 plates) + fit test | `npm run validate` | pass, all watertight; 3MF items = labels; ZIP plates and manifest rows match |
+| 2026-10-14 | gridfinity-labels | app under `/m/gridfinity-labels/`, sample list, CSV with order ids, 3MF/STL/fit-test downloads | headless Chromium (SwiftShader) | pass, 0 page errors, 0 external requests |
 | – | box-modeler | physical lid fit | – | **not yet printed** |
+| – | gridfinity-labels | fit-test strip in real bins; 3MF opened in Bambu Studio | – | **not yet printed / not opened** |
