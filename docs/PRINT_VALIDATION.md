@@ -75,4 +75,9 @@ writes `out/*.3mf` for a slicer check).
 | 2026-10-13 | box-modeler | app under `/m/box-modeler/`, preset switch, closed view, 3MF download | headless Chromium (SwiftShader) | pass, 0 console errors |
 | 2026-10-13 | all 13 modelers | hub pull + build | `node scripts/pull.mjs --no-fetch` | 13/13 ok |
 | 2026-10-13 | trinket-tray, grinch, dumpling, desktop-sign, jerry-can, phone-grip | existing suites | `npm test` / `npm run check` | 117 / 103 / 156 / 22 / smoke / 14 variants pass |
+| 2026-10-14 | grinch / dumpling ornaments | name font under a sub-path | `--base=/m/x/` build in Chromium | 404 + font error before the fix, none after |
+| 2026-10-14 | name keychain | export after dragging the preview | Chromium, STL + 3MF Z extent | 66.57 mm (tilted) before, 10.50 mm after |
+| 2026-10-14 | name tag | fast typing with a slow chunk | Chromium, count of Text parts in the 3MF | 11 before, 1 after |
+| 2026-10-14 | jerry can | name with `& < " '` | smoke test + Python XML parser + Chromium export | invalid XML before, valid with slot config after |
+| 2026-10-14 | trinket tray | heart, cloud, text artwork, 3 presets | vitest (134), Chromium walkthrough, `scripts/scanSizes.ts` | pass; ~1 % of size/scale combos fail on a pre-existing 2D pinch (export blocked, base branch same) |
 | – | box-modeler | physical lid fit | – | **not yet printed** |
