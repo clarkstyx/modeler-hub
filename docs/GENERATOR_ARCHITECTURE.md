@@ -134,7 +134,8 @@ The engine-neutral pieces live in `packages/geometry/src/batch.ts`: CSV reading 
 object names). A new engine's batch needs only its own list format and per-item build.
 
 Not yet done: grouping by colour set (every item in one batch shares the same colours), rotating
-items to pack tighter, and name keychains (own repo, not on the shared package).
+items to pack tighter. Name Keychain (keychain-modeler#3) has the same flow in its own repo, with the
+helpers copied into `src/batch.js` and its geometry extracted to `src/keychain.js`.
 
 ## Printer profiles (design)
 
