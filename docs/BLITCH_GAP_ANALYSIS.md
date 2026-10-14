@@ -128,7 +128,7 @@ four marked P0; they take effect on the hub once those PRs merge.
 |---|---|---|---|---|---|---|
 | Address Plaque | desktop-sign | **PARTIAL** | wall-mount screw holes, no foot, weather note | desktop-sign | P3 | S |
 | Door Sign | desktop-sign / name-tag | **PARTIAL** | mounting holes, no foot | desktop-sign | P3 | S |
-| Drawer/Storage Label | name-tag cut-out style | **PARTIAL** | Gridfinity/bin clip geometry, batch | **new gridfinity-label engine (own roadmap item 4)** | P1 | M |
+| Drawer/Storage Label | **gridfinity-labels** (`modelers/gridfinity-labels`, Seller): grid-unit or mm width, text + hardware icons + SVG, raised/inlay/engraved, list/CSV batch → plates → ZIP + manifest, fit-test strip | **EXISTING** (2026-10-14) | snap clip / adhesive-backed variants for non-Gridfinity bins; slot size **unverified** physically | gridfinity-labels | P1 ✅ | – |
 | QR-Code Sign | none | **MISSING** | QR module | desktop-sign + qr | P3 | M |
 | Guest Wi-Fi Sign | none | **MISSING** | WIFI: string encoder + QR | same | P3 | S after QR |
 | NFC/QR Display Stand | none | **MISSING** | NFC pocket (real tag sizes: 25 mm round, 30 mm), stand | desktop-sign + qr | P3 | M |

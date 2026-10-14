@@ -100,8 +100,11 @@ PrusaSlicer users take the STL ZIP (one STL per part, same frame) instead.
 module shapes and near-identical `mesh.ts`, `threeMF.ts`, `textShapes.ts`. When a third engine
 (cookie cutters or gridfinity labels) copies them again, lift those four files into
 `@valencia/geometry` as an independently licensed internal package and point all three at it.
+`modelers/gridfinity-labels` (2026-10-14) is that third copy (kernel, mesh, threeMF, stl,
+textShapes copied unchanged from box-modeler); the extraction is the next platform step, done in its
+own change so no engine's behaviour moves at the same time.
 
-## Batch production (design, not built)
+## Batch production (first engine built: gridfinity-labels)
 
 Seller-tier feature. Reusable interface every engine should be able to expose:
 
@@ -113,8 +116,15 @@ export: ZIP { plate-01.3mf … , manifest.csv (order id → plate, object name, 
 ```
 
 Inputs: a plain text list (one name per line) or CSV with a column → parameter mapping. Grouping
-by filament assignment keeps AMS swaps to a minimum. Start with box-modeler lids (text-only,
-fast) or name keychains, then generalise.
+by filament assignment keeps AMS swaps to a minimum.
+
+Built first in `modelers/gridfinity-labels`: `core/batch.ts` parses the list (`text | icon | units`)
+or a CSV with a column mapping (text, icon, width, order id, quantity; 500-label cap),
+`geometry/buildLabels.ts` `layoutPlates()` shelf-packs labels in list order onto bed-sized plates,
+and `pipeline/generate.ts` `batchZip()` writes `plate-NN.3mf` + `manifest.csv` (label, plate,
+object, text, icon, size, x/y, letter height, source line, order id) + README. Not yet done: grouping
+by colour set (every label in one batch shares the same colours), and the same flow for box lids or
+name keychains.
 
 ## Printer profiles (design)
 
