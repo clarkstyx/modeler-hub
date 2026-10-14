@@ -197,6 +197,7 @@ The `launch-checklist` skill in this repo has the full version. Short form:
 
 | Symptom | Likely cause | Fix |
 |---|---|---|
+| Workflow fails on "Check the repository secrets are set" | one of the three Actions secrets was never added | the error names the missing ones; add them (step 1.4) and re-run |
 | Workflow fails on "Pull and build" | `MODELER_PAT` missing or lacks a repo | re-create the token with Contents read on every modeler repo |
 | A modeler page is blank or shows 404 assets | that repo's Vite build needs something the pull script does not know | ask Claude: "the hub build of <id> fails with …" |
 | Login loops back to the members page with `?error=notier` | the pledge is to another campaign, or `PATREON_CAMPAIGN_ID` is wrong | check the campaign id; a patron must pledge to *this* page |

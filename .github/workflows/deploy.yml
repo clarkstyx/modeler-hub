@@ -17,6 +17,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check the repository secrets are set
+        # Without these the run cannot clone the private modeler repos or deploy.
+        # Fails early with the names of what is missing instead of a git error.
+        env:
+          MODELER_PAT: ${{ secrets.MODELER_PAT }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          missing=""
+          [ -n "$MODELER_PAT" ] || missing="$missing MODELER_PAT"
+          [ -n "$CLOUDFLARE_API_TOKEN" ] || missing="$missing CLOUDFLARE_API_TOKEN"
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] || missing="$missing CLOUDFLARE_ACCOUNT_ID"
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. Add them in this repo's Settings > Secrets and variables > Actions (MANUAL.md step 1.4), then re-run this workflow."
+            exit 1
+          fi
+          echo "All three secrets are set."
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
