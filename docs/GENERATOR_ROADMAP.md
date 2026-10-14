@@ -37,7 +37,7 @@ P1-3 above and two batch 2 follow-ups (the Trinket pinch fix and bundled fonts).
 
 | # | Item | Engine | Presets it unlocks | Blockers |
 |---|---|---|---|---|
-| P2-1 | Cookie cutter engine (SVG/image outline, wall, cutting rim, flange, letter cutters, optional press-in stamp) | new, reusing trinket-tray silhouette + box-modeler text | Image to Cookie Cutter, Cookie Cutter, Letter & Number Cutters | food-contact warning text; no food-safety claims |
+| P2-1 | Cookie cutter engine | 🟡 draft PR | hub `modelers/cookie-cutter/`, id `cookie-cutter`, Maker: shapes, letters (one cutter each), word, SVG outline; stepped taper to a thin edge, flange, smoothing, island joining, fragile-part warning, food-contact note in the app and every ZIP | Image to Cookie Cutter (SVG only), Cookie Cutter, Letter & Number Cutters | PNG/JPG tracing, press-in stamp, physical dough test |
 | P2-2 | Stamp maker (mirrored relief, handle, press-fit or thread) | box-modeler relief + handle module | Stamp Maker | thread/press-fit must be print-tested |
 | P2-3 | MX clicker family | new engine | 5 clicker products | Cherry MX plate cut-out 14.0 mm, 1.5 mm plate, stem cross 4.0 × 1.1 mm from the datasheet; calibration coupon required |
 | P2-4 | Image Keychain ornament/plaque presets; Name Tag strap slot + magnet pockets; Letter Beads pet-collar preset | existing | Image to Ornament, Printed-Photo Plaque, Bag & Luggage Tag, Name Badge, Pet Collar Beads | – |
