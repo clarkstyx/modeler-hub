@@ -62,10 +62,19 @@ export default function App() {
   const canExport = !!result?.exportable && !busy;
   const isText = params.source === "letters" || params.source === "word";
 
-  const download3mf = async () => downloadBytes((await client.export3mf(plateNo, params, title)).bytes, `${title}${result && result.plates.length > 1 ? `-plate-${plateNo}` : ""}.3mf`, "model/3mf");
-  const downloadStl = async () => downloadBytes((await client.exportStl(plateNo, title)).bytes, `${title}${result && result.plates.length > 1 ? `-plate-${plateNo}` : ""}.stl`, "model/stl");
-  const downloadZip = async () => downloadBytes((await client.exportZip(params, title)).bytes, `${title}.zip`, "application/zip");
-  const saveSettings = () => downloadBytes(new TextEncoder().encode(JSON.stringify(toRecipe(params), null, 2)), `${title}-settings.json`, "application/json");
+  // Downloads report problems in the status pill instead of failing silently.
+  const [note, setNote] = useState<string | null>(null);
+  const save = async (make: () => Promise<Uint8Array>, filename: string, mime: string) => {
+    try {
+      const r = await downloadBytes(await make(), filename, mime);
+      setNote(r === "declined" ? "Download cancelled." : null);
+    } catch (e) { setError((e as Error).message); }
+  };
+  const suffix = result && result.plates.length > 1 ? `-plate-${plateNo}` : "";
+  const download3mf = () => save(async () => (await client.export3mf(plateNo, params, title)).bytes, `${title}${suffix}.3mf`, "model/3mf");
+  const downloadStl = () => save(async () => (await client.exportStl(plateNo, title)).bytes, `${title}${suffix}.stl`, "model/stl");
+  const downloadZip = () => save(async () => (await client.exportZip(params, title)).bytes, `${title}.zip`, "application/zip");
+  const saveSettings = () => save(async () => new TextEncoder().encode(JSON.stringify(toRecipe(params), null, 2)), `${title}-settings.json`, "application/json");
   const openFile = async (file: File) => {
     try {
       const name = file.name.toLowerCase();
@@ -156,7 +165,7 @@ export default function App() {
           ))}
           <button onClick={() => setResetToken((t) => t + 1)}>Reset view</button>
         </div>
-        {(busy || error) && <div className="status">{error ? `Error: ${error}` : "Building…"}</div>}
+        {(busy || error || note) && <div className="status">{error ? `Error: ${error}` : busy ? "Building…" : note}</div>}
         <div className="readout">
           <b>{result && result.cutterCount > 1 ? `${result.cutterCount} cutters` : "Cutter"}</b>
           <table><tbody>
