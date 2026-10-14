@@ -60,7 +60,7 @@ imported models.
 
 | Item | Status | Notes |
 |---|---|---|
-| Batch production (text list / CSV → variations → plates → ZIP + manifest) | 🟡 | Built in gridfinity-labels and box-modeler (one lid per name, or box + lid sets; CSV order ids and quantities; plates; ZIP + manifest). Shared parts in `packages/geometry/src/batch.ts`. Next: name keychains (own repo). Design in `GENERATOR_ARCHITECTURE.md`. |
+| Batch production (text list / CSV → variations → plates → ZIP + manifest) | 🟡 | Built in gridfinity-labels and box-modeler (one lid per name, or box + lid sets; CSV order ids and quantities; plates; ZIP + manifest). Shared parts in `packages/geometry/src/batch.ts`. Name Keychain: keychain-modeler#3 (draft; same list/CSV/plates/ZIP flow, helpers copied since it is its own repo). Next: Name Tag. Design in `GENERATOR_ARCHITECTURE.md`. |
 | Shared printer profiles | 🟡 | box-modeler and phone-grip expose nozzle/layer/bed; a shared `printer.json` schema is specified in the architecture doc. |
 | Saved templates | 🟡 | Every newer modeler saves JSON and embeds it in the 3MF; the hub does not store them server-side yet. |
 | Shared geometry package | ✅ | `packages/geometry/` in the hub, copied into `modelers/*/src/shared/` by `npm run sync-shared`; `npm test` fails on drift. box-modeler and gridfinity-labels use it (23 + 16 tests, both validate suites, Chromium export + reopen check). Trinket Tray (own repo) not synced. |
