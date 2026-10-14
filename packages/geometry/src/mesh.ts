@@ -1,4 +1,4 @@
-import type { TriMesh } from "../core/types";
+import type { TriMesh } from "./types";
 import type { Manifold } from "./kernel";
 
 /** 3MF writes 7 decimals; positions are snapped to it so validation sees exactly what is exported. */

@@ -86,5 +86,6 @@ Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler`
 | 2026-10-14 | gridfinity-labels | 16 unit tests (list/CSV parsing, quantities, widths, raised/inlay/engraved, icons, SVG, plate spill, fit test, 3MF/STL/ZIP/manifest, recipe) | vitest in Node | pass |
 | 2026-10-14 | gridfinity-labels | 11 export cases (1u default, 8 hardware labels × 3 reliefs, two lines, fixed mm, 9 mm high, unicode, CSV quantity, 120 labels on a 180 mm bed → 3 plates) + fit test | `npm run validate` | pass, all watertight; 3MF items = labels; ZIP plates and manifest rows match |
 | 2026-10-14 | gridfinity-labels | app under `/m/gridfinity-labels/`, sample list, CSV with order ids, 3MF/STL/fit-test downloads | headless Chromium (SwiftShader) | pass, 0 page errors, 0 external requests |
+| 2026-10-14 | box-modeler, gridfinity-labels | after moving shared code to `packages/geometry` | `npm run check` + `npm run validate` in both, Chromium export + reopen of a saved 3MF | 23 + 16 tests pass, every validate case watertight, settings reopen, 0 page errors |
 | – | box-modeler | physical lid fit | – | **not yet printed** |
 | – | gridfinity-labels | fit-test strip in real bins; 3MF opened in Bambu Studio | – | **not yet printed / not opened** |

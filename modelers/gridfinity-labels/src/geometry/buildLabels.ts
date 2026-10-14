@@ -1,10 +1,10 @@
 import { labelWidth, type IconId, type LabelParams, type LabelSpec } from "../core/params";
 import type { Artwork, Issue, Part } from "../core/types";
-import { layoutText, missingCharacters } from "../text/textShapes";
-import { type CrossSection, type Manifold, kernel } from "./kernel";
-import { manifoldToMesh } from "./mesh";
+import { layoutText, missingCharacters } from "../shared/textShapes";
+import { type CrossSection, type Manifold, kernel } from "../shared/kernel";
+import { manifoldToMesh } from "../shared/mesh";
 import { artworkIcon, builtinIcon } from "./icons";
-import { cs, csBounds, csOpening, csTranslate, csUnion, mIntersect, mSubtract, mTranslate, prism, rect } from "./shapes";
+import { cs, csBounds, csOpening, csTranslate, csUnion, mIntersect, mSubtract, mTranslate, prism, rect } from "../shared/shapes";
 
 /** Clear border between the labels and the edge of the build plate. */
 export const PLATE_BORDER = 5;

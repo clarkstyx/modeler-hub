@@ -1,8 +1,9 @@
+// GENERATED from packages/geometry/src/stl.ts by `npm run sync-shared` in the hub. Edit the source there, not this copy.
 import { zipSync } from "fflate";
-import type { Part, TriMesh } from "../core/types";
+import type { Part, TriMesh } from "./types";
 
 /** Binary STL of one mesh. */
-export function meshToStl(mesh: TriMesh, header = "gridfinity-labels"): Uint8Array {
+export function meshToStl(mesh: TriMesh, header = "valencia-modelers"): Uint8Array {
   const nt = mesh.indices.length / 3;
   const buf = new ArrayBuffer(84 + nt * 50);
   const dv = new DataView(buf);
@@ -26,7 +27,7 @@ export function meshToStl(mesh: TriMesh, header = "gridfinity-labels"): Uint8Arr
 }
 
 /** Merges several meshes into one STL (single colour). */
-export function partsToStl(parts: Part[], header = "gridfinity-labels"): Uint8Array {
+export function partsToStl(parts: Part[], header = "valencia-modelers"): Uint8Array {
   let nv = 0, ni = 0;
   for (const p of parts) { nv += p.mesh.positions.length; ni += p.mesh.indices.length; }
   const positions = new Float64Array(nv);
@@ -43,7 +44,7 @@ export function partsToStl(parts: Part[], header = "gridfinity-labels"): Uint8Ar
 }
 
 /** ZIP with one STL per part plus a README on how to import them together. */
-export function partsToStlZip(parts: Part[], title = "labels"): Uint8Array {
+export function partsToStlZip(parts: Part[], title = "model"): Uint8Array {
   const files: Record<string, Uint8Array> = {};
   for (const p of parts) files[`${p.object}_${p.name}.stl`.toLowerCase()] = meshToStl(p.mesh, p.name);
   files["README.txt"] = new TextEncoder().encode(

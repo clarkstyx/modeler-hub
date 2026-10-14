@@ -1,4 +1,4 @@
-import { initKernel } from "../src/geometry/kernel";
+import { initKernel } from "../src/shared/kernel";
 import { DEFAULT_PARAMS, type BoxParams } from "../src/core/params";
 import { generate, type GenerateResult } from "../src/pipeline/generate";
 import type { Artwork } from "../src/core/types";

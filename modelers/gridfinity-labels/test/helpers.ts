@@ -1,4 +1,4 @@
-import { initKernel } from "../src/geometry/kernel";
+import { initKernel } from "../src/shared/kernel";
 import { DEFAULT_PARAMS, type LabelParams } from "../src/core/params";
 import { parseList } from "../src/core/batch";
 import { generate, type GenerateResult } from "../src/pipeline/generate";

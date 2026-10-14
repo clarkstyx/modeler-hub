@@ -1,3 +1,4 @@
+// GENERATED from packages/geometry/src/kernel.ts by `npm run sync-shared` in the hub. Edit the source there, not this copy.
 import Module from "manifold-3d";
 import type { CrossSection, Manifold, ManifoldToplevel } from "manifold-3d";
 

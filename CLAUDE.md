@@ -11,6 +11,8 @@ changes small, and verify in the browser.
   in this repo under `modelers/`), tier and category. The pages, the gate and the pull script all read it.
 - `modelers/<id>/` holds modelers that have not moved to their own repo yet (`box-modeler`, `gridfinity-labels`). Same rules
   as a separate repo: a Vite app with its own package.json and tests; `npm run pull <id>` builds it.
+- `packages/geometry/` is the shared engine code (manifold kernel, shapes, mesh checks, 3MF/STL, text).
+  `npm run sync-shared` copies it into each local modeler's `src/shared/`; edit the package, never a copy.
 - `docs/` holds the product strategy: `BLITCH_GAP_ANALYSIS.md` (what competitors offer vs what we
   have, with code evidence), `GENERATOR_ROADMAP.md` (ranked plan and status), `GENERATOR_ARCHITECTURE.md`
   (how a Generation 2 engine is laid out) and `PRINT_VALIDATION.md` (checks, verified fits, test log).

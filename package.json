@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "pull": "node scripts/pull.mjs",
+    "sync-shared": "node scripts/sync-shared.mjs",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

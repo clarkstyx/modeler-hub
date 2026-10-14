@@ -1,4 +1,4 @@
-import type { Ring, Vec2 } from "../core/types";
+import type { Ring, Vec2 } from "./types";
 import { kernel, track, type CrossSection, type Manifold } from "./kernel";
 
 /** Segment count giving ≈0.01 mm chord error, clamped to a sane range. */
