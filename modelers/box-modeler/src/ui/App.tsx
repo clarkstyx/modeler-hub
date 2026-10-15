@@ -97,26 +97,32 @@ export default function App() {
   const batchTitle = safeName(csv ? csv.name.replace(/\.csv$/i, "") : "lids");
   const downloadBatchPlate = async () => {
     const r = await client.exportBatch3mf(params, batchTitle, plateNo);
-    downloadBytes(r.bytes, `${batchTitle}-plate-${String(plateNo).padStart(2, "0")}.3mf`, "model/3mf");
+    save(r.bytes, `${batchTitle}-plate-${String(plateNo).padStart(2, "0")}.3mf`, "model/3mf");
   };
   const downloadBatchZip = async () => {
     const r = await client.exportBatchZip(params, batchTitle);
-    downloadBytes(r.bytes, `${batchTitle}-all-plates.zip`, "application/zip");
+    save(r.bytes, `${batchTitle}-all-plates.zip`, "application/zip");
   };
   const plate = showBatch && batch ? batch.plates[plateNo - 1] ?? null : null;
   const model: PreviewModel | null = plate ? { parts: plate.parts, lidPrintOffset: [0, 0, 0], lidClosedOffset: [0, 0, 0], kind: "batch" } : result;
   const frameKey = plate ? `batch:${plateNo}:${batch!.plates.length}` : result ? `${result.kind}:${result.derived.outerL}:${result.derived.outerW}:${result.derived.outerH}` : "";
   const batchErrors = batch?.issues.filter((i) => i.severity === "error") ?? [];
 
+  // Downloads report problems in the status pill instead of failing silently
+  // (inside a claude.ai artifact they go through the viewer's downloads prompt).
+  const save = (bytes: Uint8Array, filename: string, mime: string) => {
+    downloadBytes(bytes, filename, mime).catch((e) => setError((e as Error).message));
+  };
+
   const title = safeName(params.text.split("\n")[0] || activePreset || "box");
 
   const download3mf = async () => {
     const r = await client.export3mf(params, title);
-    downloadBytes(r.bytes, `${title}-box.3mf`, "model/3mf");
+    save(r.bytes, `${title}-box.3mf`, "model/3mf");
   };
   const downloadStl = async (zip: boolean) => {
     const r = await client.exportStl(title, zip);
-    downloadBytes(r.bytes, zip ? `${title}-box-parts.zip` : `${title}-box.stl`, zip ? "application/zip" : "model/stl");
+    save(r.bytes, zip ? `${title}-box-parts.zip` : `${title}-box.stl`, zip ? "application/zip" : "model/stl");
   };
   const downloadCalibration = async () => {
     setBusy(true);
@@ -124,13 +130,13 @@ export default function App() {
       const r = await client.generate(params, null, "calibration");
       if (!r.result.exportable) { setError("Calibration set could not be built: " + r.result.issues.filter((i) => i.severity === "error").map((i) => i.message).join(" ")); return; }
       const bytes = await client.export3mf(params, `${title}-lid-fit-test`);
-      downloadBytes(bytes.bytes, `${title}-lid-fit-test.3mf`, "model/3mf");
+      save(bytes.bytes, `${title}-lid-fit-test.3mf`, "model/3mf");
       // restore the real model in the worker
       const back = await client.generate(params, art, "box");
       setResult(back.result);
     } finally { setBusy(false); }
   };
-  const saveSettings = () => downloadBytes(new TextEncoder().encode(JSON.stringify(toRecipe(params), null, 2)), `${title}-box-settings.json`, "application/json");
+  const saveSettings = () => save(new TextEncoder().encode(JSON.stringify(toRecipe(params), null, 2)), `${title}-box-settings.json`, "application/json");
   const openFile = async (file: File) => {
     try {
       const name = file.name.toLowerCase();
