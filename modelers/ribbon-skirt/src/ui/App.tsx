@@ -126,7 +126,9 @@ export default function App() {
 
         <Section title="5 · Waistband and loop">
           <Num label="Waistband height" value={params.waistHeight} set={(v) => set("waistHeight", v)} {...LIMITS.waistHeight} hint={d.waistHeight > params.waistHeight ? `Raised to ${d.waistHeight.toFixed(1)} mm to fit the inside top and the recess.` : undefined} />
-          <Num label="Waist puff" value={params.waistBulge} set={(v) => set("waistBulge", v)} {...LIMITS.waistBulge} hint="How far the waistband bulges out past the skirt." />
+          <Num label="Waistband stands out" value={params.waistBulge} set={(v) => set("waistBulge", v)} {...LIMITS.waistBulge} hint="How far the shirred waistband stands out past the top of the skirt." />
+          <Num label="Shirring rows" value={params.waistRows} set={(v) => set("waistRows", Math.round(v))} {...LIMITS.waistRows} unit="" hint="Rows of puffs between the elastic lines. 1 = one round puff." />
+          <Num label="Elastic pinch" value={params.waistPinch} set={(v) => set("waistPinch", v)} {...LIMITS.waistPinch} unit="×" hint="How tightly each elastic line pinches the puffs in." />
           <Num label="Gathers around the waist" value={params.waistRibs} set={(v) => set("waistRibs", Math.round(v))} {...LIMITS.waistRibs} unit="" />
           <Num label="Gather depth" value={params.waistRibDepth} set={(v) => set("waistRibDepth", v)} {...LIMITS.waistRibDepth} />
           <Num label="Loop sits down inside the waist" value={params.waistRecess} set={(v) => set("waistRecess", v)} {...LIMITS.waistRecess} hint="0 = flat top; more = an open ring with the loop rising from inside." />

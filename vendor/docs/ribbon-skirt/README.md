@@ -14,7 +14,8 @@ Vite app and can move to its own repository by changing `path` to `repo` in `mod
   number of pleats, pleat depth, how far up the pleats stay deep.
 - **Ribbons**: horizontal bands from the hem up, each colour its own part (same colours share a
   part), with the skirt colour showing below and between them. Width, gap and hem band are set in mm.
-- **Waistband**: a gathered band that puffs out past the skirt, open on top like a ring, with the
+- **Waistband**: a shirred elastic waistband (rows of puffy gathers pinched at each elastic line,
+  top edge rolled in) that stands out past the skirt, open on top like a ring, with the
   loop rising from a solid floor a few mm down inside. That floor is either a flat 2 mm bridge
   (short waistband; the bridge is hidden inside) or a 45° cone (no bridge, taller waistband); the
   waistband is raised automatically if it is too short for the choice.

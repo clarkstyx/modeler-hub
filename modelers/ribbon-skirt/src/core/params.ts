@@ -35,8 +35,12 @@ export interface SkirtParams {
   /** Gathers around the waistband (0 = smooth). */
   waistRibs: number;
   waistRibDepth: number;
-  /** How far the waistband puffs out past the top of the skirt. */
+  /** How far the waistband stands out past the top of the skirt. */
   waistBulge: number;
+  /** Shirring: rows of puffs separated by pinched elastic lines (1 = one puff, a barrel). */
+  waistRows: number;
+  /** How tight the elastic lines pinch the puffs in (0 = straight band, 0.6 = deep). */
+  waistPinch: number;
   /** How far the loop's floor sits below the waistband's rim (an open ring on top). */
   waistRecess: number;
   /**
@@ -81,6 +85,8 @@ export const DEFAULT_PARAMS: SkirtParams = {
   waistRibs: 24,
   waistRibDepth: 0.9,
   waistBulge: 1.6,
+  waistRows: 1,
+  waistPinch: 0.4,
   waistRecess: 3,
   ceiling: "flat",
   loopDiameter: 14,
@@ -110,6 +116,8 @@ export const LIMITS = {
   waistRibs: { min: 0, max: 72, step: 1 },
   waistRibDepth: { min: 0, max: 2.5, step: 0.1 },
   waistBulge: { min: 0, max: 5, step: 0.1 },
+  waistRows: { min: 1, max: 4, step: 1 },
+  waistPinch: { min: 0, max: 0.6, step: 0.05 },
   waistRecess: { min: 0, max: 10, step: 0.5 },
   loopDiameter: { min: 6, max: 40, step: 0.5 },
   loopHole: { min: 2, max: 30, step: 0.5 },
@@ -201,10 +209,25 @@ export const pleatShape = (phase: number) => 2 * Math.abs(Math.cos(phase / 2)) -
 export const outerRadius = (p: SkirtParams, d: Derived, theta: number, u: number) =>
   profileRadius(p, d, u) + pleatAmplitude(p, u) * pleatShape(p.pleats * theta);
 
-/** Waistband outer radius at angle θ and height fraction t (0 = where the skirt ends, 1 = rim). */
+const smoothstep = (a: number, b: number, x: number) => {
+  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
+  return t * t * (3 - 2 * t);
+};
+
+/**
+ * Waistband outer radius at angle θ and height fraction t (0 = where the skirt
+ * ends, 1 = rim). A shirred elastic band: it steps out from the skirt at a
+ * printable slope, rows of puffs are pinched in at each elastic line, the top
+ * edge rolls in, and every puff is a rounded gather with a crease between.
+ */
 export function waistRadius(p: SkirtParams, d: Derived, theta: number, t: number): number {
-  // Puffs out from the skirt's top edge and comes partway back in at the rim (stays a little full there).
-  const env = Math.sin(Math.PI * 0.85 * t);
-  const rib = p.waistRibs > 0 ? p.waistRibDepth * 0.5 * (1 + Math.cos(p.waistRibs * theta)) : 0;
-  return d.topRadius + env * (p.waistBulge + rib);
+  const amp = p.waistBulge + (p.waistRibs > 0 ? p.waistRibDepth : 0);
+  if (amp <= 0) return d.topRadius;
+  // Step out from the skirt over the height that keeps the side under ~40° (smoothstep peaks at 1.5× its average slope).
+  const rise = Math.min(0.6, (1.5 * amp) / (0.8 * d.waistHeight));
+  const out = smoothstep(0, rise, t);
+  const roll = 1 - 0.3 * smoothstep(0.8, 1, t);
+  const pinch = 1 - p.waistPinch * Math.cos(Math.PI * Math.max(1, Math.round(p.waistRows)) * t) ** 2;
+  const gather = p.waistRibs > 0 ? p.waistRibDepth * Math.abs(Math.cos((p.waistRibs * theta) / 2)) : 0;
+  return d.topRadius + out * roll * pinch * (p.waistBulge + gather);
 }
