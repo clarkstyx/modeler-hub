@@ -149,6 +149,16 @@
       "makerworld": ""
     },
     {
+      "id": "ribbon-skirt",
+      "name": "Ribbon Skirt Ornament",
+      "path": "modelers/ribbon-skirt",
+      "tagline": "A pleated ribbon skirt ornament with your ribbon colours, a gathered waistband and a hanging loop.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "image-keychain",
       "name": "Image Keychain",
       "repo": "clarkstyx/image-keychain-modeler",
