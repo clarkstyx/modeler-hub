@@ -121,7 +121,7 @@
     {
       "id": "box-modeler",
       "name": "Sliding-Lid Box",
-      "path": "modelers/box-modeler",
+      "repo": "clarkstyx/box-modeler",
       "tagline": "Gift tins, jewellery boxes and sorting trays with a sliding lid and your name on top. Plus stackable enclosure racks with drawer trays.",
       "category": "Home",
       "tier": "maker",

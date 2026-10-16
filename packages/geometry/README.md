@@ -30,5 +30,6 @@ here changes all of them.
 Rules: no app names or app-specific defaults in here (pass them in, like `app` for the 3MF), and keep
 every file free of React and DOM code so it runs in the Web Worker and in Node tests.
 
-Used by: `box-modeler`, `gridfinity-labels`. Trinket Tray (own repository) has an older copy of the
-same pattern and is not synced from here.
+Used by: `gridfinity-labels`, `cookie-cutter` (synced). `box-modeler` moved to its own repository
+(`clarkstyx/box-modeler`) with a copy of these files in `src/shared/`: copy changed files there by hand.
+Trinket Tray (own repository) has an older copy of the same pattern and is not synced from here.

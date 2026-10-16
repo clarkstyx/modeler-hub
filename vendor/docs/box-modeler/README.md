@@ -4,9 +4,8 @@ Parametric **sliding-lid boxes, gift tins, jewellery boxes and sorting trays** i
 your text and artwork on the lid, exported as a colour-ready 3MF. One engine, many presets. Also
 **enclosure racks**: stackable cubes with a pull-out drawer tray, joined by dovetail keys.
 
-Lives inside the hub at `modelers/box-modeler/` and is served at `/m/box-modeler/` (Maker tier).
-It is a normal Vite app and can move to its own repository by changing `path` to `repo` in
-`modelers.json`.
+Its own repository (`clarkstyx/box-modeler`). The Valencia Modelers hub (`clarkstyx/modeler-hub`)
+clones and builds it and serves it at `/m/box-modeler/` (Maker tier).
 
 ## What it makes
 
@@ -62,7 +61,7 @@ npm install
 npm run dev        # http://localhost:5181
 npm test           # vitest, headless geometry + export tests
 npm run validate   # builds every preset and edge case, checks meshes, writes out/*.3mf
-npm run build      # production build (the hub passes --base=/m/box-modeler/)
+npm run build      # production build (the hub runs vite build --base=/m/box-modeler/)
 ```
 
 ## How it is built
@@ -77,14 +76,14 @@ of, cut into, or inlaid flush with the lid. Parts never overlap: raised and inla
 booleans of the same sections, and the pipeline checks pairwise intersection volume.
 
 Every exported mesh is checked independently (closed, consistently wound, no degenerate triangles,
-positive volume) and export is blocked on any error. See `../../docs/GENERATOR_ARCHITECTURE.md`.
+positive volume) and export is blocked on any error. See `docs/GENERATOR_ARCHITECTURE.md` in the hub repository.
 
 ## Printing
 
 Print both objects as placed: flat, no supports, 0.2 mm layers. The default 0.25 mm clearance suits
 well-tuned printers; **print the fit test first** for a new printer or material and set Clearance
 to the lid that slides without rattling. The physical fit has not been verified yet; see
-`../../docs/PRINT_VALIDATION.md`.
+`docs/PRINT_VALIDATION.md` in the hub repository.
 
 ## Known limitations
 
