@@ -1,8 +1,8 @@
 import { strToU8, zipSync } from "fflate";
-import type { BoxParams, Derived } from "../core/params";
+import { derive, deriveRack, type BoxParams, type Derived, type RackDerived } from "../core/params";
 import type { BatchItem, BatchWhat } from "../core/batch";
 import type { Artwork, Issue, Part } from "../core/types";
-import { hasErrors, validateParams } from "../core/validateParams";
+import { hasErrors, validateParams, validateRack } from "../core/validateParams";
 import { withArena } from "../shared/kernel";
 import { validateMesh, type MeshReport } from "../shared/mesh";
 import { buildBox, buildCalibration } from "../geometry/buildBox";
@@ -11,6 +11,7 @@ import { partsToStl, partsToStlZip } from "../shared/stl";
 import { toRecipe } from "../core/recipe";
 import { toCsv } from "../shared/batch";
 import { buildBoxBatch, type BatchPlate } from "../geometry/buildBatch";
+import { buildRack, buildRackCalibration, type Ghost, type Placement } from "../geometry/buildRack";
 
 export interface GenerateResult {
   parts: Part[];
@@ -24,15 +25,43 @@ export interface GenerateResult {
   exportable: boolean;
   elapsedMs: number;
   kind: "box" | "calibration";
+  product: "box" | "rack";
+  /** Rack only: cube sizes, how the printed objects assemble, and the enclosures to draw see-through. */
+  rack?: RackDerived;
+  assembly?: Placement[];
+  ghosts?: Ghost[];
+}
+
+/** Enclosure rack: cube + tray + keys, or the key fit test. */
+function generateRack(params: BoxParams, kind: "box" | "calibration", t0: number): GenerateResult {
+  const issues = validateRack(params);
+  const derived = derive(params);
+  const none = { lidPrintOffset: [0, 0, 0] as [number, number, number], lidClosedOffset: [0, 0, 0] as [number, number, number], textSizeUsed: 0, artWidthUsed: 0, product: "rack" as const };
+  if (hasErrors(issues))
+    return { parts: [], meshReports: [], issues, derived, ...none, rack: deriveRack(params), exportable: false, elapsedMs: Date.now() - t0, kind };
+  return withArena(() => {
+    const built = kind === "calibration" ? buildRackCalibration(params) : buildRack(params);
+    issues.push(...built.issues);
+    const meshReports = built.parts.map((p) => validateMesh(p.name, p.mesh));
+    for (const r of meshReports) for (const e of r.errors) issues.push({ severity: "error", message: `${r.name}: ${e}` });
+    return {
+      parts: built.parts, meshReports, issues, derived, ...none,
+      rack: built.rack, assembly: built.assembly, ghosts: built.ghosts,
+      exportable: !hasErrors(issues) && built.parts.length > 0,
+      elapsedMs: Date.now() - t0,
+      kind,
+    };
+  });
 }
 
 /** Parameters → validated parts. Deterministic for identical inputs; requires initKernel(). */
 export function generate(params: BoxParams, art: Artwork | null, kind: "box" | "calibration" = "box"): GenerateResult {
   const t0 = Date.now();
+  if (params.product === "rack") return generateRack(params, kind, t0);
   const issues = validateParams(params);
   if (hasErrors(issues)) {
     const d = (withArena(() => buildBox({ ...params, text: "" }, null)) as { derived: Derived }).derived;
-    return { parts: [], meshReports: [], issues, derived: d, lidPrintOffset: [0, 0, 0], lidClosedOffset: [0, 0, 0], textSizeUsed: 0, artWidthUsed: 0, exportable: false, elapsedMs: Date.now() - t0, kind };
+    return { parts: [], meshReports: [], issues, derived: d, lidPrintOffset: [0, 0, 0], lidClosedOffset: [0, 0, 0], textSizeUsed: 0, artWidthUsed: 0, exportable: false, elapsedMs: Date.now() - t0, kind, product: "box" };
   }
   return withArena(() => {
     const built = kind === "calibration" ? buildCalibration(params) : buildBox(params, art);
@@ -51,6 +80,7 @@ export function generate(params: BoxParams, art: Artwork | null, kind: "box" | "
       exportable: !hasErrors(issues) && built.parts.length > 0,
       elapsedMs: Date.now() - t0,
       kind,
+      product: "box",
     };
   });
 }

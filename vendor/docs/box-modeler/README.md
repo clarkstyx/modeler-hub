@@ -1,7 +1,8 @@
 # Box Modeler
 
 Parametric **sliding-lid boxes, gift tins, jewellery boxes and sorting trays** in the browser, with
-your text and artwork on the lid, exported as a colour-ready 3MF. One engine, many presets.
+your text and artwork on the lid, exported as a colour-ready 3MF. One engine, many presets. Also
+**enclosure racks**: stackable cubes with a pull-out drawer tray, joined by dovetail keys.
 
 Lives inside the hub at `modelers/box-modeler/` and is served at `/m/box-modeler/` (Maker tier).
 It is a normal Vite app and can move to its own repository by changing `path` to `repo` in
@@ -27,6 +28,30 @@ It is a normal Vite app and can move to its own repository by changing `path` to
   packed onto plates that fit your bed. Download one plate as 3MF, or every plate plus a
   `manifest.csv` (name → order → plate → position) as a ZIP. Up to 200 lids.
 
+### Enclosure rack (Making a → Enclosure rack)
+
+A stackable cube for each small enclosure (isopod/tarantula/plant boxes), as in the "modular
+enclosure shelf" pictures people ask for:
+
+- **Sizes from the enclosure**: width, depth and height (inches or mm), a gap on each side and above,
+  and space behind for air and cables. The cube is built around one enclosure.
+- **Drawer tray** with a D-handle and a shallow recess the enclosure sits in. A ramp on the cube
+  floor lets the tray in and catches it on the way out (it slides out half its length by default).
+  To take it out completely, pull to the stop and press the handle down so the back lifts over.
+- **Vented back** (round holes, size and spacing adjustable, or none).
+- **Joining keys**: every outer face has two dovetail grooves; bowtie keys slide in from the front
+  to join cubes side by side and on top of each other. Pick a columns × rows layout and the 3MF
+  holds every key that layout needs. A **key fit test** (two blocks + keys at ±0.05 mm) sets the
+  clearance.
+- One 3MF holds one cube, one tray and the keys; print the cube and tray once per compartment.
+  The cube prints **on its back** (open side up) so walls, grooves and vents need no supports or
+  bridges; the tray prints flat. On a 256 mm bed the cube fits enclosures up to about 8 in wide.
+- Views: print layout, or the assembled rack with see-through enclosures and one tray pulled out.
+
+Presets: enclosure rack 4 × 4 × 6 in, enclosure rack 6.25 × 3.5 in (6 in tall assumed).
+
+### Box presets
+
 Presets: gift tin, jewellery box (2 × 3), business-card box, storage box (3 × 2), personalised gift
 box, pencil box, 7-day pill box, pet treat tin.
 
@@ -42,7 +67,8 @@ npm run build      # production build (the hub passes --base=/m/box-modeler/)
 
 ## How it is built
 
-All geometry runs in a Web Worker on **manifold-3d**: the body is a prism minus the cavity, minus
+All geometry runs in a Web Worker on **manifold-3d**. The rack lives in `src/geometry/buildRack.ts`
+(`deriveRack` in `src/core/params.ts`, checks in `validateRack`). For the box: the body is a prism minus the cavity, minus
 the rail (the cavity outline grown by the rail depth, from the lid's underside up to the lip),
 minus the front opening; dividers are unioned in. The lid is a prism of a rectangle whose front
 corners follow the box corners and whose back corners follow the rail. Decoration regions are 2D

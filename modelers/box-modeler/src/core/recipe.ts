@@ -34,5 +34,7 @@ export function parseRecipe(json: string | object): BoxParams {
       out[key] = v;
     }
   }
+  if (out.product !== "box" && out.product !== "rack") out.product = DEFAULT_PARAMS.product;
+  if (out.rackUnits !== "mm" && out.rackUnits !== "in") out.rackUnits = DEFAULT_PARAMS.rackUnits;
   return out as unknown as BoxParams;
 }

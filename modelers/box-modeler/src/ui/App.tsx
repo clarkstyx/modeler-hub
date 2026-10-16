@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_PARAMS, FONT_LABELS, LIMITS, derive, type BoxParams, type FontId } from "../core/params";
+import { DEFAULT_PARAMS, FONT_LABELS, LIMITS, derive, deriveRack, type BoxParams, type FontId, type Product } from "../core/params";
 import { PRESETS, presetParams } from "../core/presets";
 import { parseRecipe, toRecipe } from "../core/recipe";
 import type { Artwork } from "../core/types";
@@ -11,6 +11,7 @@ import { parseSvgArtwork } from "./loadArtwork";
 import { downloadBytes, safeName } from "./download";
 import { Choice, Colour, Num, Section } from "./controls";
 import { Preview3D, type PreviewModel, type ViewMode } from "./Preview3D";
+import { RackControls } from "./RackControls";
 
 const STORAGE_KEY = "box-modeler:params";
 const BATCH_KEY = "box-modeler:batch-list";
@@ -27,6 +28,9 @@ function loadSaved(): BoxParams {
   } catch { /* ignore */ }
   return presetParams("gift-tin");
 }
+
+/** "127 mm (5.00 in)" */
+const inches = (mm: number) => `${mm.toFixed(0)} mm (${(mm / 25.4).toFixed(2)} in)`;
 
 export default function App() {
   const [params, setParams] = useState<BoxParams>(loadSaved);
@@ -46,6 +50,8 @@ export default function App() {
   const client = useMemo(() => new GeometryClient(), []);
   const seq = useRef(0);
   const d = useMemo(() => derive(params), [params]);
+  const isRack = params.product === "rack";
+  const rk = useMemo(() => deriveRack(params), [params]);
 
   const set = useCallback(<K extends keyof BoxParams>(k: K, v: BoxParams[K]) => {
     setParams((p) => ({ ...p, [k]: v }));
@@ -105,7 +111,9 @@ export default function App() {
   };
   const plate = showBatch && batch ? batch.plates[plateNo - 1] ?? null : null;
   const model: PreviewModel | null = plate ? { parts: plate.parts, lidPrintOffset: [0, 0, 0], lidClosedOffset: [0, 0, 0], kind: "batch" } : result;
-  const frameKey = plate ? `batch:${plateNo}:${batch!.plates.length}` : result ? `${result.kind}:${result.derived.outerL}:${result.derived.outerW}:${result.derived.outerH}` : "";
+  const frameKey = plate ? `batch:${plateNo}:${batch!.plates.length}`
+    : result?.rack ? `rack:${result.kind}:${result.rack.W}:${result.rack.H}:${result.rack.D}:${params.rackCols}:${params.rackRows}`
+    : result ? `${result.kind}:${result.derived.outerL}:${result.derived.outerW}:${result.derived.outerH}` : "";
   const batchErrors = batch?.issues.filter((i) => i.severity === "error") ?? [];
 
   // Downloads report problems in the status pill instead of failing silently
@@ -114,29 +122,32 @@ export default function App() {
     downloadBytes(bytes, filename, mime).catch((e) => setError((e as Error).message));
   };
 
-  const title = safeName(params.text.split("\n")[0] || activePreset || "box");
+  const title = isRack ? safeName(`enclosure-rack-${(params.encWidth / 25.4).toFixed(2)}x${(params.encDepth / 25.4).toFixed(2)}x${(params.encHeight / 25.4).toFixed(2)}in`)
+    : safeName(params.text.split("\n")[0] || activePreset || "box");
+  const suffix = isRack ? "" : "-box";
 
   const download3mf = async () => {
     const r = await client.export3mf(params, title);
-    save(r.bytes, `${title}-box.3mf`, "model/3mf");
+    save(r.bytes, `${title}${suffix}.3mf`, "model/3mf");
   };
   const downloadStl = async (zip: boolean) => {
     const r = await client.exportStl(title, zip);
-    save(r.bytes, zip ? `${title}-box-parts.zip` : `${title}-box.stl`, zip ? "application/zip" : "model/stl");
+    save(r.bytes, zip ? `${title}${suffix}-parts.zip` : `${title}${suffix}.stl`, zip ? "application/zip" : "model/stl");
   };
   const downloadCalibration = async () => {
     setBusy(true);
     try {
       const r = await client.generate(params, null, "calibration");
       if (!r.result.exportable) { setError("Calibration set could not be built: " + r.result.issues.filter((i) => i.severity === "error").map((i) => i.message).join(" ")); return; }
-      const bytes = await client.export3mf(params, `${title}-lid-fit-test`);
-      save(bytes.bytes, `${title}-lid-fit-test.3mf`, "model/3mf");
+      const test = isRack ? "key-fit-test" : "lid-fit-test";
+      const bytes = await client.export3mf(params, `${title}-${test}`);
+      save(bytes.bytes, `${title}-${test}.3mf`, "model/3mf");
       // restore the real model in the worker
       const back = await client.generate(params, art, "box");
       setResult(back.result);
     } finally { setBusy(false); }
   };
-  const saveSettings = () => save(new TextEncoder().encode(JSON.stringify(toRecipe(params), null, 2)), `${title}-box-settings.json`, "application/json");
+  const saveSettings = () => save(new TextEncoder().encode(JSON.stringify(toRecipe(params), null, 2)), `${title}${suffix}-settings.json`, "application/json");
   const openFile = async (file: File) => {
     try {
       const name = file.name.toLowerCase();
@@ -161,11 +172,13 @@ export default function App() {
   return (
     <div className="app">
       <aside className="sidebar">
-        <div className="brand"><span className="dot" /><div><h1>Box Modeler</h1><small>Sliding-lid boxes, tins and sorting trays · Valencia Modelers</small></div></div>
+        <div className="brand"><span className="dot" /><div><h1>Box Modeler</h1><small>Sliding-lid boxes, tins, sorting trays and enclosure racks · Valencia Modelers</small></div></div>
 
         <Section title="1 · Pick a product">
+          <Choice label="Making a" value={params.product} set={(v) => set("product", v as Product)}
+            options={[{ value: "box", label: "Sliding-lid box" }, { value: "rack", label: "Enclosure rack (stackable cubes with drawer trays)" }]} />
           <div className="presets">
-            {PRESETS.map((p) => (
+            {PRESETS.filter((p) => (p.params.product ?? "box") === params.product).map((p) => (
               <button key={p.id} className={activePreset === p.id ? "active" : ""} title={p.description}
                 onClick={() => { setParams(presetParams(p.id)); setActivePreset(p.id); }}>
                 <b>{p.label}</b><small>{p.description}</small>
@@ -174,6 +187,7 @@ export default function App() {
           </div>
         </Section>
 
+        {isRack ? <RackControls params={params} set={set} busy={busy} onFitTest={downloadCalibration} /> : <>
         <Section title="2 · Size">
           <Choice label="Dimensions describe the" value={params.sizeMode} set={(v) => set("sizeMode", v)}
             options={[{ value: "inner", label: "inside (what has to fit)" }, { value: "outer", label: "outside (overall size)" }]} />
@@ -236,10 +250,12 @@ export default function App() {
           <small className="hint">PNG/JPG tracing is not in this modeler yet: convert photos to SVG first (Image Keychain does this), or use filled SVG shapes. Each fill colour becomes its own part.</small>
         </Section>
 
+        </>}
+
         <Section title="6 · Colours">
-          <Colour label="Box" value={params.bodyColor} set={(v) => set("bodyColor", v)} />
-          <Colour label="Lid" value={params.lidColor} set={(v) => set("lidColor", v)} />
-          <Colour label="Text" value={params.textColor} set={(v) => set("textColor", v)} />
+          <Colour label={isRack ? "Cubes and keys" : "Box"} value={params.bodyColor} set={(v) => set("bodyColor", v)} />
+          <Colour label={isRack ? "Trays" : "Lid"} value={params.lidColor} set={(v) => set("lidColor", v)} />
+          {!isRack && <Colour label="Text" value={params.textColor} set={(v) => set("textColor", v)} />}
         </Section>
 
         <Section title="7 · Printer" open={false}>
@@ -260,9 +276,11 @@ export default function App() {
               <input type="file" accept=".json,.3mf" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) openFile(f); e.target.value = ""; }} /></label>
             <button onClick={() => { setParams({ ...DEFAULT_PARAMS }); setActivePreset(null); }}>Reset</button>
           </div>
-          <small className="hint">The 3MF opens in Bambu Studio / OrcaSlicer as two objects (box, lid) with every colour already on its own filament slot, and carries your settings so you can reopen it here. Print both flat as placed, no supports.</small>
+          {isRack
+            ? <small className="hint">The 3MF holds one cube, one tray and every joining key for a {params.rackCols} × {params.rackRows} rack, and carries your settings so you can reopen it here. Print the cube on its back as placed (open side up) and the tray flat: no supports. They may need separate plates: in Bambu Studio add a plate and press Arrange.</small>
+            : <small className="hint">The 3MF opens in Bambu Studio / OrcaSlicer as two objects (box, lid) with every colour already on its own filament slot, and carries your settings so you can reopen it here. Print both flat as placed, no supports.</small>}
         </Section>
-        <Section title="9 · Batch: one lid per name" open={false}>
+        {!isRack && <Section title="9 · Batch: one lid per name" open={false}>
           {!csv ? <>
             <label className="field"><span>Names, one lid per line</span>
               <textarea className="list" value={batchList} onChange={(e) => setBatchList(e.target.value)} rows={6} /></label>
@@ -290,8 +308,10 @@ export default function App() {
             </div>
           </>}
           <small className="hint">Every lid uses the settings and artwork above; only the text changes. The ZIP holds one 3MF per plate and a manifest.csv saying which name and order is where.</small>
-        </Section>
-        <p className="footer-note">Lid fit depends on your printer. Treat the first print of a new size as the test print, or use the fit test above.</p>
+        </Section>}
+        <p className="footer-note">{isRack
+          ? "Print one cube and tray first and try the enclosure in it before printing the whole rack."
+          : "Lid fit depends on your printer. Treat the first print of a new size as the test print, or use the fit test above."}</p>
       </aside>
 
       <main className="main">
@@ -299,7 +319,7 @@ export default function App() {
         <div className="toolbar">
           {!plate && <>
             <button className={view === "print" ? "on" : ""} onClick={() => setView("print")}>Print layout</button>
-            <button className={view === "closed" ? "on" : ""} onClick={() => setView("closed")}>Lid closed</button>
+            <button className={view === "closed" ? "on" : ""} onClick={() => setView("closed")}>{isRack ? "Assembled rack" : "Lid closed"}</button>
           </>}
           <button onClick={() => setResetToken((t) => t + 1)}>Reset view</button>
         </div>
@@ -313,6 +333,16 @@ export default function App() {
             <tr><td>Checks</td><td className="v">{batch.meshesFailed === 0 && batchErrors.length === 0 ? `✓ ${batch.meshesChecked} parts watertight` : "✗ see problems"}</td></tr>
             <tr><td>Built in</td><td className="v">{(batch.elapsedMs / 1000).toFixed(1)} s</td></tr>
           </tbody></table>
+        </div> : isRack ? <div className="readout">
+          <b>Enclosure rack</b>
+          <table><tbody>
+            <tr><td>One cube</td><td className="v">{inches(rk.W)} × {inches(rk.H)} × {inches(rk.D)} deep</td></tr>
+            <tr><td>Whole rack</td><td className="v">{inches(rk.W * params.rackCols)} wide × {inches(rk.H * params.rackRows)} tall</td></tr>
+            <tr><td>Tray</td><td className="v">{inches(rk.trayW)} × {inches(rk.trayL)}, slides out {inches(rk.travel)}</td></tr>
+            <tr><td>To print</td><td className="v">{params.rackCols * params.rackRows} cubes, {params.rackCols * params.rackRows} trays{rk.keysNeeded ? `, ${rk.keysNeeded} keys (one set)` : ""}</td></tr>
+            {result && <tr><td>Checks</td><td className="v">{result.meshReports.every((m) => m.ok) && errors.length === 0 ? "✓ watertight, no overlaps" : "✗ see problems"}</td></tr>}
+          </tbody></table>
+          {result && <div style={{ marginTop: 6 }}>{result.parts.map((p) => <div key={p.name}><span className="swatch" style={{ background: p.hex }} />{p.object}/{p.name} <span style={{ color: "var(--muted)" }}>{(p.volume / 1000).toFixed(1)} cm³</span></div>)}</div>}
         </div> : <div className="readout">
           <b>{params.sizeMode === "inner" ? "Outside" : "Inside"} size</b>
           <table><tbody>
