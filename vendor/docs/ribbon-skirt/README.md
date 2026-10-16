@@ -9,18 +9,21 @@ Vite app and can move to its own repository by changing `path` to `repo` in `mod
 ## What it makes
 
 - **Skirt**: hollow, with soft rounded folds facing out and sharp creases facing in, deepest at the
-  hem and gathering into the waistband. Settings: height, hem and waist diameter, flare, wall,
+  hem and gathering into the waistband. Settings: height, hem and waist diameter, flare, fullness
+  (rounded shoulders), wall,
   number of pleats, pleat depth, how far up the pleats stay deep.
 - **Ribbons**: horizontal bands from the hem up, each colour its own part (same colours share a
   part), with the skirt colour showing below and between them. Width, gap and hem band are set in mm.
-- **Waistband**: small gathers around a solid top. Inside, the top is a 45° cone, so it prints
-  without supports; the waistband is raised automatically if it is too short for that.
+- **Waistband**: a gathered band that puffs out past the skirt, open on top like a ring, with the
+  loop rising from a solid floor a few mm down inside. That floor is either a flat 2 mm bridge
+  (short waistband; the bridge is hidden inside) or a 45° cone (no bridge, taller waistband); the
+  waistband is raised automatically if it is too short for the choice.
 - **Loop**: standing on top, with a teardrop-shaped hole (pointed at the top) so it prints clean.
 - Exports: 3MF (one object, one part per colour, settings embedded so the file reopens here),
   single STL, STL per colour (ZIP), settings JSON.
 
-Presets: ribbon skirt ornament (70 mm, three ribbons on black), mini ornament (45 mm), long
-skirt with five ribbons (95 mm).
+Presets: as pictured (70 mm, full shoulders, puffy waist, three ribbons on black), ribbon skirt
+ornament (70 mm, straighter sides), mini ornament (45 mm), long skirt with five ribbons (95 mm).
 
 ## Run
 

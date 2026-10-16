@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_PARAMS, LIMITS, MAX_RIBBONS, derive, ribbonList, type SkirtParams } from "../core/params";
+import { DEFAULT_PARAMS, LIMITS, MAX_RIBBONS, derive, ribbonList, type Ceiling, type SkirtParams } from "../core/params";
 import { PRESETS, presetParams } from "../core/presets";
 import { parseRecipe, toRecipe } from "../core/recipe";
 import { readProjectFrom3MF } from "../export/threeMF";
 import { GeometryClient } from "../pipeline/client";
 import type { GenerateResult } from "../pipeline/generate";
 import { downloadBytes, safeName } from "./download";
-import { Colour, Num, Section } from "./controls";
+import { Choice, Colour, Num, Section } from "./controls";
 import { Preview3D } from "./Preview3D";
 
 const STORAGE_KEY = "ribbon-skirt:v1";
@@ -18,7 +18,7 @@ function loadSaved(): SkirtParams {
     const s = localStorage.getItem(STORAGE_KEY);
     if (s) return parseRecipe(s);
   } catch { /* ignore */ }
-  return presetParams("classic");
+  return presetParams("pictured");
 }
 
 export default function App() {
@@ -114,6 +114,7 @@ export default function App() {
           <Num label="Hem diameter" value={params.bottomDiameter} set={(v) => set("bottomDiameter", v)} {...LIMITS.bottomDiameter} />
           <Num label="Waist diameter" value={params.topDiameter} set={(v) => set("topDiameter", v)} {...LIMITS.topDiameter} />
           <Num label="Flare" value={params.flare} set={(v) => set("flare", v)} {...LIMITS.flare} unit="×" hint="1 = straight sides; higher flares out more at the hem." />
+          <Num label="Fullness" value={params.fullness} set={(v) => set("fullness", v)} {...LIMITS.fullness} unit="×" hint="0 = straight or flared sides; higher = rounded shoulders that stay wide and curve in to the waist." />
           <Num label="Wall" value={params.wall} set={(v) => set("wall", v)} {...LIMITS.wall} hint="1.6 mm = four lines with a 0.4 mm nozzle." />
         </Section>
 
@@ -123,10 +124,14 @@ export default function App() {
           <Num label="Pleats stay deep" value={params.pleatReach} set={(v) => set("pleatReach", v)} {...LIMITS.pleatReach} unit="×" hint="1 = fade evenly up to the waist; higher = deep most of the way, gathering just under the waist." />
         </Section>
 
-        <Section title="5 · Waistband and loop" open={false}>
-          <Num label="Waistband height" value={params.waistHeight} set={(v) => set("waistHeight", v)} {...LIMITS.waistHeight} hint={d.waistHeight > params.waistHeight ? `Raised to ${d.waistHeight.toFixed(1)} mm so the inside prints without supports.` : undefined} />
+        <Section title="5 · Waistband and loop">
+          <Num label="Waistband height" value={params.waistHeight} set={(v) => set("waistHeight", v)} {...LIMITS.waistHeight} hint={d.waistHeight > params.waistHeight ? `Raised to ${d.waistHeight.toFixed(1)} mm to fit the inside top and the recess.` : undefined} />
+          <Num label="Waist puff" value={params.waistBulge} set={(v) => set("waistBulge", v)} {...LIMITS.waistBulge} hint="How far the waistband bulges out past the skirt." />
           <Num label="Gathers around the waist" value={params.waistRibs} set={(v) => set("waistRibs", Math.round(v))} {...LIMITS.waistRibs} unit="" />
           <Num label="Gather depth" value={params.waistRibDepth} set={(v) => set("waistRibDepth", v)} {...LIMITS.waistRibDepth} />
+          <Num label="Loop sits down inside the waist" value={params.waistRecess} set={(v) => set("waistRecess", v)} {...LIMITS.waistRecess} hint="0 = flat top; more = an open ring with the loop rising from inside." />
+          <Choice label="Inside top" value={params.ceiling} set={(v) => set("ceiling", v as Ceiling)}
+            options={[{ value: "flat", label: "Flat (short waistband, bridged inside)" }, { value: "cone", label: "45° cone (no bridge, taller waistband)" }]} />
           <Num label="Loop diameter" value={params.loopDiameter} set={(v) => set("loopDiameter", v)} {...LIMITS.loopDiameter} />
           <Num label="Loop hole" value={params.loopHole} set={(v) => set("loopHole", v)} {...LIMITS.loopHole} />
           <Num label="Loop thickness" value={params.loopThickness} set={(v) => set("loopThickness", v)} {...LIMITS.loopThickness} />

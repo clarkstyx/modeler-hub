@@ -24,7 +24,7 @@ cases.push(
   ["eight-ribbons", { ...DEFAULT_PARAMS, height: 110, ribbons: "#E8352F,#F2A81D,#F4E04D,#2FA84F,#2F6FD6,#7B3FC4,#FFFFFF,#FF66AA", ribbonWidth: 6, ribbonGap: 2 }],
   ["smooth-waist", { ...DEFAULT_PARAMS, waistRibs: 0 }],
   ["big-on-256", { ...DEFAULT_PARAMS, height: 200, bottomDiameter: 180, topDiameter: 50, pleats: 16, pleatDepth: 6, wall: 2 }],
-  ["small-30mm", { ...DEFAULT_PARAMS, height: 32, bottomDiameter: 30, topDiameter: 12, pleats: 8, pleatDepth: 1.4, wall: 1, waistHeight: 6, loopDiameter: 9, loopHole: 4, loopThickness: 3, ribbonWidth: 4, ribbonGap: 1.5, hemHeight: 1.5 }],
+  ["small-30mm", { ...DEFAULT_PARAMS, height: 32, bottomDiameter: 30, topDiameter: 12, pleats: 8, pleatDepth: 1.4, wall: 1, waistHeight: 6, waistBulge: 0.8, waistRibDepth: 0.6, loopDiameter: 9, loopHole: 4, loopThickness: 3, ribbonWidth: 4, ribbonGap: 1.5, hemHeight: 1.5 }],
 );
 
 let failed = false;

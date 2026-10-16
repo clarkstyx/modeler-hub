@@ -9,6 +9,17 @@ export interface Preset {
 
 export const PRESETS: Preset[] = [
   {
+    id: "pictured",
+    label: "As pictured",
+    description: "70 mm, puffy gathered waist, three silk ribbons on black",
+    params: {
+      height: 66, bottomDiameter: 70, topDiameter: 22, flare: 1, fullness: 0.75, pleats: 12, pleatDepth: 4, pleatReach: 3.5, wall: 1.6,
+      waistHeight: 11, waistRibs: 32, waistRibDepth: 1, waistBulge: 1.1, waistRecess: 3, ceiling: "flat",
+      loopDiameter: 14, loopHole: 6.5, loopThickness: 4.5,
+      baseColor: "#151515", ribbons: "#FF6A2A,#A51EF0,#1C7CF0", hemHeight: 2.5, ribbonWidth: 8.5, ribbonGap: 2.5,
+    },
+  },
+  {
     id: "classic",
     label: "Ribbon skirt ornament",
     description: "70 mm, 12 pleats, three ribbons on black",

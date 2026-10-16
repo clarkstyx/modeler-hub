@@ -79,11 +79,29 @@ describe("ribbon skirt ornament", () => {
     expect(errorsOf(r).join(" ")).toMatch(/45°/);
   });
 
-  it("raises a short waistband so its solid top sits on a 45° cone, and says so", () => {
-    const p = params({ waistHeight: 4 });
-    const d = derive(p);
-    expect(d.waistHeight).toBeCloseTo(p.topDiameter / 2 - p.wall + 2);
-    expect(generate(p).issues.some((i) => /Waistband raised/.test(i.message))).toBe(true);
+  it("raises a short waistband to fit the inside top and the recess, and says so", () => {
+    const cone = params({ ceiling: "cone", waistHeight: 4, waistRecess: 3 });
+    expect(derive(cone).waistHeight).toBeCloseTo(cone.topDiameter / 2 - cone.wall + 2 + 3);
+    expect(generate(cone).issues.some((i) => /Waistband raised/.test(i.message))).toBe(true);
+    const flat = params({ ceiling: "flat", waistHeight: 4, waistRecess: 3 });
+    expect(derive(flat).waistHeight).toBeCloseTo(2 + 1 + 3);
+    expect(derive(flat).waistHeight).toBeLessThan(derive(cone).waistHeight);
+  });
+
+  it("both inside tops build watertight; the loop stands in the recess below the rim", () => {
+    for (const ceiling of ["flat", "cone"] as const) {
+      const p = params({ ceiling });
+      const r = generate(p);
+      expect(errorsOf(r), ceiling).toEqual([]);
+      const d = derive(p);
+      expect(d.capTop).toBeCloseTo(d.bodyTop - p.waistRecess);
+      expect(bbox(r).max[2]).toBeCloseTo(d.totalHeight, 2);
+    }
+  });
+
+  it("warns when a flat inside top would bridge too wide", () => {
+    const r = generate(params({ topDiameter: 40, bottomDiameter: 90, ceiling: "flat" }));
+    expect(r.issues.some((i) => /bridges/.test(i.message))).toBe(true);
   });
 
   it("every preset builds", () => {

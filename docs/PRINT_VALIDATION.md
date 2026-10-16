@@ -45,7 +45,7 @@ Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo
 | Jerry Can keyring hole | 5.5 mm, chamfered | design choice | printed by Clark (per MANUAL) |
 | Cookie cutter wall / edge / flange | 1.2 mm wall, 0.8 mm edge, 4 mm × 1.6 mm flange, 15 mm tall | common choices for FDM cutters | **Untested on dough.** |
 | Gridfinity label width | grid units × 42 mm − 6 mm end clearance (1 unit = 36 mm) | 42 mm pitch is the published Gridfinity grid; the clearance is a design choice | unverified |
-| Ribbon skirt ornament: walls and overhangs | 1.6 mm wall, pleat folds must bend wider than the wall, no wall leaning over 45°, waistband top on a 45° inner cone, teardrop loop hole | design choice; checked on every build (export blocked otherwise) | **Unverified physically.** Print the default and check the waist cone and loop hole print clean without supports. |
+| Ribbon skirt ornament: walls and overhangs | 1.6 mm wall, pleat folds must bend wider than the wall, no wall leaning over 45°, waistband floor either a flat 2 mm bridge (≤ 26 mm, hidden inside) or a 45° inner cone, teardrop loop hole | design choice; checked on every build (export blocked otherwise) | **Unverified physically.** Print the default and check the waist cone and loop hole print clean without supports. |
 | Gridfinity label slot | 12 mm high × 1.2 mm thick | a common size, **not** a standard: slots differ between bin designs | **Unverified.** The app's fit-test strip prints 11.6 / 12.0 / 12.4 mm; record the one that fits your bins here. |
 
 ## Required before claiming a fit (future engines)

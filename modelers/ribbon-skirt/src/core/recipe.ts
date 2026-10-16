@@ -28,5 +28,6 @@ export function parseRecipe(json: string | object): SkirtParams {
       out[key] = lim ? Math.min(lim.max, Math.max(lim.min, n)) : n;
     } else if (typeof def === "string" && typeof v === "string") out[key] = v;
   }
+  if (out.ceiling !== "flat" && out.ceiling !== "cone") out.ceiling = DEFAULT_PARAMS.ceiling;
   return out as unknown as SkirtParams;
 }

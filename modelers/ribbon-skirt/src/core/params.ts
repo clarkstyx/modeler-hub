@@ -8,6 +8,9 @@
  * bands are horizontal slices cut out of the body as separate parts, one per
  * colour, so each lands on its own filament slot.
  */
+/** How the hollow inside is closed under the waistband top. */
+export type Ceiling = "flat" | "cone";
+
 export interface SkirtParams {
   /** Body height from the hem to the top of the waistband (the loop comes on top). */
   height: number;
@@ -17,6 +20,8 @@ export interface SkirtParams {
   topDiameter: number;
   /** Profile: 1 = straight cone, above 1 = flares out more towards the hem. */
   flare: number;
+  /** 0 = sides as set by flare; towards 1 = full, rounded shoulders that stay wide and curve in to the waist. */
+  fullness: number;
   /** Number of pleats around. */
   pleats: number;
   /** How far a pleat stands out at the hem (half its in-out swing). */
@@ -27,9 +32,19 @@ export interface SkirtParams {
   wall: number;
 
   waistHeight: number;
-  /** Small gathers around the waistband (0 = smooth). */
+  /** Gathers around the waistband (0 = smooth). */
   waistRibs: number;
   waistRibDepth: number;
+  /** How far the waistband puffs out past the top of the skirt. */
+  waistBulge: number;
+  /** How far the loop's floor sits below the waistband's rim (an open ring on top). */
+  waistRecess: number;
+  /**
+   * Inside top: "flat" bridges straight across (short waistband; the bridge
+   * sits hidden inside), "cone" closes it with a 45° cone (no bridge, but the
+   * waistband must be taller).
+   */
+  ceiling: Ceiling;
 
   loopDiameter: number;
   loopHole: number;
@@ -57,13 +72,17 @@ export const DEFAULT_PARAMS: SkirtParams = {
   bottomDiameter: 70,
   topDiameter: 24,
   flare: 1.25,
+  fullness: 0,
   pleats: 12,
   pleatDepth: 3.5,
   pleatReach: 2,
   wall: 1.6,
   waistHeight: 10,
-  waistRibs: 28,
-  waistRibDepth: 0.8,
+  waistRibs: 24,
+  waistRibDepth: 0.9,
+  waistBulge: 1.6,
+  waistRecess: 3,
+  ceiling: "flat",
   loopDiameter: 14,
   loopHole: 6,
   loopThickness: 4,
@@ -82,6 +101,7 @@ export const LIMITS = {
   bottomDiameter: { min: 25, max: 250, step: 0.5 },
   topDiameter: { min: 10, max: 120, step: 0.5 },
   flare: { min: 1, max: 2.5, step: 0.05 },
+  fullness: { min: 0, max: 1, step: 0.05 },
   pleats: { min: 0, max: 36, step: 1 },
   pleatDepth: { min: 0, max: 12, step: 0.1 },
   pleatReach: { min: 1, max: 6, step: 0.1 },
@@ -89,6 +109,8 @@ export const LIMITS = {
   waistHeight: { min: 3, max: 40, step: 0.5 },
   waistRibs: { min: 0, max: 72, step: 1 },
   waistRibDepth: { min: 0, max: 2.5, step: 0.1 },
+  waistBulge: { min: 0, max: 5, step: 0.1 },
+  waistRecess: { min: 0, max: 10, step: 0.5 },
   loopDiameter: { min: 6, max: 40, step: 0.5 },
   loopHole: { min: 2, max: 30, step: 0.5 },
   loopThickness: { min: 2, max: 10, step: 0.5 },
@@ -102,8 +124,10 @@ export const LIMITS = {
 
 /** Most ribbons the UI offers. One AMS has four slots and the skirt colour takes one. */
 export const MAX_RIBBONS = 8;
-/** Solid material above the waistband's 45° inner cone. */
+/** Thickness of the solid top the loop stands on (above the cone, or the flat bridge itself). */
 export const CAP_THICKNESS = 2;
+/** Widest flat ceiling we bridge without warning. */
+export const MAX_BRIDGE = 26;
 /** How far the loop sinks into the top so it is fused, not just touching. */
 export const LOOP_EMBED = 1.5;
 
@@ -114,10 +138,12 @@ export const ribbonList = (p: SkirtParams): string[] =>
 export interface Derived {
   /** Height of the pleated skirt (hem to waistband). */
   skirtHeight: number;
-  /** Waistband height actually used (raised so the inner cone fits under a solid top). */
+  /** Waistband height actually used (raised when the inside top and recess need more room). */
   waistHeight: number;
-  /** Top of the body (waistband), where the loop sits. */
+  /** Top of the body (waistband rim). */
   bodyTop: number;
+  /** Floor the loop stands on (top of the solid cap, waistRecess below the rim). */
+  capTop: number;
   /** Mean skirt radius at the hem (pleat tips stand out by pleatDepth more). */
   bottomRadius: number;
   topRadius: number;
@@ -132,9 +158,11 @@ export interface Derived {
 export function derive(p: SkirtParams): Derived {
   const topRadius = p.topDiameter / 2;
   const innerTopRadius = Math.max(1, topRadius - p.wall);
-  const waistHeight = Math.max(p.waistHeight, innerTopRadius + CAP_THICKNESS);
+  const inside = p.ceiling === "cone" ? innerTopRadius + CAP_THICKNESS : CAP_THICKNESS + 1;
+  const waistHeight = Math.max(p.waistHeight, inside + p.waistRecess);
   const skirtHeight = Math.max(5, p.height - waistHeight);
   const bodyTop = skirtHeight + waistHeight;
+  const capTop = bodyTop - p.waistRecess;
   const ribbons: Derived["ribbons"] = [];
   let z = p.hemHeight;
   for (const hex of ribbonList(p)) {
@@ -146,17 +174,18 @@ export function derive(p: SkirtParams): Derived {
     skirtHeight,
     waistHeight,
     bodyTop,
+    capTop,
     bottomRadius: p.bottomDiameter / 2 - (p.pleats > 0 ? p.pleatDepth : 0),
     topRadius,
     innerTopRadius,
-    totalHeight: bodyTop - LOOP_EMBED + p.loopDiameter,
+    totalHeight: Math.max(bodyTop, capTop - LOOP_EMBED + p.loopDiameter),
     ribbons,
   };
 }
 
 /** Mean skirt radius at height fraction u (0 = hem, 1 = waistband). */
 export const profileRadius = (p: SkirtParams, d: Derived, u: number) =>
-  d.topRadius + (d.bottomRadius - d.topRadius) * Math.pow(1 - u, p.flare);
+  d.topRadius + (d.bottomRadius - d.topRadius) * ((1 - p.fullness) * Math.pow(1 - u, p.flare) + p.fullness * (1 - u * u));
 
 /** Pleat swing at height fraction u: full at the hem, zero at the waistband, finite slope everywhere. */
 export const pleatAmplitude = (p: SkirtParams, u: number) => (p.pleats > 0 ? p.pleatDepth * (1 - Math.pow(u, p.pleatReach)) : 0);
@@ -171,3 +200,11 @@ export const pleatShape = (phase: number) => 2 * Math.abs(Math.cos(phase / 2)) -
 /** Outer skirt radius at angle θ and height fraction u. */
 export const outerRadius = (p: SkirtParams, d: Derived, theta: number, u: number) =>
   profileRadius(p, d, u) + pleatAmplitude(p, u) * pleatShape(p.pleats * theta);
+
+/** Waistband outer radius at angle θ and height fraction t (0 = where the skirt ends, 1 = rim). */
+export function waistRadius(p: SkirtParams, d: Derived, theta: number, t: number): number {
+  // Puffs out from the skirt's top edge and comes partway back in at the rim (stays a little full there).
+  const env = Math.sin(Math.PI * 0.85 * t);
+  const rib = p.waistRibs > 0 ? p.waistRibDepth * 0.5 * (1 + Math.cos(p.waistRibs * theta)) : 0;
+  return d.topRadius + env * (p.waistBulge + rib);
+}
