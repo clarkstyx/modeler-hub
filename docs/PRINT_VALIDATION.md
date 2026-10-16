@@ -26,7 +26,7 @@ observed.
 | Colour count | distinct hex > 4 | warning |
 | Missing glyphs | font has no outline | warning |
 
-Run them headlessly: `npm test` and `npm run validate` in `modelers/box-modeler` or
+Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo or
 `modelers/gridfinity-labels` (the latter writes `out/*.3mf` for a slicer check).
 
 ## Fit data

@@ -10,7 +10,7 @@
 // Private repos: set MODELER_PAT (a GitHub token with read access) and the
 // script uses it for cloning. Locally your normal git credentials work too.
 //
-// Local modelers: an entry with "path" (e.g. "modelers/box-modeler") instead of
+// Local modelers: an entry with "path" (e.g. "modelers/cookie-cutter") instead of
 // "repo" is built straight from that folder inside this repo. Nothing is cloned.
 // Moving one to its own repo later is a one-line change in modelers.json.
 //
