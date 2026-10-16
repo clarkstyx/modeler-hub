@@ -27,6 +27,8 @@ cases.push(
   ["ridge-grip-square", { ...DEFAULT_PARAMS, cornerRadius: 0, lidGrip: "ridge", text: "RIDGE" }],
   ["outer-sizing", { ...DEFAULT_PARAMS, sizeMode: "outer", length: 80, width: 50, height: 30, text: "OUT" }],
   ["thin-wall-rail-cap", { ...DEFAULT_PARAMS, wall: 1.2, railDepth: 1.5, text: "" }],
+  ["rack-single-no-vents", { ...presetParams("rack-4x4x6"), rackCols: 1, rackRows: 1, ventHole: 0 }],
+  ["rack-small-4x3", { ...presetParams("rack-4x4x6"), encWidth: 50, encDepth: 50, encHeight: 60, rackCols: 4, rackRows: 3 }],
 );
 
 let failed = false;
@@ -51,6 +53,11 @@ const calOk = cal.exportable && cal.meshReports.every((m) => m.ok);
 console.log(`${calOk ? "ok  " : "FAIL"} calibration set      ${cal.parts.map((p) => p.name).join(", ")}`);
 if (calOk) writeFileSync("out/calibration.3mf", export3MF(cal, DEFAULT_PARAMS, "calibration"));
 if (!calOk) failed = true;
+const rackCal = generate(presetParams("rack-4x4x6"), null, "calibration");
+const rackCalOk = rackCal.exportable && rackCal.meshReports.every((m) => m.ok);
+console.log(`${rackCalOk ? "ok  " : "FAIL"} key fit test         ${rackCal.parts.map((p) => p.name).join(", ")}`);
+if (rackCalOk) writeFileSync("out/key-fit-test.3mf", export3MF(rackCal, presetParams("rack-4x4x6"), "key-fit-test"));
+else failed = true;
 const names = parseNames(Array.from({ length: 24 }, (_, i) => `NAME ${i + 1}`).join("\n") + "\nZoë & Łukasz\nHappy\\nBirthday").items;
 for (const [name, what, p] of [
   ["batch-lids-26", "lids", presetParams("gift-tin")],

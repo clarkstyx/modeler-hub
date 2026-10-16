@@ -74,6 +74,24 @@ export const PRESETS: Preset[] = [
     description: "A chunky tin for treats, inlaid name so it stays smooth",
     params: { sizeMode: "inner", length: 90, width: 90, height: 45, cornerRadius: 14, text: "LUNA", textSize: 16, relief: "inlay" },
   },
+  {
+    id: "rack-4x4x6",
+    label: "Enclosure rack 4 × 4 × 6 in",
+    description: "Stackable cube with a pull-out tray for a 4 × 4 × 6 inch enclosure, half-inch gaps",
+    params: {
+      product: "rack", rackUnits: "in", encWidth: 101.6, encDepth: 101.6, encHeight: 152.4, rackSideGap: 12.7, rackTopGap: 12.7,
+      rackCols: 3, rackRows: 2, bodyColor: "#4B5D3A", lidColor: "#4B5D3A",
+    },
+  },
+  {
+    id: "rack-6x3",
+    label: "Enclosure rack 6.25 × 3.5 in",
+    description: "Wider, shallower cube for a 6.25 × 3.5 inch enclosure (6 in tall); check the real height",
+    params: {
+      product: "rack", rackUnits: "in", encWidth: 158.75, encDepth: 88.9, encHeight: 152.4, rackSideGap: 12.7, rackTopGap: 12.7,
+      rackCols: 3, rackRows: 2, bodyColor: "#4B5D3A", lidColor: "#4B5D3A",
+    },
+  },
 ];
 
 export function presetParams(id: string): BoxParams {

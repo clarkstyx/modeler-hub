@@ -4,7 +4,8 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { GenerateResult } from "../pipeline/generate";
 
 /** What the preview draws: the single box (a GenerateResult) or one batch plate. */
-export type PreviewModel = Pick<GenerateResult, "parts" | "lidPrintOffset" | "lidClosedOffset"> & { kind: string };
+export type PreviewModel = Pick<GenerateResult, "parts" | "lidPrintOffset" | "lidClosedOffset"> &
+  Partial<Pick<GenerateResult, "assembly" | "ghosts">> & { kind: string };
 
 export type ViewMode = "print" | "closed";
 
@@ -84,16 +85,38 @@ export function Preview3D({ result, view, bedSize, resetToken, frameKey }: Props
     if (!result) return;
     const [px, py, pz] = result.lidPrintOffset;
     const [cx, cy, cz] = result.lidClosedOffset;
+    // Rack, assembled: each printed object drawn at every place it goes; objects with no place (keys) hidden.
+    const assembled = view === "closed" && !!result.assembly?.length;
     for (const part of result.parts) {
       const g = new THREE.BufferGeometry();
       g.setAttribute("position", new THREE.Float32BufferAttribute(Float32Array.from(part.mesh.positions), 3));
       g.setIndex(new THREE.Uint32BufferAttribute(part.mesh.indices, 1));
       g.computeVertexNormals();
       const mat = new THREE.MeshStandardMaterial({ color: new THREE.Color(part.hex), roughness: 0.55, metalness: 0.05, flatShading: true });
+      if (assembled) {
+        for (const place of result.assembly!.filter((a) => a.object === part.object)) {
+          const mesh = new THREE.Mesh(g, mat);
+          mesh.matrixAutoUpdate = false;
+          mesh.matrix.set(...(place.matrix as Parameters<THREE.Matrix4["set"]>));
+          s.group.add(mesh);
+        }
+        continue;
+      }
       const mesh = new THREE.Mesh(g, mat);
       if (view === "closed" && part.object === "lid" && result.kind === "box") mesh.position.set(cx - px, cy - py, cz - pz);
       s.group.add(mesh);
     }
+    if (assembled)
+      for (const gh of result.ghosts ?? []) {
+        const size = gh.max.map((v, i) => v - gh.min[i]);
+        const geo = new THREE.BoxGeometry(size[0], size[1], size[2]);
+        const glass = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: 0xcfe8ff, transparent: true, opacity: 0.18, roughness: 0.1, depthWrite: false }));
+        const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xdff0ff, transparent: true, opacity: 0.6 }));
+        for (const o of [glass, edges]) {
+          o.position.set(gh.min[0] + size[0] / 2, gh.min[1] + size[1] / 2, gh.min[2] + size[2] / 2);
+          s.group.add(o);
+        }
+      }
   }, [result, view]);
 
   // Frame the model
@@ -104,7 +127,7 @@ export function Preview3D({ result, view, bedSize, resetToken, frameKey }: Props
     if (box.isEmpty()) return;
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
-    const radius = Math.max(size.x, size.y, size.z) * 0.8 + 20;
+    const radius = Math.max(size.x, size.y, size.z) * (result.assembly?.length ? 1.15 : 0.8) + 20;
     s.controls.target.copy(center);
     s.camera.position.set(center.x - radius * 0.9, center.y - radius * 1.3, center.z + radius * 1.0);
     s.camera.near = 1;
