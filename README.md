@@ -9,7 +9,7 @@ Maker and Seller modelers need a logged-in patron on that tier.
 
 ```
 modelers.json          the list: id, repo (or path), tagline, category, tier  ← edit this to add a modeler
-modelers/<id>/         modelers that live in this repo for now (gridfinity-labels, cookie-cutter, checklist-tag); built like any other
+modelers/<id>/         modelers that live in this repo for now (gridfinity-labels, cookie-cutter); built like any other
 docs/                  gap analysis vs Create.Blitch, roadmap, engine architecture, print validation
 scripts/pull.mjs       clones + builds every modeler into public/m/<id>/ (also copies their docs + skills)
 index.html             home page: cards grouped by category, locked/unlocked per tier

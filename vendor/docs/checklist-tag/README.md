@@ -5,8 +5,8 @@ Parametric **checklist tags**: a flat card with a hanging hole, a raised questio
 Sized by default for an Elf on the Shelf to hold (55 × 75 mm), and every size can change.
 Printed flat, exported as a colour-ready 3MF for Bambu Studio / OrcaSlicer.
 
-Lives inside the hub at `modelers/checklist-tag/` and is served at `/m/checklist-tag/`. It is a normal
-Vite app and can move to its own repository by changing `path` to `repo` in `modelers.json`.
+Its own repository (`clarkstyx/checklist-tag`). The Valencia Modelers hub (`clarkstyx/modeler-hub`)
+clones and builds it and serves it at `/m/checklist-tag/` (Maker tier).
 
 ## What it makes
 
@@ -32,7 +32,7 @@ npm install
 npm run dev        # http://localhost:5190
 npm test           # vitest: parts, size, no overlaps, wrapping and shrinking, refusals, batch, 3MF/ZIP, settings
 npm run validate   # every preset and edge case, writes out/*.3mf
-npm run build      # production build (the hub passes --base=/m/checklist-tag/)
+npm run build      # production build (the hub runs vite build --base=/m/checklist-tag/)
 ```
 
 ## How it is built
@@ -47,4 +47,4 @@ it runs in a Web Worker.
 
 Flat as placed, no supports, 0.2 mm layers. The colours change only in the top 0.8 mm, so a
 4-colour tag wastes little filament. A 5 mm hole takes a small book ring or ribbon. Not yet printed;
-see `../../docs/PRINT_VALIDATION.md`.
+see `docs/PRINT_VALIDATION.md` in the hub repository.
