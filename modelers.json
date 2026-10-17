@@ -171,7 +171,7 @@
     {
       "id": "checklist-tag",
       "name": "Checklist Tag",
-      "path": "modelers/checklist-tag",
+      "repo": "clarkstyx/checklist-tag",
       "tagline": "Seasonal YES / NO checklist tags (Nice list? Trick or treat?) with your own text and names, sized for an Elf on the Shelf.",
       "category": "Seasonal",
       "tier": "maker",
