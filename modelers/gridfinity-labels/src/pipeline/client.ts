@@ -7,28 +7,33 @@ type Body = WorkerRequest extends infer R ? (R extends WorkerRequest ? Omit<R, "
 
 /** Promise wrapper around the geometry worker. */
 export class GeometryClient {
-  private worker: Worker;
+  private worker: Worker | null = null;
   private nextId = 1;
   private pending = new Map<number, { resolve: (r: WorkerResponse) => void; reject: (e: Error) => void }>();
-  constructor() {
-    this.worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
-    this.worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
+  /** Creates the worker on first use, so a client stays usable after dispose() (React StrictMode remounts in dev). */
+  private start(): Worker {
+    if (this.worker) return this.worker;
+    const worker = new Worker(new URL("./worker.ts", import.meta.url), { type: "module" });
+    worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
       const p = this.pending.get(e.data.id);
       if (!p) return;
       this.pending.delete(e.data.id);
       if (e.data.ok) p.resolve(e.data);
       else p.reject(new Error(e.data.error));
     };
-    this.worker.onerror = (e) => {
+    worker.onerror = (e) => {
       for (const p of this.pending.values()) p.reject(new Error(e.message || "Geometry worker crashed."));
       this.pending.clear();
     };
+    this.worker = worker;
+    return worker;
   }
   private send<T extends string>(body: Body): Promise<Ok<T>> {
     const id = this.nextId++;
+    const worker = this.start();
     return new Promise((resolve, reject) => {
       this.pending.set(id, { resolve: (r) => resolve(r as Ok<T>), reject });
-      this.worker.postMessage({ ...body, id });
+      worker.postMessage({ ...body, id });
     });
   }
   generate(params: LabelParams, specs: LabelSpec[], art: Artwork | null, kind: Kind = "batch") {
@@ -44,6 +49,9 @@ export class GeometryClient {
     return this.send<"exportZip">({ type: "exportZip", params, list, title });
   }
   dispose() {
-    this.worker.terminate();
+    this.worker?.terminate();
+    this.worker = null;
+    for (const p of this.pending.values()) p.reject(new Error("Geometry worker stopped."));
+    this.pending.clear();
   }
 }
