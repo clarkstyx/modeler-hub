@@ -149,6 +149,26 @@
       "makerworld": ""
     },
     {
+      "id": "ribbon-skirt",
+      "name": "Ribbon Skirt Ornament",
+      "path": "modelers/ribbon-skirt",
+      "tagline": "A pleated ribbon skirt ornament with your ribbon colours, a gathered waistband and a hanging loop.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "knot-bead",
+      "name": "Knot Bead",
+      "path": "modelers/knot-bead",
+      "tagline": "Paracord knot beads that look like a snake knot, coil or rope. Slide on, no tying; printed in batches.",
+      "category": "Keychains",
+      "tier": "free",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "image-keychain",
       "name": "Image Keychain",
       "repo": "clarkstyx/image-keychain-modeler",
