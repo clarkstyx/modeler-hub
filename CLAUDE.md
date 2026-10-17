@@ -9,7 +9,7 @@ changes small, and verify in the browser.
 
 - `modelers.json` is the single source of truth: every modeler, its repo (or `path` for one that lives
   in this repo under `modelers/`), tier and category. The pages, the gate and the pull script all read it.
-- `modelers/<id>/` holds modelers that have not moved to their own repo yet (`gridfinity-labels`, `cookie-cutter`, `ribbon-skirt`, `knot-bead`, `checklist-tag`). Same rules
+- `modelers/<id>/` holds modelers that have not moved to their own repo yet (`gridfinity-labels`, `cookie-cutter`, `ribbon-skirt`, `knot-bead`). Same rules
   as a separate repo: a Vite app with its own package.json and tests; `npm run pull <id>` builds it.
 - `packages/geometry/` is the shared engine code (manifold kernel, shapes, mesh checks, 3MF/STL, text).
   `npm run sync-shared` copies it into each local modeler's `src/shared/`; edit the package, never a copy.
