@@ -10,7 +10,7 @@ Run through this for every new modeler or big feature. Same content, four places
 ## 1. MakerWorld (exposure)
 - Post the OpenSCAD mirror as a Parametric Model Maker model. Defaults must look great in the auto thumbnail
   (a real name, two contrasting colours, nothing clipped).
-- Title: what it is + "Generator" or "Customizable". Example: "Jerry Can Name Keychain Generator (Customizable)".
+- Title: what it is + "Generator" or "Customizable". Example: "Name Tag Generator (Customizable)".
 - First line of the description: "Free single-colour version. Multi-colour 3MF, SVG upload and batch plates
   at <site>/m/<id>/". Then 3 bullets of what the sliders do, then print settings (0.2 mm, no supports, flat on the back).
 - Licence: Standard Digital File Licence or CC BY-NC-ND. Commercial use is a Seller-tier perk on the site.

@@ -3,7 +3,7 @@
 // site into public/m/<id>/ so the hub can serve it at /m/<id>/.
 //
 //   node scripts/pull.mjs                 all modelers
-//   node scripts/pull.mjs jerry-can       just one (by id)
+//   node scripts/pull.mjs name-keychain   just one (by id)
 //   node scripts/pull.mjs --keep          keep each repo's node_modules
 //   node scripts/pull.mjs --no-fetch      don't git pull, just rebuild
 //

@@ -92,7 +92,7 @@ PrusaSlicer users take the STL ZIP (one STL per part, same frame) instead.
 | Colour-separated 3MF | `packages/geometry/src/threeMF.ts` (multi-object) ≥ trinket-tray ≥ phone-grip | the shared writer |
 | Mesh validation | `packages/geometry/src/mesh.ts` (trinket-tray has its own) | all |
 | Keyring loop / hole placement | image-keychain (anywhere, chamfered rim), bubble-keychain (drag) | tags, medals |
-| Dome / pillow | phone-grip layer stack, jerry-can torus hull | badges, clicker caps |
+| Dome / pillow | phone-grip layer stack | badges, clicker caps |
 | Hardware presets with verification status | phone-grip `hardware.js` | clickers, stamps, NFC pockets |
 | Calibration pieces | phone-grip (size rings), box-modeler (lid fit set) | every mechanical product |
 

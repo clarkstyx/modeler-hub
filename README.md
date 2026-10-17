@@ -28,7 +28,7 @@ vendor/docs/<id>/      each modeler's README + CLAUDE.md (+ its MakerWorld .scad
 
 ```bash
 npm install
-npm run pull                           # build every modeler (takes a while), or `npm run pull jerry-can`
+npm run pull                           # build every modeler (takes a while), or `npm run pull name-keychain`
 npm run dev                            # http://localhost:5173, every modeler unlocked, no login
 # with the gate + Patreon login:
 cp .dev.vars.example .dev.vars         # fill in, or leave DEV_BYPASS=1

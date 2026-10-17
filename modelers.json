@@ -57,16 +57,6 @@
       "scad": "makerworld"
     },
     {
-      "id": "jerry-can",
-      "name": "Jerry Can Keychain",
-      "repo": "clarkstyx/jerry-can-modeler",
-      "tagline": "Three-colour jerry can with arched text, maple leaf and a knurled cap.",
-      "category": "Keychains",
-      "tier": "maker",
-      "status": "live",
-      "makerworld": ""
-    },
-    {
       "id": "bubble-keychain",
       "name": "Bubble Keychain",
       "repo": "clarkstyx/bubble-keychain-maker",
@@ -144,16 +134,6 @@
       "path": "modelers/cookie-cutter",
       "tagline": "Cookie cutters from shapes, letters, words or your own SVG, with a thin cutting edge and a sturdy flange.",
       "category": "Kitchen",
-      "tier": "maker",
-      "status": "live",
-      "makerworld": ""
-    },
-    {
-      "id": "ribbon-skirt",
-      "name": "Ribbon Skirt Ornament",
-      "repo": "clarkstyx/ribbon-skirt",
-      "tagline": "A pleated ribbon skirt ornament with your ribbon colours, a gathered waistband and a hanging loop.",
-      "category": "Seasonal",
       "tier": "maker",
       "status": "live",
       "makerworld": ""
