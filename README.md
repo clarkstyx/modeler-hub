@@ -9,7 +9,7 @@ Maker and Seller modelers need a logged-in patron on that tier.
 
 ```
 modelers.json          the list: id, repo (or path), tagline, category, tier  ← edit this to add a modeler
-modelers/<id>/         modelers that live in this repo for now (gridfinity-labels, cookie-cutter, ribbon-skirt, knot-bead); built like any other
+modelers/<id>/         modelers that live in this repo for now (gridfinity-labels, cookie-cutter); built like any other
 docs/                  gap analysis vs Create.Blitch, roadmap, engine architecture, print validation
 scripts/pull.mjs       clones + builds every modeler into public/m/<id>/ (also copies their docs + skills)
 index.html             home page: cards grouped by category, locked/unlocked per tier
@@ -28,12 +28,16 @@ vendor/docs/<id>/      each modeler's README + CLAUDE.md (+ its MakerWorld .scad
 
 ```bash
 npm install
-npm run pull jerry-can name-keychain   # or `npm run pull` for all (takes a while)
-npm run dev                            # hub pages only, no gate
+npm run pull                           # build every modeler (takes a while), or `npm run pull jerry-can`
+npm run dev                            # http://localhost:5173, every modeler unlocked, no login
 # with the gate + Patreon login:
 cp .dev.vars.example .dev.vars         # fill in, or leave DEV_BYPASS=1
 npm run build && npm run pages:dev     # http://localhost:8788
 ```
+
+On your own computer without the login server (`npm run dev`), the hub shows "Local preview · all
+unlocked" instead of the login button and every card opens. A modeler you have not pulled yet shows
+the `npm run pull <id>` command to build it. The live site still needs a Patreon login.
 
 ## One-time setup
 

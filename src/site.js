@@ -1,6 +1,10 @@
 // Shared page script: fills the brand + nav, renders the modeler cards on the
 // home page, and shows who is logged in (asks /api/me, which only exists on
-// Cloudflare Pages; on plain `vite dev` it just shows the logged-out state).
+// Cloudflare Pages).
+//
+// Local preview: on your own computer with no login server (`npm run dev` or
+// `npm run preview`) there is no gate at all, so every modeler opens and the
+// login button is hidden. Same with `npm run pages:dev` and DEV_BYPASS=1.
 import manifest from '../modelers.json';
 
 const { site, tiers, modelers } = manifest;
@@ -14,20 +18,26 @@ export function fillChrome() {
   document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
 }
 
+const LOCAL_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
+const LOCAL_PREVIEW = { loggedIn: true, name: 'Local preview', level: 2, dev: true };
+
 export async function whoAmI() {
   try {
     const res = await fetch('/api/me', { headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error(res.status);
     return await res.json();
   } catch (_) {
-    return { loggedIn: false, level: 0 };
+    // No /api/me means no Pages Functions, so no gate. Only trust that on your own machine.
+    return LOCAL_HOSTS.includes(location.hostname) ? LOCAL_PREVIEW : { loggedIn: false, level: 0 };
   }
 }
 
 export function renderAccount(me) {
   const slot = document.querySelector('[data-account]');
   if (!slot) return;
-  if (me.loggedIn) {
+  if (me.dev) {
+    slot.innerHTML = `<span class="who" title="Running on this computer: every modeler is unlocked and login is off.">Local preview · all unlocked</span>`;
+  } else if (me.loggedIn) {
     const tierName = Object.values(tiers).find((t) => t.level === me.level)?.label || 'Member';
     slot.innerHTML = `<span class="who">Hi <b></b> · ${tierName}</span> <a class="btn" href="/auth/logout">Log out</a>`;
     slot.querySelector('b').textContent = me.name || 'there';
