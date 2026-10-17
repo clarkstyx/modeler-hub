@@ -40,7 +40,7 @@ changes small, and verify in the browser.
 ```bash
 npm install
 npm run pull [id…]        # clone + build modelers into public/m/
-npm run dev               # hub pages, no gate
+npm run dev               # hub + built modelers, all unlocked, no login
 npm run build && npm run pages:dev   # full site with the gate at :8788 (needs .dev.vars)
 npm test
 ```
