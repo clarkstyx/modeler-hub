@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { unzipSync, strFromU8 } from "fflate";
 import { initKernel } from "../src/shared/kernel";
-import { DEFAULT_PARAMS, derive, type SkirtParams } from "../src/core/params";
+import { DEFAULT_PARAMS, derive, waistRadius, type SkirtParams } from "../src/core/params";
 import { PRESETS, presetParams } from "../src/core/presets";
 import { parseRecipe, toRecipe } from "../src/core/recipe";
 import { export3MF, generate } from "../src/pipeline/generate";
@@ -97,6 +97,17 @@ describe("ribbon skirt ornament", () => {
       expect(d.capTop).toBeCloseTo(d.bodyTop - p.waistRecess);
       expect(bbox(r).max[2]).toBeCloseTo(d.totalHeight, 2);
     }
+  });
+
+  it("bottle-cap crown: widest at its crimped bottom edge, narrowing to a closed top, no supports", () => {
+    const p = presetParams("bottle-cap");
+    const r = generate(p);
+    expect(errorsOf(r)).toEqual([]);
+    const d = derive(p);
+    expect(d.capTop).toBeCloseTo(d.bodyTop); // closed: no recess
+    expect(waistRadius(p, d, 0, 0.35)).toBeGreaterThan(waistRadius(p, d, 0, 0.95));
+    expect(waistRadius(p, d, 0, 0.35) - waistRadius(p, d, Math.PI / p.waistRibs, 0.35)).toBeGreaterThan(0.5); // crimps
+    expect(parseRecipe({ waistStyle: "tiara" }).waistStyle).toBe("shirred");
   });
 
   it("warns when a flat inside top would bridge too wide", () => {

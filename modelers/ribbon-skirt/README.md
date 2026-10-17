@@ -19,12 +19,15 @@ Vite app and can move to its own repository by changing `path` to `repo` in `mod
   loop rising from a solid floor a few mm down inside. That floor is either a flat 2 mm bridge
   (short waistband; the bridge is hidden inside) or a 45° cone (no bridge, taller waistband); the
   waistband is raised automatically if it is too short for the choice.
+- **Bottle-cap waistband** (Waistband style → Bottle cap): a crimped crown like a bottle cap, 21
+  crimps flaring out at the bottom edge and fading up to a rounded shoulder and a flat, closed top.
+  It narrows going up, so it prints without supports.
 - **Loop**: standing on top, with a teardrop-shaped hole (pointed at the top) so it prints clean.
 - Exports: 3MF (one object, one part per colour, settings embedded so the file reopens here),
   single STL, STL per colour (ZIP), settings JSON.
 
-Presets: as pictured (70 mm, full shoulders, puffy waist, three ribbons on black), ribbon skirt
-ornament (70 mm, straighter sides), mini ornament (45 mm), long skirt with five ribbons (95 mm).
+Presets: as pictured (70 mm, shirred waistband, full shoulders, puffy waist, three ribbons on black), ribbon skirt
+ornament (70 mm, straighter sides), bottle-cap waist, mini ornament (45 mm), long skirt with five ribbons (95 mm).
 
 ## Run
 

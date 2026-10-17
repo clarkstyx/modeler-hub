@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { DEFAULT_PARAMS, LIMITS, MAX_RIBBONS, derive, ribbonList, type Ceiling, type SkirtParams } from "../core/params";
+import { DEFAULT_PARAMS, LIMITS, MAX_RIBBONS, WAIST_STYLE_DEFAULTS, derive, ribbonList, type Ceiling, type SkirtParams, type WaistStyle } from "../core/params";
 import { PRESETS, presetParams } from "../core/presets";
 import { parseRecipe, toRecipe } from "../core/recipe";
 import { readProjectFrom3MF } from "../export/threeMF";
@@ -125,12 +125,17 @@ export default function App() {
         </Section>
 
         <Section title="5 · Waistband and loop">
+          <Choice label="Waistband style" value={params.waistStyle}
+            set={(v) => { setParams((p) => ({ ...p, ...WAIST_STYLE_DEFAULTS[v as WaistStyle], waistStyle: v as WaistStyle })); setActivePreset(null); }}
+            options={[{ value: "shirred", label: "Shirred elastic (gathered puffs)" }, { value: "crown", label: "Bottle cap (crimped crown, closed top)" }]} />
           <Num label="Waistband height" value={params.waistHeight} set={(v) => set("waistHeight", v)} {...LIMITS.waistHeight} hint={d.waistHeight > params.waistHeight ? `Raised to ${d.waistHeight.toFixed(1)} mm to fit the inside top and the recess.` : undefined} />
           <Num label="Waistband stands out" value={params.waistBulge} set={(v) => set("waistBulge", v)} {...LIMITS.waistBulge} hint="How far the shirred waistband stands out past the top of the skirt." />
-          <Num label="Shirring rows" value={params.waistRows} set={(v) => set("waistRows", Math.round(v))} {...LIMITS.waistRows} unit="" hint="Rows of puffs between the elastic lines. 1 = one round puff." />
-          <Num label="Elastic pinch" value={params.waistPinch} set={(v) => set("waistPinch", v)} {...LIMITS.waistPinch} unit="×" hint="How tightly each elastic line pinches the puffs in." />
-          <Num label="Gathers around the waist" value={params.waistRibs} set={(v) => set("waistRibs", Math.round(v))} {...LIMITS.waistRibs} unit="" />
-          <Num label="Gather depth" value={params.waistRibDepth} set={(v) => set("waistRibDepth", v)} {...LIMITS.waistRibDepth} />
+          {params.waistStyle === "shirred" && <>
+            <Num label="Shirring rows" value={params.waistRows} set={(v) => set("waistRows", Math.round(v))} {...LIMITS.waistRows} unit="" hint="Rows of puffs between the elastic lines. 1 = one round puff." />
+            <Num label="Elastic pinch" value={params.waistPinch} set={(v) => set("waistPinch", v)} {...LIMITS.waistPinch} unit="×" hint="How tightly each elastic line pinches the puffs in." />
+          </>}
+          <Num label={params.waistStyle === "crown" ? "Crimps around the cap" : "Gathers around the waist"} value={params.waistRibs} set={(v) => set("waistRibs", Math.round(v))} {...LIMITS.waistRibs} unit="" />
+          <Num label={params.waistStyle === "crown" ? "Crimp depth" : "Gather depth"} value={params.waistRibDepth} set={(v) => set("waistRibDepth", v)} {...LIMITS.waistRibDepth} />
           <Num label="Loop sits down inside the waist" value={params.waistRecess} set={(v) => set("waistRecess", v)} {...LIMITS.waistRecess} hint="0 = flat top; more = an open ring with the loop rising from inside." />
           <Choice label="Inside top" value={params.ceiling} set={(v) => set("ceiling", v as Ceiling)}
             options={[{ value: "flat", label: "Flat (short waistband, bridged inside)" }, { value: "cone", label: "45° cone (no bridge, taller waistband)" }]} />

@@ -29,5 +29,6 @@ export function parseRecipe(json: string | object): SkirtParams {
     } else if (typeof def === "string" && typeof v === "string") out[key] = v;
   }
   if (out.ceiling !== "flat" && out.ceiling !== "cone") out.ceiling = DEFAULT_PARAMS.ceiling;
+  if (out.waistStyle !== "shirred" && out.waistStyle !== "crown") out.waistStyle = DEFAULT_PARAMS.waistStyle;
   return out as unknown as SkirtParams;
 }

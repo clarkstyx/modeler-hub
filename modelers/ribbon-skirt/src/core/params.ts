@@ -10,6 +10,8 @@
  */
 /** How the hollow inside is closed under the waistband top. */
 export type Ceiling = "flat" | "cone";
+/** Waistband look: gathered elastic (shirred) or a bottle-cap crown (crimps flaring out at the bottom, closed top). */
+export type WaistStyle = "shirred" | "crown";
 
 export interface SkirtParams {
   /** Body height from the hem to the top of the waistband (the loop comes on top). */
@@ -32,7 +34,8 @@ export interface SkirtParams {
   wall: number;
 
   waistHeight: number;
-  /** Gathers around the waistband (0 = smooth). */
+  waistStyle: WaistStyle;
+  /** Gathers (shirred) or crimps (crown) around the waistband (0 = smooth). */
   waistRibs: number;
   waistRibDepth: number;
   /** How far the waistband stands out past the top of the skirt. */
@@ -82,6 +85,7 @@ export const DEFAULT_PARAMS: SkirtParams = {
   pleatReach: 2,
   wall: 1.6,
   waistHeight: 10,
+  waistStyle: "shirred",
   waistRibs: 24,
   waistRibDepth: 0.9,
   waistBulge: 1.6,
@@ -221,6 +225,10 @@ const smoothstep = (a: number, b: number, x: number) => {
  * edge rolls in, and every puff is a rounded gather with a crease between.
  */
 export function waistRadius(p: SkirtParams, d: Derived, theta: number, t: number): number {
+  return p.waistStyle === "crown" ? crownRadius(p, d, theta, t) : shirredRadius(p, d, theta, t);
+}
+
+function shirredRadius(p: SkirtParams, d: Derived, theta: number, t: number): number {
   const amp = p.waistBulge + (p.waistRibs > 0 ? p.waistRibDepth : 0);
   if (amp <= 0) return d.topRadius;
   // Step out from the skirt over the height that keeps the side under 45°: smoothstep peaks at 1.5×
@@ -234,3 +242,26 @@ export function waistRadius(p: SkirtParams, d: Derived, theta: number, t: number
   const gather = p.waistRibs > 0 ? p.waistRibDepth * Math.abs(Math.cos((p.waistRibs * theta) / 2)) : 0;
   return d.topRadius + out * roll * pinch * (p.waistBulge + gather);
 }
+
+/**
+ * Bottle-cap crown: steps out from the skirt (under 45°) to its widest at the
+ * crimped bottom edge, then narrows up to a rounded shoulder and a flat top.
+ * The crimps are round waves that fade out going up, as on a real crown cap.
+ * Narrowing upwards always sits on the layer below, so it prints without supports.
+ */
+function crownRadius(p: SkirtParams, d: Derived, theta: number, t: number): number {
+  const amp = p.waistBulge + (p.waistRibs > 0 ? p.waistRibDepth : 0);
+  if (amp <= 0) return d.topRadius;
+  const rise = Math.min(0.7, (1.5 * amp) / (0.95 * d.waistHeight));
+  const out = smoothstep(0, rise, t);
+  const shoulder = 1 - 0.65 * smoothstep(rise, 1, t);
+  const fade = 1 - 0.75 * smoothstep(rise, 0.9, t);
+  const crimp = p.waistRibs > 0 ? p.waistRibDepth * 0.5 * (1 + Math.cos(p.waistRibs * theta)) * fade : 0;
+  return d.topRadius + out * shoulder * (p.waistBulge + crimp);
+}
+
+/** Starting values when switching the waistband style in the app. */
+export const WAIST_STYLE_DEFAULTS: Record<WaistStyle, Partial<SkirtParams>> = {
+  shirred: { waistHeight: 8, waistRibs: 28, waistRibDepth: 1.1, waistBulge: 0.6, waistRows: 2, waistPinch: 0.3, waistRecess: 2.5 },
+  crown: { waistHeight: 7, waistRibs: 21, waistRibDepth: 1, waistBulge: 1, waistRecess: 0 },
+};
