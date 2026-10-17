@@ -169,6 +169,16 @@
       "makerworld": ""
     },
     {
+      "id": "checklist-tag",
+      "name": "Checklist Tag",
+      "path": "modelers/checklist-tag",
+      "tagline": "Seasonal YES / NO checklist tags (Nice list? Trick or treat?) with your own text and names, sized for an Elf on the Shelf.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "image-keychain",
       "name": "Image Keychain",
       "repo": "clarkstyx/image-keychain-modeler",

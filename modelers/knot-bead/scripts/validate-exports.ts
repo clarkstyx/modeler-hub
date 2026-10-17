@@ -21,7 +21,7 @@ cases.push(
   ["big-30mm", { ...DEFAULT_PARAMS, pattern: "rope", height: 40, diameter: 30, bore: 12, ridgeDepth: 2.5, strands: 4, twist: 50 }],
   ["smooth", { ...DEFAULT_PARAMS, ridgeDepth: 0 }],
   ["six-strand-braid", { ...DEFAULT_PARAMS, pattern: "braid", strands: 6, twist: 30, diameter: 14 }],
-  ["no-chamfers", { ...DEFAULT_PARAMS, boreChamfer: 0, endFade: 0 }],
+  ["no-chamfer", { ...DEFAULT_PARAMS, boreChamfer: 0 }],
   ["200-beads-180bed", { ...DEFAULT_PARAMS, count: 200, bedSize: 180 }],
 );
 
