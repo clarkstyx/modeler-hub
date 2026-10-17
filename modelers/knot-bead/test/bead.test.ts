@@ -24,7 +24,7 @@ describe("knot bead", () => {
   });
 
   it("is the right size with a hole through it", () => {
-    const p = params();
+    const p = params({ pattern: "coil" }); // the coil's ridge passes every angle, so the width is the full diameter
     const r = generate(p);
     const b = r.meshReport!.bbox;
     expect(b.max[0] - b.min[0]).toBeCloseTo(p.diameter, 1);
