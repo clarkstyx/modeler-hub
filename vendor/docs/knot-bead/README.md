@@ -4,8 +4,8 @@ Parametric **paracord knot beads**: a short tube whose outside looks like a tied
 for the cord. Slide it on instead of tying; it saves cord and every bead comes out the same.
 Printed standing up in batches, exported as 3MF for Bambu Studio / OrcaSlicer.
 
-Lives inside the hub at `modelers/knot-bead/` and is served at `/m/knot-bead/`. It is a normal Vite
-app and can move to its own repository by changing `path` to `repo` in `modelers.json`.
+One of Clark's Valencia Modelers. The hub (`clarkstyx/modeler-hub`) clones this repo, builds it and
+serves it at `/m/knot-bead/` (Free tier).
 
 ## What it makes
 
@@ -46,4 +46,4 @@ as fast as one. The overhang check samples the outside on a fine grid before any
 
 Standing up as placed, no supports, 0.2 mm layers, 3 walls. Ridges deeper than about 1 mm at a
 short pitch print with slightly rough undersides; the app says so. Not yet printed; see
-`../../docs/PRINT_VALIDATION.md`.
+`docs/PRINT_VALIDATION.md` in the hub.

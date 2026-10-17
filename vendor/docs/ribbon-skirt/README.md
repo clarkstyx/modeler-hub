@@ -3,8 +3,8 @@
 A parametric **ribbon skirt ornament**: a pleated skirt with ribbon bands in your colours, a
 gathered waistband and a hanging loop, exported as a colour-ready 3MF for Bambu Studio / OrcaSlicer.
 
-Lives inside the hub at `modelers/ribbon-skirt/` and is served at `/m/ribbon-skirt/`. It is a normal
-Vite app and can move to its own repository by changing `path` to `repo` in `modelers.json`.
+One of Clark's Valencia Modelers. The hub (`clarkstyx/modeler-hub`) clones this repo, builds it and
+serves it at `/m/ribbon-skirt/` behind the Patreon gate (Maker tier).
 
 ## What it makes
 
