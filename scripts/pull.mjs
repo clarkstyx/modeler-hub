@@ -18,12 +18,13 @@
 // hub so Claude sessions in this repo know every modeler's conventions.
 
 import { execSync } from 'node:child_process';
-import { existsSync, mkdirSync, rmSync, cpSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, cpSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const manifest = (await import(join(ROOT, 'modelers.json'), { with: { type: 'json' } })).default;
+// Read as a plain file: import() of a Windows path like D:\... fails ("Received protocol 'd:'").
+const manifest = JSON.parse(readFileSync(join(ROOT, 'modelers.json'), 'utf8'));
 
 const args = process.argv.slice(2);
 const keep = args.includes('--keep');
