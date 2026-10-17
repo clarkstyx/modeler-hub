@@ -223,11 +223,14 @@ const smoothstep = (a: number, b: number, x: number) => {
 export function waistRadius(p: SkirtParams, d: Derived, theta: number, t: number): number {
   const amp = p.waistBulge + (p.waistRibs > 0 ? p.waistRibDepth : 0);
   if (amp <= 0) return d.topRadius;
-  // Step out from the skirt over the height that keeps the side under ~40° (smoothstep peaks at 1.5× its average slope).
-  const rise = Math.min(0.6, (1.5 * amp) / (0.8 * d.waistHeight));
+  // Step out from the skirt over the height that keeps the side under 45°: smoothstep peaks at 1.5×
+  // its average slope, and the first puff swelling out adds its own slope on top.
+  const rows = Math.max(1, Math.round(p.waistRows));
+  const room = 0.95 * d.waistHeight - p.waistPinch * amp * Math.PI * rows;
+  const rise = room > 0 ? Math.min(0.6, (1.5 * amp) / room) : 0.6;
   const out = smoothstep(0, rise, t);
   const roll = 1 - 0.3 * smoothstep(0.8, 1, t);
-  const pinch = 1 - p.waistPinch * Math.cos(Math.PI * Math.max(1, Math.round(p.waistRows)) * t) ** 2;
+  const pinch = 1 - p.waistPinch * Math.cos(Math.PI * rows * t) ** 2;
   const gather = p.waistRibs > 0 ? p.waistRibDepth * Math.abs(Math.cos((p.waistRibs * theta) / 2)) : 0;
   return d.topRadius + out * roll * pinch * (p.waistBulge + gather);
 }

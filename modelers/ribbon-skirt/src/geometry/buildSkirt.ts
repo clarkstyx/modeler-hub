@@ -23,7 +23,7 @@ function segmentsAround(p: SkirtParams): number {
 interface SkirtShell {
   solid: Manifold | null;
   issues: Issue[];
-  /** Steepest lean of the outer or inner wall from vertical (rise over run as dr/dz). */
+  /** Steepest overhang: outside leaning out or inside leaning in, as dr/dz (1 = 45°). */
   maxLean: number;
   /** Tightest bend of a pleat fold, mm. */
   minTipRadius: number;
@@ -82,15 +82,18 @@ export function buildShell(p: SkirtParams, d: Derived): SkirtShell {
     levels.push({ z: d.skirtHeight + t * d.waistHeight, outer, inner: innerCircle });
   }
 
-  // Lean from vertical, outside and inside: over 45° (dr/dz > 1) needs supports.
+  // Overhang: over 45° (dr/dz > 1) needs supports. Only a surface leaning out over air counts:
+  // the outside moving outwards, or the inside moving inwards. Leaning the other way sits on
+  // the layer below (the skirt narrowing, the waistband's rim rolling in).
   let maxLean = 0;
+  const rad = (q: [number, number]) => Math.hypot(q[0], q[1]);
   for (let i = 0; i + 1 < levels.length; i++) {
     const dz = levels[i + 1].z - levels[i].z;
-    for (let j = 0; j < N; j++)
-      for (const key of ["outer", "inner"] as const) {
-        const a = levels[i][key][j], b = levels[i + 1][key][j];
-        maxLean = Math.max(maxLean, Math.hypot(b[0] - a[0], b[1] - a[1]) / dz);
-      }
+    for (let j = 0; j < N; j++) {
+      const out = rad(levels[i + 1].outer[j]) - rad(levels[i].outer[j]);
+      const inn = rad(levels[i].inner[j]) - rad(levels[i + 1].inner[j]);
+      maxLean = Math.max(maxLean, out / dz, inn / dz);
+    }
   }
   if (minTipRadius < p.wall * 1.02)
     issues.push({ severity: "error", message: `The pleat tips bend tighter (${minTipRadius.toFixed(2)} mm) than the wall is thick (${p.wall} mm), so the inside would fold over itself. Use fewer or shallower pleats, or a thinner wall.` });

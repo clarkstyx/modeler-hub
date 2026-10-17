@@ -13,8 +13,8 @@ export const PRESETS: Preset[] = [
     label: "As pictured",
     description: "70 mm, shirred elastic waistband, three silk ribbons on black",
     params: {
-      height: 66, bottomDiameter: 70, topDiameter: 22, flare: 1, fullness: 0.75, pleats: 12, pleatDepth: 4, pleatReach: 3.5, wall: 1.6,
-      waistHeight: 13, waistRibs: 28, waistRibDepth: 1.4, waistBulge: 2, waistRows: 2, waistPinch: 0.35, waistRecess: 3, ceiling: "flat",
+      height: 66, bottomDiameter: 70, topDiameter: 24, flare: 1, fullness: 0.75, pleats: 12, pleatDepth: 4, pleatReach: 3.5, wall: 1.6,
+      waistHeight: 8, waistRibs: 28, waistRibDepth: 1.1, waistBulge: 0.6, waistRows: 2, waistPinch: 0.3, waistRecess: 2.5, ceiling: "flat",
       loopDiameter: 14, loopHole: 6.5, loopThickness: 4.5,
       baseColor: "#151515", ribbons: "#FF6A2A,#A51EF0,#1C7CF0", hemHeight: 2.5, ribbonWidth: 8.5, ribbonGap: 2.5,
     },
