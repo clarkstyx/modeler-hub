@@ -42,10 +42,8 @@ Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo
 | Phone-grip swappable PopTop | – | not measured | not generated (listed, unselectable) |
 | Trinket Tray coaster holder clearance | 0.8 mm | design choice | unverified |
 | Letter Beads cord hole | 5 mm | design choice | printed by Clark (per MANUAL) |
-| Jerry Can keyring hole | 5.5 mm, chamfered | design choice | printed by Clark (per MANUAL) |
 | Cookie cutter wall / edge / flange | 1.2 mm wall, 0.8 mm edge, 4 mm × 1.6 mm flange, 15 mm tall | common choices for FDM cutters | **Untested on dough.** |
 | Gridfinity label width | grid units × 42 mm − 6 mm end clearance (1 unit = 36 mm) | 42 mm pitch is the published Gridfinity grid; the clearance is a design choice | unverified |
-| Ribbon skirt ornament: walls and overhangs | 1.6 mm wall, pleat folds must bend wider than the wall, no wall leaning over 45°, waistband floor either a flat 2 mm bridge (≤ 26 mm, hidden inside) or a 45° inner cone, teardrop loop hole | design choice; checked on every build (export blocked otherwise) | **Unverified physically.** Print the default and check the waist cone and loop hole print clean without supports. |
 | Knot bead ridges | smooth patterns, ridges ≤ 1.2 mm deep, overhang warned over 60° and refused over 72°, ridges fade at the rims, wall ≥ 2 nozzle widths between bore and valleys | design choice; the coil in the reference photo printed fine at a similar depth | **Unverified physically.** Print the snake and coil presets, check the ridge undersides. |
 | Checklist tag | 55 × 75 × 2 mm card, details 0.8 mm raised, 5 mm hole centred 6 mm in, letters never under 2.5 mm, tick cut out of its box | design choice; 55 × 75 mm sized to the Elf on the Shelf reference photo | **Unverified physically.** Print the nice-list preset in 3 colours; check the small letters and that the elf can hold it. |
 | Gridfinity label slot | 12 mm high × 1.2 mm thick | a common size, **not** a standard: slots differ between bin designs | **Unverified.** The app's fit-test strip prints 11.6 / 12.0 / 12.4 mm; record the one that fits your bins here. |
@@ -110,7 +108,6 @@ Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo
 | – | cookie-cutter | print a heart and the letters, cut dough | – | **not yet printed** |
 | 2026-10-17 | knot-bead | 9 vitest (default batch, size + bore, every pattern under the overhang limit, thin-wall and overhang refusals, plate spill inside the bed, presets without warnings, 3MF/ZIP/settings) + 11 validate cases (5 presets, 6 mm, 30 mm, smooth, 6-strand braid, no bore chamfer, 200 beads on a 180 mm bed) | vitest + `npm run validate` | all pass, watertight |
 | 2026-10-17 | knot-bead | app: presets, one-bead and plate views, 3MF download | headless Chromium (production build) | pass, 0 page errors |
-| – | ribbon-skirt | print the default ornament in 4 colours | – | **not yet printed** |
 | – | knot-bead | print the snake and coil presets, slide onto 550 cord | – | **not yet printed** |
 | 2026-10-17 | checklist-tag | 8 vitest (default parts, size + details on top, tick cut out of its box, name + shrink to fit, long-question and hole refusals, 14-name batch over plates, presets + every mark/box/layout, 3MF/ZIP/settings) + 13 validate cases (5 presets, outline + cross side by side, 3 options, no hole/no tick, centre hole, 35 × 50 mm, 150 × 200 mm, no question, 20 names) | vitest + `npm run validate` | all pass, every part watertight |
 | 2026-10-17 | checklist-tag | app: all 5 presets, preview, readout | headless Chromium (production build) | pass, 0 page errors |

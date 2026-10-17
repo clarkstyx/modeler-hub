@@ -47,8 +47,8 @@ npm test
 
 ## Roadmap (in order)
 
-1. Patreon page + Cloudflare project live, jerry can + name tag behind the gate.
-2. OpenSCAD mirrors on MakerWorld for the name keychain and jerry can, each linking here.
+1. Patreon page + Cloudflare project live, name tag behind the gate.
+2. OpenSCAD mirrors on MakerWorld for the name keychain and name tag, each linking here.
 3. Box with slide lid + sorting tray modeler (highest demand on MakerWorld).
 4. Gridfinity bin label generator with batch export (Seller-tier magnet). Built in `modelers/gridfinity-labels`; slot fit still needs a print.
-5. Sign / nameplate generator reusing the jerry can text stack.
+5. Sign / nameplate generator.

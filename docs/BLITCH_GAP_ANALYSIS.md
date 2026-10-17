@@ -220,7 +220,6 @@ preset architecture: the roadmap builds ~8 engines, not 86 apps.
 
 ## Valencia has, Create.Blitch does not advertise
 
-- **Jerry Can Keychain** (3-colour sculpted body with knurled cap).
 - **Bubble Keychain** (speech/thought/shout bubbles with tails and a draggable keyring).
 - **Letter Beads** with custom TTF upload and bed layouts for 180/256/350 mm plates.
 - **Icon Beads** with a 278-charm library and Iconify search.

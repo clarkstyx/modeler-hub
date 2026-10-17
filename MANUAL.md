@@ -78,7 +78,7 @@ Done when: the workflow is green and `https://YOUR-DOMAIN` shows the cards.
 
 ### 1.5 Test the gate (You, 15 min)
 
-1. Open the site logged out. Name Keychain and Letter Beads open. Jerry Can sends you to the members page.
+1. Open the site logged out. Name Keychain and Letter Beads open. Name Tag sends you to the members page.
 2. Press "Log in with Patreon" and log in with your own account (you are in `OWNER_EMAILS`, so you get Seller).
    Everything opens.
 3. Ask a friend to join the Maker tier (or make a second Patreon account and pledge $4 to yourself).
@@ -111,7 +111,6 @@ two-colour version of each modeler so it gets boosted. Every MakerWorld descript
 | **Name Keychain** (has `keychainv2.scad`) | name, MakerWorld's built-in fonts + bundled Waltograph, 3 base styles, keyring position, plate + text colours | 35+ Google fonts, SVG logo upload with its own colour, auto-fit, model scale, 4-part 3MF, saved projects | Free on site, so the funnel lands somewhere open |
 | **Letter Beads** | one letter per render, 2 chunky fonts, hole size, body + face colours | whole word on one plate, upload your own .ttf, font fatness / width, spacer beads, 180 / 256 / 350 bed layouts | Free on site |
 | **Name Tag** (has `makerworld/`) | name + position, built-in fonts, raised / cut-out / inlay, magnet recesses, 2 colours | PNG / JPG / SVG logo upload with colour tracing, layered logo depth, company name + divider, Google fonts | Maker |
-| **Jerry Can** | lines 1 to 3 straight text, heart / star / simple leaf, body sliders, body + text colours | black cap as its own part, arched text, flag leaf, thicken icons, handle and cap Y / Z / tilt, rim, settings save | Maker |
 | **Bubble Keychain** | text, speech + pill bubbles, 1 font, hole presets, 2 colours | 6 bubble styles with tails, 4 fonts, drag the hole anywhere, raised / flush outline, projects stored in the 3MF | Maker |
 | **Icon Beads** | the 29 quick-pick icons, bead shape, hole | 280-charm library, Iconify search of 200k icons, logo upload, keep logo colours, both sides | Maker |
 | **Desktop Sign** (has `desktop-sign.scad`) | name + title, 1 base style, lean angle, 2 colours | all base styles, logo, fonts, multi-line | Maker |
@@ -139,7 +138,7 @@ Two extra rules:
 2. **Set the defaults so the auto-thumbnail looks great**: a real name, two contrasting colours, nothing
    clipped. The thumbnail is 80 % of whether anyone clicks.
 3. MakerWorld → Upload → "Parametric Model Maker" → upload the `.scad`. Check every slider shows and renders.
-4. **Title**: "<Thing> Generator (Customizable)". Example: "Jerry Can Name Keychain Generator (Customizable)".
+4. **Title**: "<Thing> Generator (Customizable)". Example: "Name Tag Generator (Customizable)".
 5. **Description**: the link line first, then 3 bullets of what the sliders do, then print settings
    (0.2 mm, no supports, flat side down, which parts get which filament).
 6. **Photos**: one real print photo beats five renders. Print one before you post.
@@ -157,13 +156,13 @@ Each is a new repo, same conventions as the others. Ask Claude with the prompt s
 `add-modeler` skill in the hub to put it on the site.
 
 1. **Box with slide lid + sorting tray.** The most-downloaded generator type on MakerWorld.
-   > Build a new modeler repo "box-modeler" like jerry-can-modeler: inner width / depth / height, wall,
+   > Build a new modeler repo "box-modeler" like name-tag-modeler: inner width / depth / height, wall,
    > corner radius, slide lid or no lid, divider rows and columns (sorting-tray mode), optional text on the
    > lid as a second colour, lid tolerance preset for Bambu. Multi-part 3MF, flat-bottom print, no supports.
 2. **Gridfinity bin label generator with batch export.** Seller-tier magnet.
    > Build "gridfinity-label-modeler": standard Gridfinity label sizes, text + icon from the icon-bead
    > charm library, and a batch mode: paste many lines, get one plate with all labels laid out for a 256 mm bed.
-3. **Sign / nameplate generator** reusing the jerry can text stack: multi-line text, arches, raised or
+3. **Sign / nameplate generator**: multi-line text, arches, raised or
    engraved, built-in stand or magnet pockets or screw holes.
 4. **Cookie cutter + stamp from SVG** (reuse the image-keychain SVG path).
 5. **Cable clamp / cable label clip.** Small, fast, printed by the dozen.
