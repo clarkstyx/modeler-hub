@@ -1,4 +1,4 @@
-import { SIGN, TARGETS, type StadiumParams } from "../core/params";
+import { SIGN, TARGETS, WING, type StadiumParams } from "../core/params";
 import type { Artwork, Issue } from "../core/types";
 import { type CrossSection } from "../shared/kernel";
 import { cs, csBounds, csOpening, csScale, csSimplify, csTranslate, csUnion } from "../shared/shapes";
@@ -96,4 +96,20 @@ export function layoutSign(p: StadiumParams, art: Artwork | null, maxW: number, 
     capHeight,
     emblemH,
   };
+}
+
+/** The sign text alone, fitted into `maxW` × `maxH` for the wall faces beside the tower; null when it would be under 3 mm. */
+export function layoutWingText(p: StadiumParams, maxW: number, maxH: number, issues: Issue[]): { section: CrossSection; capHeight: number } | null {
+  const text = p.text.replace(/\s+/g, " ").trim();
+  if (!text || maxW < 8 || maxH < WING.minCap) return null;
+  const probe = layoutText(text, p.font, 10, 0.06, 1.2);
+  if (probe.width <= 0) return null;
+  const capHeight = Math.min(WING.maxCap, maxH, (maxW * 10) / probe.width);
+  if (capHeight < WING.minCap) {
+    issues.push({ severity: "info", message: `No room for the lettering on the walls beside the entrance (it would be ${capHeight.toFixed(1)} mm tall); it stays on the tower only.` });
+    return null;
+  }
+  const raw = cs(layoutText(text, p.font, capHeight, 0.06, 1.2).rings, "Positive");
+  const clean = csSimplify(csOpening(raw, p.nozzle / 2), 0.01);
+  return clean.isEmpty() ? null : { section: clean, capHeight };
 }

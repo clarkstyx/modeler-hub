@@ -1,11 +1,11 @@
-import { AWNING, DOOR, MAST, PILASTER, PLINTH, SIGN, TRIM, derive, rad, type Derived, type StadiumParams } from "../core/params";
+import { AWNING, DOOR, MAST, PILASTER, PLINTH, SEAT, SIGN, TRIM, WING, derive, rad, type Derived, type StadiumParams } from "../core/params";
 import type { Artwork, Issue, Part } from "../core/types";
 import { kernel, track, type Manifold } from "../shared/kernel";
 import { manifoldToMesh } from "../shared/mesh";
 import { box, mIntersect, mSubtract, mUnion, prism, segmentsFor } from "../shared/shapes";
 import { buildFloodlight, placeFlat, placeStanding, type Floodlight } from "./buildFloodlight";
 import { archRing, at, extrudeX, extrudeY, polygon, rectRing, revolve, rotZ, spin } from "./frames";
-import { layoutSign } from "./sign";
+import { layoutSign, layoutWingText } from "./sign";
 
 /** One printed object: the stadium, one floodlight, or the fit test. */
 export interface Printed {
@@ -39,6 +39,7 @@ export interface BuildResult {
 
 const OBJ = "stadium";
 const big = 1e4;
+const angleDiffDeg = (a: number, b: number) => ((((a - b) % 360) + 540) % 360) - 180;
 
 /**
  * Booleans between solids that share a face can leave zero-volume shells of
@@ -88,27 +89,30 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
   const zBase = p.baseThickness;
   const r0 = d.ri + p.wall;
   const yWall = d.wallOuter;
-  const seats: Manifold[] = []; // cream
-  const accent: Manifold[] = []; // red
-  const signage: Manifold[] = []; // dark blue
-  const doorSkins: Manifold[] = []; // dark blue, inside the wall
-  const signArt: Manifold[] = []; // cream, raised on the sign
+  const seats: Manifold[] = []; // accent: slabs on the treads
+  const accent: Manifold[] = []; // accent: awnings, the band, wing lettering
+  const signage: Manifold[] = []; // sign colour: the panel
+  const doorSkins: Manifold[] = []; // sign colour, inside the wall
+  const signArt: Manifold[] = []; // facade colour, raised on the sign
+  const facadeParts: Manifold[] = []; // facade colour: the wall ring, columns, tower
 
   // ---- 1. solid block: base plate, the body up to the concourse, the exterior wall
-  const block = prism(polygon(N, yWall), 0, d.zSeatTop);
-  const wall = prism(track(polygon(N, yWall).subtract(polygon(N, d.wallInner))), 0, d.wallHeight);
+  // The structure (grey) is the base plate and the block inside the walls; the exterior wall ring stands on the base
+  // plate as the facade (its own colour), touching the block along the inner polygon.
+  const block = prism(polygon(N, d.wallInner), 0, d.zSeatTop);
   const base = prism(polygon(N, d.baseApothem), 0, zBase);
-  let body = mUnion([base, block, wall]);
+  let body = mUnion([base, block]);
+  facadeParts.push(prism(track(polygon(N, yWall).subtract(polygon(N, d.wallInner))), zBase, d.wallHeight));
 
   // ---- 2. the bowl: the cavity, the rim ledge, and everything above the ledge out to the last row
   body = mSubtract(body, revolve([[0, d.zFloor], [d.ri, d.zFloor], [d.ri, d.zRim], [d.rSeats, d.zRim], [d.rSeats, d.zSeatTop + big], [0, d.zSeatTop + big]], seg));
 
-  // ---- 3. seating: a stepped ring standing on the ledge, cut by the aisles; in the aisles the structure carries half-step stairs
+  // ---- 3. seating: a stepped ring standing on the ledge; stair aisles at the corners with half steps; a raised seat slab on each tread
   const steps: [number, number][] = [[r0, d.zRim]];
   for (let k = 1; k <= p.rows; k++) steps.push([r0 + (k - 1) * p.rowTread, d.zRim + k * p.rowRise], [r0 + k * p.rowTread, d.zRim + k * p.rowRise]);
   steps.push([d.rSeats, d.zRim]);
-  const aisles = mUnion(d.cornerAngles.map((a) => sideBox(a, -p.aisleWidth / 2, -(d.rSeats + 1), d.zRim - 1, p.aisleWidth / 2, -(r0 - 1), d.zSeatTop + 2)));
-  seats.push(dropSlivers(mSubtract(revolve(steps, seg), aisles)));
+  const aisleBoxes = (w: number) => mUnion(d.cornerAngles.map((a) => sideBox(a, -w / 2, -(d.rSeats + 1), d.zRim - 1, w / 2, -(r0 - 1), d.zSeatTop + 2)));
+  const aisles = aisleBoxes(p.aisleWidth);
   const halfSteps = p.rowTread / 2 >= 0.8 && p.rowRise / 2 >= 2 * p.layerHeight;
   const stairProfile: [number, number][] = [[r0, d.zRim]];
   for (let k = 1; k <= p.rows; k++) {
@@ -117,15 +121,24 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
     stairProfile.push([ri + (halfSteps ? p.rowTread / 2 : 0), zk + p.rowRise], [ri + p.rowTread, zk + p.rowRise]);
   }
   stairProfile.push([d.rSeats, d.zRim]);
-  body = mUnion([body, dropSlivers(mIntersect(revolve(stairProfile, seg), aisles))]);
+  body = mUnion([body, dropSlivers(mSubtract(revolve(steps, seg), aisles)), dropSlivers(mIntersect(revolve(stairProfile, seg), aisles))]);
+  const slabW = p.rowTread - SEAT.front - SEAT.back;
+  if (slabW >= SEAT.minWidth) {
+    const slabs: [number, number][][] = [];
+    for (let k = 1; k <= p.rows; k++) {
+      const ri = r0 + (k - 1) * p.rowTread + SEAT.front, z = d.zRim + k * p.rowRise;
+      slabs.push(rectRing(ri, z, ri + slabW, z + SEAT.raise));
+    }
+    seats.push(dropSlivers(mSubtract(revolve(slabs, seg), aisleBoxes(p.aisleWidth + 2 * SEAT.back))));
+  }
 
   // ---- 4. exterior architecture: corner columns, pilasters, doors with awnings, the band along the top
   const colTop = d.wallHeight - TRIM.height;
-  const features: Manifold[] = [];
+  const features = facadeParts;
   const recesses: Manifold[] = [];
   for (const a of d.cornerAngles) {
     const hw = PILASTER.cornerWidth / 2;
-    features.push(sideBox(a, -hw, -(d.wallCorner + PILASTER.cornerOut), 0, hw, -(d.wallCorner - 1.6), colTop));
+    features.push(sideBox(a, -hw, -(d.wallCorner + PILASTER.cornerOut), zBase, hw, -(d.wallCorner - 1.6), colTop));
   }
   // Doors shrink with a low wall so they stay in proportion. Above the concourse the wall is
   // free-standing, so a recess there must leave two nozzle widths of wall.
@@ -135,26 +148,39 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
   const sideDoorDepth = doorTop > d.zSeatTop ? Math.min(DOOR.depth, p.wallThickness - 2 * p.nozzle) : DOOR.depth;
   for (const a of d.sideAngles) {
     const front = Math.abs(a + 90) < 1e-9;
-    const pil = (x: number) => features.push(sideBox(a, x - PILASTER.width / 2, -(yWall + PILASTER.out), 0, x + PILASTER.width / 2, -(yWall - 0.5), colTop));
+    const pil = (x: number) => features.push(sideBox(a, x - PILASTER.width / 2, -(yWall + PILASTER.out), zBase, x + PILASTER.width / 2, -(yWall - 0.5), colTop));
     if (front) {
       const xp = d.towerWidth / 2 + 3 + PILASTER.width / 2;
       if (xp + PILASTER.width / 2 < d.sideLength / 2 - PILASTER.cornerWidth - 1) { pil(xp); pil(-xp); }
       continue;
     }
-    if (d.sideLength >= 24) { pil(d.sideLength * 0.28); pil(-d.sideLength * 0.28); }
+    const midPilasters = d.sideLength >= 24;
+    if (midPilasters) { pil(d.sideLength * 0.28); pil(-d.sideLength * 0.28); }
+    let clearAbove = zBase + 1;
     if (sideDoorDepth >= 0.6 && d.sideLength >= doorW + 2 * PILASTER.width + 6 && d.wallHeight > doorTop + AWNING.out + 3) {
       const dw = doorway(yWall, doorW, doorH, a, zBase, sideDoorDepth);
       recesses.push(dw.recess);
       doorSkins.push(dw.skin);
       accent.push(dw.awning);
+      clearAbove = dw.top + 1;
+    }
+    // Lettering on the two faces beside the entrance, like a ballpark's name across its wings.
+    const wing = Math.abs(angleDiffDeg(a, -90)) < 360 / N + 1e-6;
+    if (wing) {
+      const maxW = midPilasters ? 2 * (d.sideLength * 0.28 - PILASTER.width / 2 - 1) : d.sideLength - 2 * PILASTER.cornerWidth - 4;
+      const maxH = colTop - 1 - clearAbove;
+      const text = layoutWingText(p, maxW, maxH, issues);
+      if (text) {
+        const zc = (clearAbove + colTop - 1) / 2;
+        accent.push(spin(extrudeY(track(text.section.translate([0, zc])), -yWall - WING.raise, -yWall), a));
+      }
     }
   }
-  body = mUnion([body, ...features]);
 
   // ---- 5. entrance tower on the front: the big door, its awning, the sign panel and the raised artwork
   const tw = d.towerWidth;
   const towerBack = -(yWall - p.wallThickness);
-  body = mUnion([body, box(-tw / 2, -d.towerFront, 0, tw / 2, towerBack, d.towerTop)]);
+  features.push(box(-tw / 2, -d.towerFront, zBase, tw / 2, towerBack, d.towerTop));
   // The front door is bigger than the side doors, but shrinks until a sign of at least 5 mm fits above it.
   const zTop = d.towerTop - TRIM.height - 1.2;
   let fd = doorway(d.towerFront, 1, 1, -90, zBase, DOOR.depth);
@@ -204,27 +230,33 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
         sockets.push(at(rotZ(box(-MAST.pegDepth / 2 - c, -MAST.pegWidth / 2 - c, plinthTop - PLINTH.socketDepth, MAST.pegDepth / 2 + c, MAST.pegWidth / 2 + c, plinthTop + 1), s.angle), cx, cy, 0));
       }
     }
-    body = mUnion([body, ...plinths, ...(p.lights === "attached" ? standing.map((f) => f.mast) : [])]);
+    // Plinths sit against the wall at the corners; the facade keeps that material, the plinth the rest.
+    const plinthSolid = mSubtract(mUnion(plinths), mUnion(features));
+    body = mUnion([body, plinthSolid, ...(p.lights === "attached" ? standing.map((f) => f.mast) : [])]);
   }
 
-  // ---- 7. cut the recesses, the door skins, the band's skin and the sockets out of the structure
-  body = dropSlivers(mSubtract(body, mUnion([...recesses, ...doorSkins, ...accent, ...sockets])));
-  const voids = voidCount(body);
-  const bodyPieces = solidPieces(body).length - voids;
-  if (bodyPieces !== 1) issues.push({ severity: "error", message: `The stadium structure is not one piece (${bodyPieces} separate pieces). Please report these settings.` });
-  if (voids) issues.push({ severity: "error", message: `The structure has ${voids} sealed pocket(s) inside it. Please report these settings.` });
+  // ---- 7. cut the recesses, door skins and the band's skin out of the facade; door skins and sockets out of the structure
+  const facade = dropSlivers(mSubtract(mUnion(features), mUnion([...recesses, ...doorSkins, ...accent])));
+  // Door skins reach a little past the wall into the block behind it, so they come out of the structure too.
+  body = dropSlivers(mSubtract(body, mUnion([...recesses, ...doorSkins, ...sockets])));
+  const voids = voidCount(body) + voidCount(facade);
+  const bodyPieces = solidPieces(body).length - voidCount(body);
+  const facadePieces = solidPieces(facade).length - voidCount(facade);
+  if (bodyPieces !== 1 || facadePieces !== 1) issues.push({ severity: "error", message: `The stadium is not one piece (structure ${bodyPieces}, facade ${facadePieces}). Please report these settings.` });
+  if (voids) issues.push({ severity: "error", message: `The stadium has ${voids} sealed pocket(s) inside it. Please report these settings.` });
 
   const stadiumSolids: Solid[] = [
     { name: "STRUCTURE", hex: p.colorStructure, solid: body },
-    { name: "SEATS", hex: p.colorSeats, solid: mUnion(seats) },
-    { name: "SIGN_ART", hex: p.colorSeats, solid: mUnion(signArt) },
+    { name: "FACADE", hex: p.colorFacade, solid: facade },
+    { name: "SEATS", hex: p.colorAccent, solid: mUnion(seats) },
+    { name: "SIGN_ART", hex: p.colorFacade, solid: mUnion(signArt) },
     { name: "SIGN", hex: p.colorSign, solid: mUnion(signage) },
     { name: "DOORS", hex: p.colorSign, solid: mUnion(doorSkins) },
     { name: "TRIM", hex: p.colorAccent, solid: mUnion(accent) },
   ];
   if (p.lights === "attached") {
     stadiumSolids.push({ name: "LAMP_HEADS", hex: p.colorSign, solid: mUnion(standing.map((f) => f.head)) });
-    stadiumSolids.push({ name: "LAMPS", hex: p.colorSeats, solid: mUnion(standing.map((f) => f.lamps)) });
+    stadiumSolids.push({ name: "LAMPS", hex: p.colorFacade, solid: mUnion(standing.map((f) => f.lamps)) });
   }
   const live = stadiumSolids.filter((s) => !s.solid.isEmpty());
   const toPart = (object: string, name: string, hex: string, solid: Manifold): Part => ({ name, object, hex: hex.toUpperCase(), mesh: manifoldToMesh(solid), volume: solid.volume() });
@@ -239,8 +271,8 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
     standing.forEach((f, i) => {
       const obj = `floodlight-${i + 1}`;
       const flat = placeFlat(lights, 0, (i - (standing.length - 1) / 2) * pitch);
-      floodlights.push({ object: obj, parts: [toPart(obj, "MAST", p.colorStructure, flat.mast), toPart(obj, "HEAD", p.colorSign, flat.head), toPart(obj, "LAMPS", p.colorSeats, flat.lamps)] });
-      assembled.push(toPart(obj, "MAST", p.colorStructure, f.mast), toPart(obj, "HEAD", p.colorSign, f.head), toPart(obj, "LAMPS", p.colorSeats, f.lamps));
+      floodlights.push({ object: obj, parts: [toPart(obj, "MAST", p.colorStructure, flat.mast), toPart(obj, "HEAD", p.colorSign, flat.head), toPart(obj, "LAMPS", p.colorFacade, flat.lamps)] });
+      assembled.push(toPart(obj, "MAST", p.colorStructure, f.mast), toPart(obj, "HEAD", p.colorSign, f.head), toPart(obj, "LAMPS", p.colorFacade, f.lamps));
     });
     // Fit test: a plinth with the socket at the chosen clearance, and a 12 mm stub of mast with its peg.
     const half = PLINTH.size / 2, c = p.pegClearance, top = PLINTH.height + 1.2;

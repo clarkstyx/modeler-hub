@@ -60,7 +60,7 @@ describe("default stadium", () => {
     expect(errorsOf(r)).toEqual([]);
     expect(r.exportable).toBe(true);
     expect(r.meshesFailed).toBe(0);
-    expect(stadiumParts(r).map((p) => p.name)).toEqual(["STRUCTURE", "SEATS", "SIGN_ART", "SIGN", "DOORS", "TRIM"]);
+    expect(stadiumParts(r).map((p) => p.name)).toEqual(["STRUCTURE", "FACADE", "SEATS", "SIGN_ART", "SIGN", "DOORS", "TRIM"]);
     expect(new Set(r.assembled.map((p) => p.hex)).size).toBe(4);
     expect(r.readout!.capHeight).toBeGreaterThan(3.5);
     expect(r.groups.floodlights.length).toBe(4);
@@ -79,14 +79,20 @@ describe("default stadium", () => {
     // solid floor under the cavity and solid rim beside it
     expect(inside(s.mesh, 0.2, y, d.zFloor - 0.5)).toBe(true);
     expect(inside(s.mesh, ri + 0.6, y, d.zRim - 0.5)).toBe(true);
-    // the seats start right outside the rim, one row up, and never reach into the cavity
+    // the steps start right outside the rim and never reach into the cavity; a seat slab sits on every tread
+    expect(inside(s.mesh, ri + DEFAULT_PARAMS.wall + 1, y, d.zRim + 1)).toBe(true);
+    expect(inside(s.mesh, ri - 0.6, y, d.zRim + 1)).toBe(false);
     const seats = part(r, "SEATS");
-    expect(inside(seats.mesh, ri + DEFAULT_PARAMS.wall + 1, y, d.zRim + 1)).toBe(true);
-    expect(inside(seats.mesh, ri - 0.6, y, d.zRim + 1)).toBe(false);
+    const r0 = ri + DEFAULT_PARAMS.wall;
+    expect(inside(seats.mesh, r0 + DEFAULT_PARAMS.rowTread / 2, y, d.zRim + DEFAULT_PARAMS.rowRise + 0.3)).toBe(true);
+    expect(inside(seats.mesh, r0 + 0.2, y, d.zRim + DEFAULT_PARAMS.rowRise + 0.3)).toBe(false); // set back from the riser edge
     const sb = bounds([seats]);
-    expect(Math.hypot(sb.minX, 0)).toBeGreaterThanOrEqual(0); // no NaN
-    expect(sb.minZ).toBeCloseTo(d.zRim, 5);
-    expect(sb.maxZ).toBeCloseTo(d.zSeatTop, 5);
+    expect(sb.minZ).toBeCloseTo(d.zRim + DEFAULT_PARAMS.rowRise, 5);
+    expect(sb.maxZ).toBeCloseTo(d.zSeatTop + 0.6, 5);
+    // the facade is the wall ring: solid in the wall, empty inside the bowl
+    const f = part(r, "FACADE");
+    expect(inside(f.mesh, 0.2, -(d.wallOuter - 1), d.wallHeight - 5)).toBe(true);
+    expect(inside(f.mesh, 0.2, -(d.wallInner - 1), d.wallHeight - 5)).toBe(false);
   });
 
   it("stands on the bed, fits the footprint and height the readout reports", () => {
@@ -130,6 +136,7 @@ describe("parameter rules and automatic raises", () => {
     const r = generate(P({ wallHeight: 10, baseMargin: 2, lightHeight: 20 }), null);
     expect(errorsOf(r)).toEqual([]);
     expect(messages(r)).toMatch(/Exterior wall raised/);
+    expect(stadiumParts(r).map((p) => p.name)).toContain("FACADE");
     expect(messages(r)).toMatch(/Base margin widened/);
     expect(messages(r)).toMatch(/Floodlights raised/);
   });
@@ -202,12 +209,12 @@ describe("exports", () => {
     expect(stl.length).toBe(84 + n * 50);
   });
   it("settings round-trip and junk is ignored", () => {
-    const p = P({ text: "HI", lights: "none", colorSeats: "#ABCDEF" });
+    const p = P({ text: "HI", lights: "none", colorFacade: "#ABCDEF" });
     expect(parseRecipe(JSON.stringify(toRecipe(p)))).toEqual(p);
-    const junk = parseRecipe({ params: { lights: "laser", innerDiameter: 9999, colorSeats: "red", rows: "x" } });
+    const junk = parseRecipe({ params: { lights: "laser", innerDiameter: 9999, colorFacade: "red", rows: "x" } });
     expect(junk.lights).toBe("separate");
     expect(junk.innerDiameter).toBe(160);
-    expect(junk.colorSeats).toBe(DEFAULT_PARAMS.colorSeats);
+    expect(junk.colorFacade).toBe(DEFAULT_PARAMS.colorFacade);
     expect(junk.rows).toBe(DEFAULT_PARAMS.rows);
   });
 });

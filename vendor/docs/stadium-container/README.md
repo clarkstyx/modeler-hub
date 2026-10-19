@@ -16,7 +16,8 @@ Valencia Modelers; the hub serves it at `/m/stadium-container/`.
 - **Sign**: text in four fonts, an uploaded SVG emblem above it, emblem height.
 - **Floodlights**: separate parts that peg into sockets on the base (print lying flat; a fit test is
   included and the peg clearance is adjustable), printed in place, or none.
-- **Colours**: structure, seats/letters/lamps, accent (awnings and the top band), sign/doors/lamp heads.
+- **Colours**: structure (base, steps, masts), facade (walls, tower, letters, lamps), accent (seat rows, awnings,
+  the top band, the lettering on the wings beside the entrance), sign panel / doors / lamp heads.
 
 ## Printing
 

@@ -130,7 +130,7 @@ export default function App() {
           <label className="field"><div className="row"><span>Sign text</span></div>
             <input className="text-input" value={params.text} onChange={(e) => set("text", e.target.value)} placeholder="BALLPARK" maxLength={24} /></label>
           <Choice label="Font" value={params.font} set={(v) => set("font", v as FontId)} options={(Object.keys(FONT_LABELS) as FontId[]).map((f) => ({ value: f, label: FONT_LABELS[f] }))} />
-          <label className="field"><span>Emblem: SVG with filled shapes (printed in the seat colour above the text)</span><br />{fileInput(".svg,image/svg+xml")}</label>
+          <label className="field"><span>Emblem: SVG with filled shapes (raised on the tower sign, above the text)</span><br />{fileInput(".svg,image/svg+xml")}</label>
           {art && <div className="btns"><span>{art.name}</span><button onClick={() => setArt(null)}>Remove</button></div>}
           {art && <Num label="Emblem height (0 = automatic)" value={params.emblemHeight} set={(v) => set("emblemHeight", v)} {...LIMITS.emblemHeight} />}
           {r && r.capHeight > 0 && <small className="hint">Letters {r.capHeight.toFixed(1)} mm tall, raised {TARGETS.stroke} mm.</small>}
@@ -144,10 +144,10 @@ export default function App() {
         </Section>
 
         <Section title="6 · Colours" open={false}>
-          <Colour label="Structure (walls, base, masts)" value={params.colorStructure} set={(v) => set("colorStructure", v)} />
-          <Colour label="Seats, letters and lamps" value={params.colorSeats} set={(v) => set("colorSeats", v)} />
-          <Colour label="Accent (awnings, top band)" value={params.colorAccent} set={(v) => set("colorAccent", v)} />
-          <Colour label="Sign, doors and lamp heads" value={params.colorSign} set={(v) => set("colorSign", v)} />
+          <Colour label="Structure (base, steps, masts)" value={params.colorStructure} set={(v) => set("colorStructure", v)} />
+          <Colour label="Facade (walls, tower, letters, lamps)" value={params.colorFacade} set={(v) => set("colorFacade", v)} />
+          <Colour label="Accent (seats, awnings, top band, wing text)" value={params.colorAccent} set={(v) => set("colorAccent", v)} />
+          <Colour label="Sign panel, doors, lamp heads" value={params.colorSign} set={(v) => set("colorSign", v)} />
           <small className="hint">Four colours at most, one AMS. Pick the same colour twice to use fewer.</small>
         </Section>
 

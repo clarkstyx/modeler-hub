@@ -34,7 +34,7 @@ const cases: [string, StadiumParams, Artwork | null][] = [
   ["serif-emblem", P({ text: "HOME", font: "serif" }), emblem],
   ["emblem-only", P({ text: "", emblemHeight: 12 }), emblem],
   ["nozzle-0.6", P({ nozzle: 0.6, layerHeight: 0.3 }), null],
-  ["two-colours", P({ colorSeats: "#8E9094", colorSign: "#C53B32" }), null],
+  ["two-colours", P({ colorFacade: "#8E9094", colorSign: "#C53B32" }), null],
 ];
 
 let failed = false;

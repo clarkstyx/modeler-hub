@@ -37,7 +37,7 @@ export interface StadiumParams {
   aisleWidth: number;
 
   // --- building
-  /** Height of the exterior wall, measured from the bed. Raised automatically to clear the top row. */
+  /** Height of the exterior wall, measured from the bed. Raised automatically to at least the top row. */
   wallHeight: number;
   /** Thickness of the exterior wall. */
   wallThickness: number;
@@ -61,9 +61,13 @@ export interface StadiumParams {
   pegClearance: number;
 
   // --- colours (at most four filaments)
+  /** Base, seating steps, stairs, concourse, masts. */
   colorStructure: string;
-  colorSeats: string;
+  /** Exterior walls, columns, the entrance tower, sign letters, lamps. */
+  colorFacade: string;
+  /** Seat rows, awnings, the band along the top, wing lettering. */
   colorAccent: string;
+  /** Sign panel, doors, lamp heads. */
   colorSign: string;
 
   // --- printer
@@ -82,9 +86,9 @@ export const DEFAULT_PARAMS: StadiumParams = {
   rowTread: 3,
   sections: 8,
   aisleWidth: 2,
-  wallHeight: 46,
+  wallHeight: 44,
   wallThickness: 2,
-  concourse: 3,
+  concourse: 2.5,
   baseThickness: 2.4,
   baseMargin: 8,
   text: "BALLPARK",
@@ -94,7 +98,7 @@ export const DEFAULT_PARAMS: StadiumParams = {
   lightHeight: 70,
   pegClearance: 0.15,
   colorStructure: "#8E9094",
-  colorSeats: "#F1E6CE",
+  colorFacade: "#F1E6CE",
   colorAccent: "#C53B32",
   colorSign: "#223B6B",
   nozzle: 0.4,
@@ -159,7 +163,11 @@ export const TOWER = { out: 3, above: 7, widthShare: 0.72, minWidth: 26, maxWidt
 /** Sign panel on the tower: standoff, margins, raised artwork height. */
 export const SIGN = { raise: 0.8, margin: 1.6, textRaise: 0.8, minCap: 3.5, maxCap: 9 };
 /** Floodlight mast (radial × tangential), peg below it, head plate, lamp bumps. */
-export const MAST = { depth: 3, width: 4, pegDepth: 2.2, pegWidth: 3.2, pegLength: 3, headWidth: 12, headHeight: 9, shoulder: 4, lamp: 2, lampGap: 1, lampRaise: 0.6 };
+export const MAST = { depth: 3, width: 5, pegDepth: 2.2, pegWidth: 3.2, pegLength: 3, headWidth: 14, headHeight: 13, shoulder: 4, lamp: 1.8, lampGap: 0.8, lampRaise: 0.6 };
+/** Seat rows: a raised slab on each tread, set back from the riser edge and the next riser. */
+export const SEAT = { raise: 0.6, front: 0.6, back: 0.4, minWidth: 0.8 };
+/** Lettering on the two wall faces beside the entrance tower. */
+export const WING = { raise: 0.8, minCap: 3, maxCap: 8 };
 /** Plinth the mast pegs into: footprint, height above the base, socket depth below its top. */
 export const PLINTH = { size: 7, height: 4, socketDepth: 3.2 };
 
@@ -221,7 +229,8 @@ export function derive(p: StadiumParams): Derived {
   const cosHalf = Math.cos(Math.PI / N);
   const tanHalf = Math.tan(Math.PI / N);
   const wallCorner = wallOuter / cosHalf;
-  const wallHeight = Math.max(p.wallHeight, zSeatTop + 1.2);
+  // The top row may sit almost level with the wall top (the upper deck shows from outside, like the reference).
+  const wallHeight = Math.max(p.wallHeight, zSeatTop + 0.4);
   const sideLength = 2 * wallOuter * tanHalf;
   const sideAngles = Array.from({ length: N }, (_, k) => norm(-90 + (360 * k) / N));
   const cornerAngles = Array.from({ length: N }, (_, k) => norm(-90 + 180 / N + (360 * k) / N));
