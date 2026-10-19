@@ -26,34 +26,59 @@ export function manifoldToMesh(m: Manifold): TriMesh {
  * triangles this leaves behind (the kernel can emit two coincident vertices
  * where a cut edge meets a curve). The surface stays closed: a collapsed
  * triangle's two surviving edges cancel each other.
+ *
+ * The kernel also keeps some coincident vertices apart on purpose: where a
+ * surface touches itself at a point (its "merge vectors"), joining them would
+ * give an edge shared by more than two triangles. Any merge that does that is
+ * undone, so the result is always as manifold as the kernel's own mesh.
  */
 function weld(P: Float64Array, I: Uint32Array): TriMesh {
   const nv = P.length / 3;
-  const remap = new Uint32Array(nv);
-  const seen = new Map<string, number>();
-  const kept: number[] = [];
-  for (let i = 0; i < nv; i++) {
-    const k = `${P[i * 3]},${P[i * 3 + 1]},${P[i * 3 + 2]}`;
-    const j = seen.get(k);
-    if (j === undefined) {
-      seen.set(k, kept.length);
-      remap[i] = kept.length;
-      kept.push(i);
-    } else remap[i] = j;
+  const keyOf = new Array<string>(nv);
+  for (let i = 0; i < nv; i++) keyOf[i] = `${P[i * 3]},${P[i * 3 + 1]},${P[i * 3 + 2]}`;
+  const keepApart = new Set<number>();
+  for (let round = 0; round < 8; round++) {
+    const remap = new Uint32Array(nv);
+    const seen = new Map<string, number>();
+    const kept: number[] = [];
+    for (let i = 0; i < nv; i++) {
+      const j = keepApart.has(i) ? undefined : seen.get(keyOf[i]);
+      if (j === undefined) {
+        if (!keepApart.has(i)) seen.set(keyOf[i], kept.length);
+        remap[i] = kept.length;
+        kept.push(i);
+      } else remap[i] = j;
+    }
+    const out: number[] = [];
+    for (let t = 0; t < I.length; t += 3) {
+      const a = remap[I[t]], b = remap[I[t + 1]], c = remap[I[t + 2]];
+      if (a === b || b === c || a === c) continue;
+      out.push(a, b, c);
+    }
+    // Directed edges used more than once mark merges that broke the surface: keep those vertices apart and retry.
+    const count = new Map<number, number>();
+    const n = kept.length;
+    for (let t = 0; t < out.length; t += 3)
+      for (const [u, v] of [[out[t], out[t + 1]], [out[t + 1], out[t + 2]], [out[t + 2], out[t]]]) {
+        const k = u * n + v;
+        count.set(k, (count.get(k) ?? 0) + 1);
+      }
+    const bad = new Set<number>();
+    for (const [k, c] of count) if (c > 1) { bad.add(Math.floor(k / n)); bad.add(k % n); }
+    if (bad.size) {
+      let grew = false;
+      for (let i = 0; i < nv; i++) if (bad.has(remap[i]) && !keepApart.has(i)) { keepApart.add(i); grew = true; }
+      if (grew) continue;
+    }
+    const positions = new Float64Array(n * 3);
+    kept.forEach((src, dst) => {
+      positions[dst * 3] = P[src * 3];
+      positions[dst * 3 + 1] = P[src * 3 + 1];
+      positions[dst * 3 + 2] = P[src * 3 + 2];
+    });
+    return { positions, indices: new Uint32Array(out) };
   }
-  const positions = new Float64Array(kept.length * 3);
-  kept.forEach((src, dst) => {
-    positions[dst * 3] = P[src * 3];
-    positions[dst * 3 + 1] = P[src * 3 + 1];
-    positions[dst * 3 + 2] = P[src * 3 + 2];
-  });
-  const out: number[] = [];
-  for (let t = 0; t < I.length; t += 3) {
-    const a = remap[I[t]], b = remap[I[t + 1]], c = remap[I[t + 2]];
-    if (a === b || b === c || a === c) continue;
-    out.push(a, b, c);
-  }
-  return { positions, indices: new Uint32Array(out) };
+  return { positions: P, indices: I };
 }
 
 function area2(P: Float64Array, a: number, b: number, c: number): number {
