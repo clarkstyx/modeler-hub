@@ -2,7 +2,7 @@ import { AWNING, DOOR, MAST, PILASTER, SEAT, SIGN, TRIM, WINDOW, WING, derive, t
 import type { Artwork, Issue, Part } from "../core/types";
 import { kernel, track, type Manifold } from "../shared/kernel";
 import { manifoldToMesh } from "../shared/mesh";
-import { box, cs, mIntersect, mSubtract, mUnion, prism, segmentsFor } from "../shared/shapes";
+import { box, cs, csBounds, mIntersect, mSubtract, mUnion, prism, segmentsFor } from "../shared/shapes";
 import { buildFloodlight, placeFlat, placeStanding, socketBoxes, type Floodlight } from "./buildFloodlight";
 import { archRing, at, extrudeX, extrudeY, octagonRing, rectRing, revolve, spin } from "./frames";
 import { layoutSign, layoutWingText } from "./sign";
@@ -39,6 +39,7 @@ export interface BuildResult {
 
 const OBJ = "stadium";
 const big = 1e4;
+const angleDiffDeg = (a: number, b: number) => ((((a - b) % 360) + 540) % 360) - 180;
 
 /**
  * Booleans between solids that share a face can leave zero-volume shells of
@@ -160,6 +161,10 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
       features.push(spin(m, a));
     };
     const midPilasters = len >= 24 && kind !== "short";
+    // The two short sides beside the logo carry the main entrances and the name banners (like the reference);
+    // the other short sides get an entrance too. The long left, right and back sides stay plain.
+    const entrance = kind === "short";
+    const banner = kind === "short" && Math.abs(angleDiffDeg(a, -90)) < 90;
     let clearAbove = zBase + 1;
     let textBottom = Infinity, textTop = -Infinity;
     if (kind === "front") {
@@ -168,23 +173,26 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
       masks.push(box(-tw / 2 - 0.3, -(d.towerFront + 1), -1, tw / 2 + 0.3, -(face - 1), d.towerTop + 1));
     } else {
       if (midPilasters) { pil(len * 0.28); pil(-len * 0.28); }
-      if (kind !== "short" && sideDoorDepth >= 0.6 && len >= doorW + 2 * PILASTER.width + 6 && d.wallHeight > doorTop + AWNING.out + 3) {
+      if (entrance && sideDoorDepth >= 0.6 && len >= doorW + 2 * PILASTER.cornerWidth + 4 && d.wallHeight > doorTop + AWNING.out + 3) {
         const dw = doorway(face, doorW, doorH, a, zBase, sideDoorDepth);
         recesses.push(dw.recess);
         doorSkins.push(dw.skin);
         accent.push(dw.awning);
         clearAbove = dw.top + 1;
       }
-      // The ballpark's name as a banner over the main entrances on the left and right sides.
-      if (kind === "side") {
-        const maxW = midPilasters ? 2 * (len * 0.28 - PILASTER.width / 2 - 1) : len - 2 * PILASTER.cornerWidth - 4;
-        const maxH = colTop - 1 - clearAbove;
+      if (banner) {
+        const maxW = len - 2 * PILASTER.cornerWidth - 2 - 2 * WING.margin;
+        const maxH = colTop - 1.5 - clearAbove - 2 * WING.margin;
         const text = layoutWingText(p, maxW, maxH, issues);
         if (text) {
           const zc = (clearAbove + colTop - 1) / 2;
-          accent.push(spin(extrudeY(track(text.section.translate([0, zc])), -face - WING.raise, -face), a));
-          textBottom = zc - text.capHeight / 2;
-          textTop = zc + text.capHeight / 2;
+          const tb = csBounds(text.section);
+          const pw = tb.w + 2 * WING.margin, ph = text.capHeight + 2 * WING.margin;
+          // A raised banner panel in the accent colour with the name raised on it in the facade colour.
+          accent.push(spin(extrudeY([rectRing(-pw / 2, zc - ph / 2, pw / 2, zc + ph / 2)], -face - WING.raise, -face), a));
+          signArt.push(spin(extrudeY(track(text.section.translate([0, zc])), -face - WING.raise - WING.textRaise, -face - WING.raise), a));
+          textBottom = zc - ph / 2;
+          textTop = zc + ph / 2;
           wingText = true;
         }
       }

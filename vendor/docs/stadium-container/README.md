@@ -2,9 +2,9 @@
 
 A miniature baseball stadium wrapped around an open round container. A baseball (about 74 mm) sits in
 the default cavity; the seats step up around it. The building is a square with its corners cut off:
-the front carries the entrance tower with your logo, the left and right sides the ballpark's name over
-a main entrance with its awning, and the four short diagonal sides each carry a lattice floodlight tower
-(two legs, X bracing, 6 × 3 lamps) whose legs plug into the wall top. A terrace in front leaves room for
+the front carries the entrance tower with your logo; the two short sides beside it carry the ballpark's
+name on a banner over a main entrance with its awning; all four short diagonal sides carry a lattice
+floodlight tower (two legs, X bracing, 6 × 3 lamps) whose legs plug into the wall top. A terrace in front leaves room for
 rocks and palms. Up to four filament colours, exported as a colour-ready 3MF or as STL. One of Clark's
 Valencia Modelers; the hub serves it at `/m/stadium-container/`.
 
@@ -15,7 +15,7 @@ Valencia Modelers; the hub serves it at `/m/stadium-container/`.
 - **Building**: corner size (1 = regular octagon, smaller = squarer), exterior wall height (raised
   automatically to the top row), wall thickness (thickened automatically to 4 mm so the floodlight legs fit),
   front terrace, concourse width, base thickness and margin.
-- **Sign**: text in four fonts on the tower and on the wings beside it; an uploaded emblem on the tower as SVG,
+- **Sign**: text in four fonts on the tower and on the banners beside it; an uploaded emblem on the tower as SVG,
   PNG or JPG (a bitmap has its background removed and is reduced to at most four colours; each colour prints in
   the nearest of your four filaments; with an emblem the tower shows it alone and the name moves to the wings),
   emblem height.

@@ -3,7 +3,8 @@
 A miniature baseball stadium around an open round container (a baseball fits the default): stepped
 seating; a chamfered-square building (long front/back/left/right sides, four short diagonals) with
 columns, window bands, arched doors and awnings; the logo tower on the front, name banners over the
-side entrances, and four lattice floodlight towers plugged into the wall top on the short sides. One of Clark's Valencia Modelers, kept in the
+entrances on the two short sides beside it, and four lattice floodlight towers plugged into the wall top
+on the short sides. One of Clark's Valencia Modelers, kept in the
 hub under `modelers/stadium-container/` and served at `/m/stadium-container/` behind the Patreon gate
 (Maker tier). Clark is a beginner programmer who vibe-codes: explain in plain words, keep changes
 small, and verify in the browser.

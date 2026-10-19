@@ -69,7 +69,7 @@ export interface StadiumParams {
   colorStructure: string;
   /** Exterior walls, columns, the entrance tower, sign letters, lamps. */
   colorFacade: string;
-  /** Seat rows, awnings, the band along the top, wing lettering. */
+  /** Seat rows, awnings, the band along the top, the name banners. */
   colorAccent: string;
   /** Sign panel, doors, lamp heads. */
   colorSign: string;
@@ -90,7 +90,7 @@ export const DEFAULT_PARAMS: StadiumParams = {
   rowTread: 3,
   sections: 8,
   aisleWidth: 2,
-  cornerSize: 0.6,
+  cornerSize: 0.75,
   wallHeight: 44,
   wallThickness: 4,
   frontApron: 14,
@@ -184,7 +184,7 @@ export const SEAT = { raise: 0.6, front: 0.6, back: 0.4, minWidth: 0.8 };
 /** Recessed window bands on the facade: height, depth into the wall, gap under the top band and above the awnings. */
 export const WINDOW = { height: 1.6, depth: 0.6, belowTop: 1.6, aboveAwning: 1.5 };
 /** Lettering on the two wall faces beside the entrance tower. */
-export const WING = { raise: 0.8, minCap: 3, maxCap: 8 };
+export const WING = { raise: 0.8, textRaise: 0.8, margin: 0.9, minCap: 3, maxCap: 8 };
 
 /** One side of the building, seen from the centre. */
 export interface Side {

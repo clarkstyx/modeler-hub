@@ -153,7 +153,7 @@ export default function App() {
         <Section title="6 · Colours" open={false}>
           <Colour label="Structure (base, steps, floodlight towers)" value={params.colorStructure} set={(v) => set("colorStructure", v)} />
           <Colour label="Facade (walls, tower, letters, lamps)" value={params.colorFacade} set={(v) => set("colorFacade", v)} />
-          <Colour label="Accent (seats, awnings, top band, wing text)" value={params.colorAccent} set={(v) => set("colorAccent", v)} />
+          <Colour label="Accent (seats, awnings, top band, name banners)" value={params.colorAccent} set={(v) => set("colorAccent", v)} />
           <Colour label="Sign panel, doors, lamp heads" value={params.colorSign} set={(v) => set("colorSign", v)} />
           <small className="hint">Four colours at most, one AMS. Pick the same colour twice to use fewer.</small>
         </Section>

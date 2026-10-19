@@ -143,7 +143,7 @@ export function layoutWingText(p: StadiumParams, maxW: number, maxH: number, iss
   if (probe.width <= 0) return null;
   const capHeight = Math.min(WING.maxCap, maxH, (maxW * 10) / probe.width);
   if (capHeight < WING.minCap) {
-    issues.push({ severity: "info", message: `No room for the lettering on the walls beside the entrance (it would be ${capHeight.toFixed(1)} mm tall); it stays on the tower only.` });
+    issues.push({ severity: "info", message: `No room for the name banners beside the entrance (letters would be ${capHeight.toFixed(1)} mm tall); the name stays on the tower only.` });
     return null;
   }
   const raw = cs(layoutText(text, p.font, capHeight, 0.06, 1.2).rings, "Positive");
