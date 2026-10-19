@@ -169,14 +169,25 @@ describe("parameter rules and automatic raises", () => {
 });
 
 describe("sign", () => {
-  it("long text shrinks and warns; an emblem is raised in the seat colour", () => {
+  it("long text shrinks and warns; an emblem keeps each SVG colour as its own raised piece in the nearest filament", () => {
     const long = generate(P({ text: "THE GRAND OLD BALLPARK" }), null);
     expect(long.exportable).toBe(true);
     expect(messages(long)).toMatch(/Sign letters are only|thinner than one nozzle|left off/);
-    const star: Artwork = { name: "star.svg", layers: [{ hex: "#FF0000", rings: [[[0, 0], [60, 0], [60, 60], [0, 60]]] }], bounds: { minX: 0, minY: 0, maxX: 60, maxY: 60 } };
-    const withArt = generate(P({ text: "HOME" }), star);
+    const crest: Artwork = {
+      name: "crest.svg",
+      layers: [
+        { hex: "#C53B32", rings: [[[0, 0], [60, 0], [60, 60], [0, 60]]] }, // red square
+        { hex: "#888888", rings: [[[15, 15], [45, 15], [45, 45], [15, 45]]] }, // grey square on top
+      ],
+      bounds: { minX: 0, minY: 0, maxX: 60, maxY: 60 },
+    };
+    const plain = generate(P({ text: "HOME" }), null);
+    const withArt = generate(P({ text: "HOME" }), crest);
     expect(errorsOf(withArt)).toEqual([]);
-    expect(part(withArt, "SIGN_ART").volume).toBeGreaterThan(part(generate(P({ text: "HOME" }), null), "SIGN_ART").volume + 20);
+    expect(stadiumParts(withArt).map((p) => p.name)).toContain("EMBLEM"); // the grey piece
+    expect(part(withArt, "TRIM").volume).toBeGreaterThan(part(plain, "TRIM").volume + 20); // the red frame
+    expect(part(withArt, "EMBLEM").volume).toBeGreaterThan(5);
+    withArena(() => expect(largestOverlap(buildStadium(P({ text: "HOME" }), crest).stadiumSolids).volume).toBeLessThan(0.01));
   });
   it("no text: no raised artwork part, the panel stays", () => {
     const r = generate(P({ text: "" }), null);

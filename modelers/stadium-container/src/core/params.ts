@@ -166,6 +166,8 @@ export const SIGN = { raise: 0.8, margin: 1.6, textRaise: 0.8, minCap: 3.5, maxC
 export const MAST = { depth: 3, width: 5, pegDepth: 2.2, pegWidth: 3.2, pegLength: 3, headWidth: 14, headHeight: 13, shoulder: 4, lamp: 1.8, lampGap: 0.8, lampRaise: 0.6 };
 /** Seat rows: a raised slab on each tread, set back from the riser edge and the next riser. */
 export const SEAT = { raise: 0.6, front: 0.6, back: 0.4, minWidth: 0.8 };
+/** Recessed window bands on the facade: height, depth into the wall, gap under the top band and above the awnings. */
+export const WINDOW = { height: 1.6, depth: 0.6, belowTop: 1.6, aboveAwning: 1.5 };
 /** Lettering on the two wall faces beside the entrance tower. */
 export const WING = { raise: 0.8, minCap: 3, maxCap: 8 };
 /** Plinth the mast pegs into: footprint, height above the base, socket depth below its top. */

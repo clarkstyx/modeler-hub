@@ -1,4 +1,4 @@
-import { AWNING, DOOR, MAST, PILASTER, PLINTH, SEAT, SIGN, TRIM, WING, derive, rad, type Derived, type StadiumParams } from "../core/params";
+import { AWNING, DOOR, MAST, PILASTER, PLINTH, SEAT, SIGN, TRIM, WINDOW, WING, derive, rad, type Derived, type StadiumParams } from "../core/params";
 import type { Artwork, Issue, Part } from "../core/types";
 import { kernel, track, type Manifold } from "../shared/kernel";
 import { manifoldToMesh } from "../shared/mesh";
@@ -94,6 +94,7 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
   const signage: Manifold[] = []; // sign colour: the panel
   const doorSkins: Manifold[] = []; // sign colour, inside the wall
   const signArt: Manifold[] = []; // facade colour, raised on the sign
+  const emblemGrey: Manifold[] = []; // structure colour pieces of the emblem
   const facadeParts: Manifold[] = []; // facade colour: the wall ring, columns, tower
 
   // ---- 1. solid block: base plate, the body up to the concourse, the exterior wall
@@ -146,39 +147,61 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
   const doorW = DOOR.width * doorScale, doorH = DOOR.height * doorScale;
   const doorTop = zBase + doorH + doorW / 2;
   const sideDoorDepth = doorTop > d.zSeatTop ? Math.min(DOOR.depth, p.wallThickness - 2 * p.nozzle) : DOOR.depth;
+  let wingText = false;
+  const tw = d.towerWidth;
   for (const a of d.sideAngles) {
     const front = Math.abs(a + 90) < 1e-9;
-    const pil = (x: number) => features.push(sideBox(a, x - PILASTER.width / 2, -(yWall + PILASTER.out), zBase, x + PILASTER.width / 2, -(yWall - 0.5), colTop));
-    if (front) {
-      const xp = d.towerWidth / 2 + 3 + PILASTER.width / 2;
-      if (xp + PILASTER.width / 2 < d.sideLength / 2 - PILASTER.cornerWidth - 1) { pil(xp); pil(-xp); }
-      continue;
-    }
+    // Pilasters on this side (in the front frame) also mask the window bands, so a band never cuts through one.
+    const masks: Manifold[] = [];
+    const pil = (x: number) => {
+      const m = box(x - PILASTER.width / 2, -(yWall + PILASTER.out), zBase, x + PILASTER.width / 2, -(yWall - 0.5), colTop);
+      masks.push(m);
+      features.push(spin(m, a));
+    };
     const midPilasters = d.sideLength >= 24;
-    if (midPilasters) { pil(d.sideLength * 0.28); pil(-d.sideLength * 0.28); }
     let clearAbove = zBase + 1;
-    if (sideDoorDepth >= 0.6 && d.sideLength >= doorW + 2 * PILASTER.width + 6 && d.wallHeight > doorTop + AWNING.out + 3) {
-      const dw = doorway(yWall, doorW, doorH, a, zBase, sideDoorDepth);
-      recesses.push(dw.recess);
-      doorSkins.push(dw.skin);
-      accent.push(dw.awning);
-      clearAbove = dw.top + 1;
-    }
-    // Lettering on the two faces beside the entrance, like a ballpark's name across its wings.
-    const wing = Math.abs(angleDiffDeg(a, -90)) < 360 / N + 1e-6;
-    if (wing) {
-      const maxW = midPilasters ? 2 * (d.sideLength * 0.28 - PILASTER.width / 2 - 1) : d.sideLength - 2 * PILASTER.cornerWidth - 4;
-      const maxH = colTop - 1 - clearAbove;
-      const text = layoutWingText(p, maxW, maxH, issues);
-      if (text) {
-        const zc = (clearAbove + colTop - 1) / 2;
-        accent.push(spin(extrudeY(track(text.section.translate([0, zc])), -yWall - WING.raise, -yWall), a));
+    let textBottom = Infinity, textTop = -Infinity;
+    if (front) {
+      const xp = tw / 2 + 3 + PILASTER.width / 2;
+      if (xp + PILASTER.width / 2 < d.sideLength / 2 - PILASTER.cornerWidth - 1) { pil(xp); pil(-xp); }
+      masks.push(box(-tw / 2 - 0.3, -(d.towerFront + 1), -1, tw / 2 + 0.3, -(yWall - 1), d.towerTop + 1));
+    } else {
+      if (midPilasters) { pil(d.sideLength * 0.28); pil(-d.sideLength * 0.28); }
+      if (sideDoorDepth >= 0.6 && d.sideLength >= doorW + 2 * PILASTER.width + 6 && d.wallHeight > doorTop + AWNING.out + 3) {
+        const dw = doorway(yWall, doorW, doorH, a, zBase, sideDoorDepth);
+        recesses.push(dw.recess);
+        doorSkins.push(dw.skin);
+        accent.push(dw.awning);
+        clearAbove = dw.top + 1;
+      }
+      // Lettering on the two faces beside the entrance, like a ballpark's name across its wings.
+      if (Math.abs(angleDiffDeg(a, -90)) < 360 / N + 1e-6) {
+        const maxW = midPilasters ? 2 * (d.sideLength * 0.28 - PILASTER.width / 2 - 1) : d.sideLength - 2 * PILASTER.cornerWidth - 4;
+        const maxH = colTop - 1 - clearAbove;
+        const text = layoutWingText(p, maxW, maxH, issues);
+        if (text) {
+          const zc = (clearAbove + colTop - 1) / 2;
+          accent.push(spin(extrudeY(track(text.section.translate([0, zc])), -yWall - WING.raise, -yWall), a));
+          textBottom = zc - text.capHeight / 2;
+          textTop = zc + text.capHeight / 2;
+          wingText = true;
+        }
       }
     }
+    // Two recessed window bands: one under the top band, one above the awnings (where the lettering leaves room).
+    const halfSpan = d.sideLength / 2 - PILASTER.cornerWidth / 2 - 0.3;
+    const bands: [number, number][] = [];
+    const upper: [number, number] = [colTop - WINDOW.belowTop - WINDOW.height, colTop - WINDOW.belowTop];
+    const lower: [number, number] = [clearAbove + WINDOW.aboveAwning, clearAbove + WINDOW.aboveAwning + WINDOW.height];
+    const clearOfText = ([z0, z1]: [number, number]) => textBottom === Infinity || z0 > textTop + 0.8 || z1 < textBottom - 0.8;
+    if (upper[0] > clearAbove + 1 && clearOfText(upper)) bands.push(upper);
+    if (lower[1] < upper[0] - 1 && clearOfText(lower)) bands.push(lower);
+    if (halfSpan > 6)
+      for (const [z0, z1] of bands)
+        recesses.push(spin(mSubtract(box(-halfSpan, -(yWall + 0.5), z0, halfSpan, -(yWall - WINDOW.depth), z1), mUnion(masks)), a));
   }
 
   // ---- 5. entrance tower on the front: the big door, its awning, the sign panel and the raised artwork
-  const tw = d.towerWidth;
   const towerBack = -(yWall - p.wallThickness);
   features.push(box(-tw / 2, -d.towerFront, zBase, tw / 2, towerBack, d.towerTop));
   // The front door is bigger than the side doors, but shrinks until a sign of at least 5 mm fits above it.
@@ -195,7 +218,8 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
   const zBottom = fd.top + 1.2;
   let capHeight = 0;
   if (zTop - zBottom >= 5) {
-    const sign = layoutSign(p, art, tw - 2 * 1.2, zTop - zBottom, issues);
+    // With an emblem and the name already on the wings, the tower carries the emblem alone (like the reference crest).
+    const sign = layoutSign(p, art, tw - 2 * 1.2, zTop - zBottom, issues, !(art && wingText));
     const zc = zTop - sign.panelH / 2;
     const yFace = -d.towerFront;
     signage.push(extrudeY([rectRing(-sign.panelW / 2, zc - sign.panelH / 2, sign.panelW / 2, zc + sign.panelH / 2)], yFace - SIGN.raise, yFace));
@@ -203,6 +227,8 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
       signArt.push(extrudeY(track(sign.section.translate([0, zc])), yFace - SIGN.raise - SIGN.textRaise, yFace - SIGN.raise));
       capHeight = sign.capHeight;
     }
+    const byColour = { structure: emblemGrey, facade: signArt, accent, sign: signage };
+    for (const e of sign.emblem) byColour[e.colour].push(extrudeY(track(e.section.translate([0, zc])), yFace - SIGN.raise - SIGN.textRaise, yFace - SIGN.raise));
   } else issues.push({ severity: "warning", message: "The entrance tower is too short for a sign above its door; a taller exterior wall makes room." });
 
   // Red band along the top of the wall and around the tower top, standing out in two half steps so the overhang stays tiny.
@@ -253,6 +279,7 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
     { name: "SIGN", hex: p.colorSign, solid: mUnion(signage) },
     { name: "DOORS", hex: p.colorSign, solid: mUnion(doorSkins) },
     { name: "TRIM", hex: p.colorAccent, solid: mUnion(accent) },
+    { name: "EMBLEM", hex: p.colorStructure, solid: mUnion(emblemGrey) },
   ];
   if (p.lights === "attached") {
     stadiumSolids.push({ name: "LAMP_HEADS", hex: p.colorSign, solid: mUnion(standing.map((f) => f.head)) });

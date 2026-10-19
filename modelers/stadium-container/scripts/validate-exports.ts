@@ -17,7 +17,14 @@ import type { Artwork } from "../src/core/types";
 await initKernel();
 mkdirSync("out", { recursive: true });
 const P = (patch: Partial<StadiumParams>): StadiumParams => ({ ...DEFAULT_PARAMS, ...patch });
-const emblem: Artwork = { name: "ring.svg", layers: [{ hex: "#000", rings: [[[0, 0], [100, 0], [100, 100], [0, 100]], [[30, 30], [30, 70], [70, 70], [70, 30]]] }], bounds: { minX: 0, minY: 0, maxX: 100, maxY: 100 } };
+const emblem: Artwork = {
+  name: "crest.svg",
+  layers: [
+    { hex: "#C53B32", rings: [[[0, 0], [100, 0], [100, 100], [0, 100]], [[30, 30], [30, 70], [70, 70], [70, 30]]] },
+    { hex: "#223B6B", rings: [[[40, 40], [60, 40], [60, 60], [40, 60]]] },
+  ],
+  bounds: { minX: 0, minY: 0, maxX: 100, maxY: 100 },
+};
 
 const cases: [string, StadiumParams, Artwork | null][] = [
   ["default", P({}), null],
