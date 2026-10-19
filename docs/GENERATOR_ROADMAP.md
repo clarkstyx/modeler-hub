@@ -42,6 +42,12 @@ P1-3 above and two batch 2 follow-ups (the Trinket pinch fix and bundled fonts).
 | P2-3 | MX clicker family | new engine | 5 clicker products | Cherry MX plate cut-out 14.0 mm, 1.5 mm plate, stem cross 4.0 × 1.1 mm from the datasheet; calibration coupon required |
 | P2-4 | Image Keychain ornament/plaque presets; Name Tag strap slot + magnet pockets; Letter Beads pet-collar preset | existing | Image to Ornament, Printed-Photo Plaque, Bag & Luggage Tag, Name Badge, Pet Collar Beads | – |
 
+## Batch 4b (2026-10-19)
+
+| # | Engine | Status | Where / what | Not yet |
+|---|---|---|---|---|
+| P2-S | Stadium container (baseball stadium around an open round container) | 🟡 draft PR | hub `modelers/stadium-container/`, id `stadium-container`, Maker: polygonal base, cavity sized to a baseball, stepped seating with stair aisles, pilastered exterior with arched doors and 45° awnings, entrance tower with raised text + SVG emblem, four floodlights as flat-printed peg-in parts (fit test, clearance exposed) or printed in place, four colours; 14 vitest + 15-case `npm run validate` + Chromium screenshots | physical print (peg clearance, 0.6 mm steps, letters), landscaping (palms, rocks), window details |
+
 ## Batch 5
 
 | # | Item | Engine | Presets |
