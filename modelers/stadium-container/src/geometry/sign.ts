@@ -1,7 +1,7 @@
 import { SIGN, TARGETS, WING, type StadiumParams } from "../core/params";
 import type { Artwork, Issue } from "../core/types";
 import { type CrossSection } from "../shared/kernel";
-import { cs, csBounds, csOpening, csScale, csSimplify, csSubtract, csTranslate, csUnion } from "../shared/shapes";
+import { cs, csBounds, csOffset, csOpening, csScale, csSimplify, csSubtract, csTranslate, csUnion } from "../shared/shapes";
 import { layoutText, missingCharacters } from "../shared/textShapes";
 
 /** Which of the four filaments a piece of artwork prints in. */
@@ -52,7 +52,9 @@ export function layoutSign(p: StadiumParams, art: Artwork | null, maxW: number, 
           const visible = above.length ? csSubtract(l.section, csUnion(above)) : l.section;
           const scaled = fit(visible);
           before += scaled.area();
-          const clean = csSimplify(csOpening(scaled, p.nozzle / 2), 0.01);
+          // Closing then opening at half a nozzle: fills pinholes, drops hairlines, and rounds pixel staircases of a traced bitmap.
+          const closed = csOffset(csOffset(scaled, p.nozzle / 2), -p.nozzle / 2);
+          const clean = csSimplify(csOpening(closed, p.nozzle / 2), 0.01);
           after += clean.area();
           if (!clean.isEmpty()) emblemPieces.push({ colour: l.colour, section: clean });
         });

@@ -17,6 +17,8 @@ small, and verify in the browser.
   one connected structure and the colour volumes that only touch it. `buildFloodlight.ts` builds a
   mast standing, and places it in its socket (preview) or flat on the bed (export). `sign.ts` lays out
   the text and emblem and drops strokes under a nozzle width.
+- `src/image/raster.ts` turns a small bitmap into filled colour layers (alpha, border flood fill, Lab k-means,
+  blend merge, majority filter, exact pixel-edge tracing); `src/ui/loadRaster.ts` decodes and downsizes in the browser.
 - `src/pipeline/` runs everything in a Web Worker; `generate.ts` validates every mesh and blocks
   export on errors. Export groups: `stadium`, `floodlights`, `fit-test`.
 - `src/export/` 3MF writer wrapper; `src/ui/` React sidebar and the three.js preview.

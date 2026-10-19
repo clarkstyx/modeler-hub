@@ -13,9 +13,10 @@ Valencia Modelers; the hub serves it at `/m/stadium-container/`.
   aisle width. Stairs between sections line up with the corners.
 - **Building**: exterior wall height (raised automatically to clear the top row), wall thickness,
   concourse width, base thickness and margin.
-- **Sign**: text in four fonts on the tower and on the wings beside it; an uploaded SVG emblem on the tower
-  (each SVG colour prints in the nearest of your four filaments; with an emblem the tower shows it alone and
-  the name moves to the wings), emblem height.
+- **Sign**: text in four fonts on the tower and on the wings beside it; an uploaded emblem on the tower as SVG,
+  PNG or JPG (a bitmap has its background removed and is reduced to at most four colours; each colour prints in
+  the nearest of your four filaments; with an emblem the tower shows it alone and the name moves to the wings),
+  emblem height.
 - **Floodlights**: separate parts that peg into sockets on the base (print lying flat; a fit test is
   included and the peg clearance is adjustable), printed in place, or none.
 - **Colours**: structure (base, steps, masts), facade (walls, tower, letters, lamps), accent (seat rows, awnings,

@@ -6,6 +6,7 @@ import { readProjectFrom3MF } from "../export/threeMF";
 import { GeometryClient } from "../pipeline/client";
 import { GROUP_LABELS, type ExportGroup, type GenerateResult } from "../pipeline/generate";
 import { parseSvgArtwork } from "./loadArtwork";
+import { parseRasterArtwork } from "./loadRaster";
 import { downloadBytes, safeName } from "./download";
 import { Choice, Colour, Num, Section } from "./controls";
 import { Preview3D, type ViewId } from "./Preview3D";
@@ -85,8 +86,11 @@ export default function App() {
   const openFile = async (file: File) => {
     try {
       const name = file.name.toLowerCase();
-      if (name.endsWith(".svg")) setArt(parseSvgArtwork(await file.text(), file.name));
-      else {
+      if (name.endsWith(".svg") || file.type === "image/svg+xml") setArt(parseSvgArtwork(await file.text(), file.name));
+      else if (file.type.startsWith("image/") || /\.(png|jpe?g|webp|gif|bmp)$/.test(name)) {
+        const palette = new Set([params.colorStructure, params.colorFacade, params.colorAccent, params.colorSign].map((c) => c.toUpperCase())).size;
+        setArt(await parseRasterArtwork(file, palette));
+      } else {
         const json = name.endsWith(".3mf") ? readProjectFrom3MF(new Uint8Array(await file.arrayBuffer())) : await file.text();
         if (!json) throw new Error("This 3MF has no saved settings. Only files downloaded from this app reopen.");
         setParams(parseRecipe(json));
@@ -130,8 +134,9 @@ export default function App() {
           <label className="field"><div className="row"><span>Sign text</span></div>
             <input className="text-input" value={params.text} onChange={(e) => set("text", e.target.value)} placeholder="BALLPARK" maxLength={24} /></label>
           <Choice label="Font" value={params.font} set={(v) => set("font", v as FontId)} options={(Object.keys(FONT_LABELS) as FontId[]).map((f) => ({ value: f, label: FONT_LABELS[f] }))} />
-          <label className="field"><span>Emblem: SVG with filled shapes (raised on the tower sign, above the text)</span><br />{fileInput(".svg,image/svg+xml")}</label>
-          {art && <div className="btns"><span>{art.name}</span><button onClick={() => setArt(null)}>Remove</button></div>}
+          <label className="field"><span>Emblem: a logo as SVG, PNG or JPG (raised on the tower; each colour prints in the nearest filament)</span><br />{fileInput(".svg,.png,.jpg,.jpeg,.webp,.gif,image/*")}</label>
+          <small className="hint">PNG or JPG: the background (transparent or the border colour) is removed and the logo is reduced to at most four colours. Flat, bold logos work best.</small>
+          {art && <div className="btns art"><span>{art.name}</span><span className="layers">{art.layers.map((l, i) => <span key={i} className="swatch" style={{ background: l.hex }} title={l.hex} />)}</span><button onClick={() => setArt(null)}>Remove</button></div>}
           {art && <Num label="Emblem height (0 = automatic)" value={params.emblemHeight} set={(v) => set("emblemHeight", v)} {...LIMITS.emblemHeight} />}
           {r && r.capHeight > 0 && <small className="hint">Letters {r.capHeight.toFixed(1)} mm tall, raised {TARGETS.stroke} mm.</small>}
         </Section>
