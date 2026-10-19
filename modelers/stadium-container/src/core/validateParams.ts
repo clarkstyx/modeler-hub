@@ -19,10 +19,9 @@ export function validateParams(p: StadiumParams): Issue[] {
   if (p.rowRise < 2 * p.layerHeight - 1e-9) err(`Each row must rise at least two layers (${(2 * p.layerHeight).toFixed(2)} mm).`);
   if (p.aisleWidth > p.rowTread * 2) warn("Aisles wider than two rows deep look like gaps rather than stairs.");
   if (d.wallHeight > p.wallHeight + 1e-9) info(`Exterior wall raised to ${d.wallHeight.toFixed(1)} mm so it reaches the top row (${d.zSeatTop.toFixed(1)} mm).`);
-  if (d.baseMargin > p.baseMargin + 1e-9) info(`Base margin widened to ${d.baseMargin.toFixed(1)} mm so the floodlight plinths sit on the base.`);
-  if (p.lights !== "none" && d.lightHeight > p.lightHeight + 1e-9) info(`Floodlights raised to ${d.lightHeight.toFixed(0)} mm so they stand above the wall.`);
-  if (p.lights === "attached" && d.lightHeight > 60) warn(`${d.lightHeight.toFixed(0)} mm masts printed standing are wobbly to print and snap along the layers; "Separate parts" prints them lying flat.`);
-  if (d.footprint > p.bedSize + 1e-9) err(`The stadium is ${d.footprint.toFixed(0)} mm across its corners and does not fit a ${p.bedSize} mm bed. Fewer rows, a smaller container or a narrower base margin shrink it.`);
+  if (d.wallThickness > p.wallThickness + 1e-9) info(`Exterior wall thickened to ${d.wallThickness.toFixed(1)} mm so the floodlight legs fit into its top.`);
+  if (p.lights === "attached" && d.lightHeight > 35) warn(`${d.lightHeight.toFixed(0)} mm towers printed standing on the wall are wobbly to print and snap along the layers; "Separate parts" prints them lying flat.`);
+  if (d.footprint > p.bedSize + 1e-9) err(`The stadium is ${d.footprint.toFixed(0)} mm across and does not fit a ${p.bedSize} mm bed. Fewer rows, a smaller container, a narrower base margin or a shorter front terrace shrink it.`);
   if (d.height > 250 && p.lights === "attached") warn(`${d.height.toFixed(0)} mm tall with the lights attached; check your printer's height.`);
   const colours = new Set([p.colorStructure, p.colorFacade, p.colorAccent, p.colorSign].map((c) => c.toUpperCase()));
   if (colours.size < 4) info(`${colours.size} distinct colour${colours.size === 1 ? "" : "s"}: parts sharing a colour land on the same filament slot.`);

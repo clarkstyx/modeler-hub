@@ -64,7 +64,7 @@ export function generate(params: StadiumParams, art: Artwork | null): GenerateRe
       cavityDepth: params.depth,
       floor: params.floor,
       footprint: d.footprint,
-      acrossFlats: 2 * d.baseApothem,
+      acrossFlats: 2 * d.baseOuter,
       height: d.height,
       wallHeight: d.wallHeight,
       seatingWidth: params.rows * params.rowTread,
@@ -93,12 +93,12 @@ export const groupStl = (result: GenerateResult, group: ExportGroup, title: stri
 export function readme(result: GenerateResult, params: StadiumParams, title: string): string {
   const r = result.readout!;
   const lights = params.lights === "separate"
-    ? `Floodlights are separate parts: print them lying flat as placed (lamps up) and push the ${result.groups.floodlights.length} pegs into the sockets on the base. ` +
-      `Print the peg fit test first (one socket at ${params.pegClearance} mm clearance per side plus a short peg); adjust "Peg clearance" if it is loose or tight.\n`
-    : params.lights === "attached" ? "Floodlights print in place, standing on the base.\n" : "No floodlights.\n";
+    ? `Floodlights are separate parts: print them lying flat as placed (lamps up) and plug the legs of the ${result.groups.floodlights.length} towers into the sockets in the wall top on the short sides. ` +
+      `Print the peg fit test first (a piece of wall top with two sockets at ${params.pegClearance} mm clearance per side plus a short tower stub); adjust "Peg clearance" if it is loose or tight.\n`
+    : params.lights === "attached" ? "Floodlights print in place, standing on the wall.\n" : "No floodlights.\n";
   return (
     `${title}: a stadium around a ${r.cavityDiameter} mm × ${r.cavityDepth} mm deep round container.\n\n` +
-    `Footprint ${r.footprint.toFixed(0)} mm across the corners, ${r.height.toFixed(0)} mm tall. ` +
+    `Footprint ${r.acrossFlats.toFixed(0)} mm wide and ${r.footprint.toFixed(0)} mm deep, ${r.height.toFixed(0)} mm tall. ` +
     `Print the stadium as placed, base on the bed, no supports (every overhang is 45° or a tiny step).\n${lights}\n` +
     `Colours: one part per colour inside each object; assign a filament to each part in the slicer (the 3MF carries the suggested slots).\n` +
     `Design targets, not yet confirmed by a print: walls ≥ ${TARGETS.wall} mm, floor ≥ ${TARGETS.floor} mm, raised details ≥ ${TARGETS.detail} mm, letter strokes ≥ ${TARGETS.stroke} mm.\n`

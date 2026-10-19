@@ -118,13 +118,15 @@ export default function App() {
           <Num label="Rows" value={params.rows} set={(v) => set("rows", Math.round(v))} {...LIMITS.rows} unit="" />
           <Num label="Row rise" value={params.rowRise} set={(v) => set("rowRise", v)} {...LIMITS.rowRise} />
           <Num label="Row depth (tread)" value={params.rowTread} set={(v) => set("rowTread", v)} {...LIMITS.rowTread} />
-          <Num label="Sections (and sides)" value={params.sections} set={(v) => set("sections", Math.round(v))} {...LIMITS.sections} unit="" hint="Stairs between the sections line up with the corners of the building." />
+          <Num label="Seating sections" value={params.sections} set={(v) => set("sections", Math.round(v))} {...LIMITS.sections} unit="" hint="Stairs run between the sections." />
           <Num label="Aisle (stairs) width" value={params.aisleWidth} set={(v) => set("aisleWidth", v)} {...LIMITS.aisleWidth} />
         </Section>
 
         <Section title="3 · Building">
-          <Num label="Exterior wall height" value={params.wallHeight} set={(v) => set("wallHeight", v)} {...LIMITS.wallHeight} hint="Raised automatically so it clears the top row." />
-          <Num label="Exterior wall thickness" value={params.wallThickness} set={(v) => set("wallThickness", v)} {...LIMITS.wallThickness} />
+          <Num label="Corner size" value={params.cornerSize} set={(v) => set("cornerSize", v)} {...LIMITS.cornerSize} unit="" hint="The four short diagonal sides, where the floodlights stand. 1 is a regular octagon; smaller is squarer." />
+          <Num label="Exterior wall height" value={params.wallHeight} set={(v) => set("wallHeight", v)} {...LIMITS.wallHeight} hint="Raised automatically so it reaches the top row." />
+          <Num label="Exterior wall thickness" value={params.wallThickness} set={(v) => set("wallThickness", v)} {...LIMITS.wallThickness} hint="At least 4 mm when floodlights plug into the wall top." />
+          <Num label="Front terrace" value={params.frontApron} set={(v) => set("frontApron", v)} {...LIMITS.frontApron} hint="Extra base in front of the entrance, room for rocks and palms." />
           <Num label="Concourse (top walkway)" value={params.concourse} set={(v) => set("concourse", v)} {...LIMITS.concourse} />
           <Num label="Base thickness" value={params.baseThickness} set={(v) => set("baseThickness", v)} {...LIMITS.baseThickness} />
           <Num label="Base margin" value={params.baseMargin} set={(v) => set("baseMargin", v)} {...LIMITS.baseMargin} hint="How far the base plate sticks out past the walls; the floodlights stand on it." />
@@ -143,13 +145,13 @@ export default function App() {
 
         <Section title="5 · Floodlights">
           <Choice label="Floodlights" value={params.lights} set={(v) => set("lights", v as LightMode)} options={(Object.keys(LIGHT_LABELS) as LightMode[]).map((l) => ({ value: l, label: LIGHT_LABELS[l] }))} />
-          {params.lights !== "none" && <Num label="Mast height" value={params.lightHeight} set={(v) => set("lightHeight", v)} {...LIMITS.lightHeight} />}
+          {params.lights !== "none" && <Num label="Tower height above the wall" value={params.lightHeight} set={(v) => set("lightHeight", v)} {...LIMITS.lightHeight} />}
           {params.lights === "separate" && <Num label="Peg clearance (per side)" value={params.pegClearance} set={(v) => set("pegClearance", v)} {...LIMITS.pegClearance}
             hint="Print the peg fit test first. Loose: lower it. Will not go in: raise it." />}
         </Section>
 
         <Section title="6 · Colours" open={false}>
-          <Colour label="Structure (base, steps, masts)" value={params.colorStructure} set={(v) => set("colorStructure", v)} />
+          <Colour label="Structure (base, steps, floodlight towers)" value={params.colorStructure} set={(v) => set("colorStructure", v)} />
           <Colour label="Facade (walls, tower, letters, lamps)" value={params.colorFacade} set={(v) => set("colorFacade", v)} />
           <Colour label="Accent (seats, awnings, top band, wing text)" value={params.colorAccent} set={(v) => set("colorAccent", v)} />
           <Colour label="Sign panel, doors, lamp heads" value={params.colorSign} set={(v) => set("colorSign", v)} />
@@ -174,7 +176,7 @@ export default function App() {
             <label className="field"><span>Open settings / saved 3MF</span><br />{fileInput(".json,.3mf")}</label>
             <button onClick={() => { setParams({ ...DEFAULT_PARAMS }); setArt(null); }}>Reset</button>
           </div>
-          <small className="hint">Print as placed: base on the bed, no supports. Floodlights print lying flat, lamps up.</small>
+          <small className="hint">Print as placed: base on the bed, no supports. Floodlights print lying flat, lamps up, and plug into the wall top.</small>
         </Section>
       </aside>
 
@@ -195,8 +197,8 @@ export default function App() {
           <table><tbody>
             {r && <>
               <tr><td>Container</td><td className="v">⌀ {r.cavityDiameter} × {r.cavityDepth} mm deep, floor {r.floor} mm</td></tr>
-              <tr><td>Footprint</td><td className="v">{r.footprint.toFixed(0)} mm corners / {r.acrossFlats.toFixed(0)} mm flats</td></tr>
-              <tr><td>Height</td><td className="v">{r.height.toFixed(0)} mm{params.lights === "separate" ? ` (+ ${r.lightHeight.toFixed(0)} mm masts)` : ""}</td></tr>
+              <tr><td>Footprint</td><td className="v">{r.acrossFlats.toFixed(0)} mm wide, {r.footprint.toFixed(0)} mm deep with the terrace</td></tr>
+              <tr><td>Height</td><td className="v">{r.height.toFixed(0)} mm{params.lights === "separate" ? ` (+ ${r.lightHeight.toFixed(0)} mm towers)` : ""}</td></tr>
               <tr><td>Seating</td><td className="v">{params.rows} rows, {r.seatingWidth.toFixed(0)} wide × {r.seatingHeight.toFixed(1)} mm tall</td></tr>
               <tr><td>Colours</td><td className="v">{r.colours}</td></tr>
             </>}

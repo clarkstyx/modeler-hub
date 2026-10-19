@@ -31,16 +31,20 @@ export interface StadiumParams {
   rowRise: number;
   /** Depth of each row. */
   rowTread: number;
-  /** Seating sections; also the number of sides of the stadium. */
+  /** Seating sections (stairs between them). */
   sections: number;
   /** Width of the stairs between sections. */
   aisleWidth: number;
 
-  // --- building
+  // --- building: a square with its corners cut off, long sides front/back/left/right, four short diagonal sides
+  /** Size of the four short diagonal sides: 1 = a regular octagon, smaller = a squarer building with small corners. */
+  cornerSize: number;
   /** Height of the exterior wall, measured from the bed. Raised automatically to at least the top row. */
   wallHeight: number;
-  /** Thickness of the exterior wall. */
+  /** Thickness of the exterior wall. Thickened automatically so the floodlight legs fit into its top. */
   wallThickness: number;
+  /** Extra base in front of the entrance, room for rocks and palms. */
+  frontApron: number;
   /** Flat walkway between the top row and the exterior wall. */
   concourse: number;
   baseThickness: number;
@@ -55,13 +59,13 @@ export interface StadiumParams {
 
   // --- floodlights
   lights: LightMode;
-  /** Height of the floodlight masts above their plinths. */
+  /** Height of the floodlight towers above the wall top. */
   lightHeight: number;
   /** Gap per side between a floodlight peg and its socket. */
   pegClearance: number;
 
   // --- colours (at most four filaments)
-  /** Base, seating steps, stairs, concourse, masts. */
+  /** Base, seating steps, stairs, concourse, floodlight towers. */
   colorStructure: string;
   /** Exterior walls, columns, the entrance tower, sign letters, lamps. */
   colorFacade: string;
@@ -86,16 +90,18 @@ export const DEFAULT_PARAMS: StadiumParams = {
   rowTread: 3,
   sections: 8,
   aisleWidth: 2,
+  cornerSize: 0.6,
   wallHeight: 44,
-  wallThickness: 2,
+  wallThickness: 4,
+  frontApron: 14,
   concourse: 2.5,
   baseThickness: 2.4,
-  baseMargin: 8,
+  baseMargin: 6,
   text: "BALLPARK",
   font: "rounded",
   emblemHeight: 0,
   lights: "separate",
-  lightHeight: 70,
+  lightHeight: 40,
   pegClearance: 0.15,
   colorStructure: "#8E9094",
   colorFacade: "#F1E6CE",
@@ -116,8 +122,10 @@ export const LIMITS = {
   rowTread: { min: 2, max: 8, step: 0.5 },
   sections: { min: 4, max: 16, step: 1 },
   aisleWidth: { min: 1, max: 5, step: 0.5 },
+  cornerSize: { min: 0.3, max: 1, step: 0.05 },
   wallHeight: { min: 10, max: 140, step: 1 },
-  wallThickness: { min: 1.6, max: 5, step: 0.2 },
+  wallThickness: { min: 1.6, max: 8, step: 0.2 },
+  frontApron: { min: 0, max: 50, step: 1 },
   concourse: { min: 1.5, max: 12, step: 0.5 },
   baseThickness: { min: 1.2, max: 8, step: 0.2 },
   baseMargin: { min: 2, max: 30, step: 0.5 },
@@ -130,8 +138,8 @@ export const LIMITS = {
 } as const;
 
 export const LIGHT_LABELS: Record<LightMode, string> = {
-  separate: "Separate parts (peg into the base, print lying flat)",
-  attached: "Printed in place, standing on the base",
+  separate: "Separate parts (legs plug into the wall top, print lying flat)",
+  attached: "Printed in place, standing on the wall",
   none: "No floodlights",
 };
 export const FONT_LABELS: Record<FontId, string> = {
@@ -159,19 +167,35 @@ export const AWNING = { out: 2.2, lip: 0.8, extra: 2 };
 /** Red band along the top of the wall: height and how far it stands out (in two half steps). */
 export const TRIM = { height: 1.6, out: 0.6, skin: 0.8 };
 /** Entrance tower: how far it stands out of the wall, how far it rises above it, and its width as a share of the side. */
-export const TOWER = { out: 3, above: 7, widthShare: 0.72, minWidth: 26, maxWidth: 64 };
+export const TOWER = { out: 3, above: 8, widthShare: 0.5, minWidth: 26, maxWidth: 70 };
 /** Sign panel on the tower: standoff, margins, raised artwork height. */
 export const SIGN = { raise: 0.8, margin: 1.6, textRaise: 0.8, minCap: 3.5, maxCap: 9 };
-/** Floodlight mast (radial × tangential), peg below it, head plate, lamp bumps. */
-export const MAST = { depth: 3, width: 5, pegDepth: 2.2, pegWidth: 3.2, pegLength: 3, headWidth: 14, headHeight: 13, shoulder: 4, lamp: 1.8, lampGap: 0.8, lampRaise: 0.6 };
+/**
+ * Floodlight tower: two legs with X bracing, a lamp head of 6 × 3 lamps. `depth` is radial (towards the
+ * field), `legGap` the centre distance of the legs along the wall. Each leg ends in a peg that drops into a
+ * socket in the wall top; the wall must be at least `pegDepth` + two walls of `wallAround` thick.
+ */
+export const MAST = {
+  depth: 2, legWidth: 2.4, legGap: 8, brace: 1.3, pegDepth: 1.6, pegWidth: 2, pegLength: 4, wallAround: 1.2,
+  headWidth: 16.4, headHeight: 12.4, lampCols: 6, lampRows: 3, lamp: 1.8, lampGap: 0.8, lampRaise: 0.6,
+};
 /** Seat rows: a raised slab on each tread, set back from the riser edge and the next riser. */
 export const SEAT = { raise: 0.6, front: 0.6, back: 0.4, minWidth: 0.8 };
 /** Recessed window bands on the facade: height, depth into the wall, gap under the top band and above the awnings. */
 export const WINDOW = { height: 1.6, depth: 0.6, belowTop: 1.6, aboveAwning: 1.5 };
 /** Lettering on the two wall faces beside the entrance tower. */
 export const WING = { raise: 0.8, minCap: 3, maxCap: 8 };
-/** Plinth the mast pegs into: footprint, height above the base, socket depth below its top. */
-export const PLINTH = { size: 7, height: 4, socketDepth: 3.2 };
+
+/** One side of the building, seen from the centre. */
+export interface Side {
+  /** Direction of the side's centre, degrees (the front is −90). */
+  angle: number;
+  /** Centre to the middle of the side's outer face. */
+  apothem: number;
+  /** Length of the outer face. */
+  length: number;
+  kind: "front" | "side" | "back" | "short";
+}
 
 export interface Derived {
   /** Cavity radius. */
@@ -184,39 +208,44 @@ export interface Derived {
   rSeats: number;
   /** Top of the last row = concourse level. */
   zSeatTop: number;
-  /** Exterior wall: inner and outer apothem (centre to the middle of a side). */
+  /** Exterior wall thickness actually built. */
+  wallThickness: number;
+  /** Long sides (front, back, left, right): inner and outer apothem. */
   wallInner: number;
   wallOuter: number;
-  /** Centre to a corner of the exterior wall. */
-  wallCorner: number;
-  /** Exterior wall height actually built (≥ the concourse + a parapet). */
+  /** Short diagonal sides: inner and outer apothem. */
+  shortInner: number;
+  shortOuter: number;
+  /** Exterior wall height actually built (≥ the top row). */
   wallHeight: number;
-  /** Base plate apothem and corner radius. */
-  baseApothem: number;
-  baseCorner: number;
-  /** Base margin actually built (raised to fit the floodlight plinths). */
-  baseMargin: number;
-  /** Floodlight mast height actually built. */
+  /** Base plate: long-side and short-side apothem, and the front terrace beyond. */
+  baseOuter: number;
+  baseShort: number;
+  frontApron: number;
+  /** Floodlight tower height actually built. */
   lightHeight: number;
-  /** Length of one side of the exterior wall at its outer face. */
-  sideLength: number;
+  /** The eight sides, starting at the front and going counter-clockwise. */
+  sides: Side[];
+  /** The eight corners: direction and distance from the centre. */
+  corners: { angle: number; radius: number }[];
+  /** Stair aisles between the seating sections, degrees. */
+  aisleAngles: number[];
   /** Entrance tower width, and its front face distance from the centre. */
   towerWidth: number;
   towerFront: number;
   towerTop: number;
-  /** Angles (degrees) of the side centres; the front is −90. */
-  sideAngles: number[];
-  /** Angles (degrees) of the corners. */
-  cornerAngles: number[];
-  /** Floodlight positions: angle and radius of each plinth centre. */
+  /** Floodlight positions: the centre of each short side, at the wall's centre line. */
   lightSpots: { angle: number; radius: number }[];
-  /** Overall footprint across corners, and the highest point incl. lights when attached. */
+  /** Overall footprint (longest extent of the base) and the highest point incl. towers when attached. */
   footprint: number;
   height: number;
 }
 
 const DEG = 180 / Math.PI;
-const PLINTH_HALF = PLINTH.size / 2;
+const SQRT2 = Math.SQRT2;
+
+/** Short-side apothem for a long-side apothem `a` and corner size `s` (1 = regular octagon, 0 = square). */
+export const shortApothem = (a: number, s: number) => a * (SQRT2 - s * (SQRT2 - 1));
 
 /** Every dimension that follows from the parameters, with the automatic raises applied. */
 export function derive(p: StadiumParams): Derived {
@@ -226,45 +255,32 @@ export function derive(p: StadiumParams): Derived {
   const zRim = zFloor + p.depth;
   const rSeats = ri + p.wall + p.rows * p.rowTread;
   const zSeatTop = zRim + p.rows * p.rowRise;
+  const wallThickness = p.lights === "none" ? p.wallThickness : Math.max(p.wallThickness, MAST.pegDepth + 2 * MAST.wallAround);
   const wallInner = rSeats + p.concourse;
-  const wallOuter = wallInner + p.wallThickness;
-  const cosHalf = Math.cos(Math.PI / N);
-  const tanHalf = Math.tan(Math.PI / N);
-  const wallCorner = wallOuter / cosHalf;
-  // The top row may sit almost level with the wall top (the upper deck shows from outside, like the reference).
+  const wallOuter = wallInner + wallThickness;
+  const shortOuter = shortApothem(wallOuter, p.cornerSize);
+  const shortInner = shortOuter - wallThickness;
   const wallHeight = Math.max(p.wallHeight, zSeatTop + 0.4);
-  const sideLength = 2 * wallOuter * tanHalf;
-  const sideAngles = Array.from({ length: N }, (_, k) => norm(-90 + (360 * k) / N));
-  const cornerAngles = Array.from({ length: N }, (_, k) => norm(-90 + 180 / N + (360 * k) / N));
-
-  // Floodlights stand at the corners nearest the four diagonals, on the base margin outside the wall.
-  let baseMargin = p.baseMargin;
-  const lightSpots: { angle: number; radius: number }[] = [];
-  if (p.lights !== "none") {
-    const needCorner = wallCorner - 2 + PLINTH_HALF + PLINTH_HALF * (1 + tanHalf); // innermost plinth still on the base
-    baseMargin = Math.max(baseMargin, needCorner * cosHalf - wallOuter);
-    const baseCorner = (wallOuter + baseMargin) / cosHalf;
-    const radius = Math.min(wallCorner + 2.5, baseCorner - PLINTH_HALF * (1 + tanHalf));
-    for (const d of [-45, -135, 45, 135]) {
-      let best = cornerAngles[0], bestGap = 1e9;
-      for (const a of cornerAngles) {
-        const gap = Math.abs(angleDiff(a, d));
-        // Ties (an octagon) go to the corner further from the front, so the sign side stays clear.
-        if (gap < bestGap - 1e-9 || (Math.abs(gap - bestGap) < 1e-9 && Math.abs(angleDiff(a, -90)) > Math.abs(angleDiff(best, -90)))) { best = a; bestGap = gap; }
-      }
-      if (!lightSpots.some((s) => Math.abs(angleDiff(s.angle, best)) < 1e-6)) lightSpots.push({ angle: best, radius });
-    }
-  }
-  const baseApothem = wallOuter + baseMargin;
-  const baseCorner = baseApothem / cosHalf;
-  const towerWidth = Math.max(TOWER.minWidth, Math.min(TOWER.maxWidth, sideLength * TOWER.widthShare, sideLength - 2 * PILASTER.cornerWidth - 2));
+  // Corner of the octagon: a long side at distance a meets a diagonal at distance b at (a, c), c = b√2 − a.
+  const c = shortOuter * SQRT2 - wallOuter;
+  const longLength = 2 * c;
+  const shortLength = SQRT2 * (wallOuter - c);
+  const kinds: Side["kind"][] = ["front", "short", "side", "short", "back", "short", "side", "short"];
+  const sides: Side[] = kinds.map((kind, k) => ({ kind, angle: norm(-90 + 45 * k), apothem: kind === "short" ? shortOuter : wallOuter, length: kind === "short" ? shortLength : longLength }));
+  const cornerRadius = Math.hypot(wallOuter, c);
+  const cornerHalf = Math.atan2(c, wallOuter) * DEG;
+  const corners = sides.filter((s) => s.kind !== "short").flatMap((s) => [{ angle: norm(s.angle - cornerHalf), radius: cornerRadius }, { angle: norm(s.angle + cornerHalf), radius: cornerRadius }]);
+  const aisleAngles = Array.from({ length: N }, (_, k) => norm(-90 + 180 / N + (360 * k) / N));
+  const lightSpots = p.lights === "none" ? [] : sides.filter((s) => s.kind === "short").map((s) => ({ angle: s.angle, radius: shortOuter - wallThickness / 2 }));
+  const baseOuter = wallOuter + p.baseMargin;
+  const baseShort = shortOuter + p.baseMargin;
+  const towerWidth = Math.max(TOWER.minWidth, Math.min(TOWER.maxWidth, longLength * TOWER.widthShare, longLength - 2 * PILASTER.cornerWidth - 2));
   const towerFront = wallOuter + TOWER.out;
   const towerTop = wallHeight + TOWER.above;
-  const lightHeight = p.lights === "none" ? 0 : Math.max(p.lightHeight, wallHeight + 8);
-  const footprint = 2 * Math.max(baseCorner, towerFront + AWNING.out + 0.5);
-  // Attached masts sit 1 mm into their plinth so the two fuse.
-  const height = Math.max(towerTop, p.lights === "attached" ? p.baseThickness + PLINTH.height - 1 + lightHeight : 0);
-  return { ri, zFloor, zRim, rSeats, zSeatTop, wallInner, wallOuter, wallCorner, wallHeight, baseApothem, baseCorner, baseMargin, lightHeight, sideLength, towerWidth, towerFront, towerTop, sideAngles, cornerAngles, lightSpots, footprint, height };
+  const lightHeight = p.lights === "none" ? 0 : p.lightHeight;
+  const footprint = Math.max(2 * baseOuter, 2 * baseOuter + p.frontApron, 2 * (baseShort * SQRT2 - baseOuter) + 2 * p.baseMargin);
+  const height = Math.max(towerTop, p.lights === "attached" ? wallHeight + lightHeight : 0);
+  return { ri, zFloor, zRim, rSeats, zSeatTop, wallThickness, wallInner, wallOuter, shortInner, shortOuter, wallHeight, baseOuter, baseShort, frontApron: p.frontApron, lightHeight, sides, corners, aisleAngles, towerWidth, towerFront, towerTop, lightSpots, footprint, height };
 }
 
 function norm(a: number): number {

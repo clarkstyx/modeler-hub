@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { strFromU8, unzipSync } from "fflate";
 import { initKernel, withArena } from "../src/shared/kernel";
-import { DEFAULT_PARAMS, MAST, PLINTH, derive, type StadiumParams } from "../src/core/params";
+import { DEFAULT_PARAMS, MAST, derive, type StadiumParams } from "../src/core/params";
 import { generate, group3MF, stadiumZip, type GenerateResult } from "../src/pipeline/generate";
 import { buildStadium, largestOverlap } from "../src/geometry/buildStadium";
 import { readProjectFrom3MF } from "../src/export/threeMF";
@@ -114,7 +114,7 @@ describe("default stadium", () => {
     });
   });
 
-  it("floodlights lie flat for printing, lamps up, and the peg matches the socket with the set clearance", () => {
+  it("floodlights lie flat for printing, lamps up, and the pegs match the wall sockets with the set clearance", () => {
     const f = r.groups.floodlights[0].parts;
     const fb = bounds(f);
     expect(fb.minZ).toBeCloseTo(0, 6);
@@ -122,23 +122,44 @@ describe("default stadium", () => {
     expect(fb.maxX - fb.minX).toBeCloseTo(DEFAULT_PARAMS.lightHeight + MAST.pegLength, 5);
     const lamps = f.find((p) => p.name === "LAMPS")!;
     expect(bounds([lamps]).maxZ).toBeCloseTo(MAST.depth + MAST.lampRaise, 5);
-    // socket in the fit test: peg + clearance each side, 3.2 deep
-    const socket = r.groups["fit-test"][0].parts.find((p) => p.name === "SOCKET")!;
-    const c = DEFAULT_PARAMS.pegClearance;
-    expect(inside(socket.mesh, MAST.pegDepth / 2 + c - 0.05, 0, PLINTH.height + 1.2 - 0.5)).toBe(false);
-    expect(inside(socket.mesh, MAST.pegDepth / 2 + c + 0.1, 0, PLINTH.height + 1.2 - 0.5)).toBe(true);
-    expect(inside(socket.mesh, 0, 0, PLINTH.height + 1.2 - PLINTH.socketDepth - 0.3)).toBe(true);
+    expect(lamps.mesh.indices.length / 3).toBe(MAST.lampCols * MAST.lampRows * 12); // 18 boxes
+    // fit test: a piece of wall top with two sockets, each peg + clearance each side, pegLength + 0.3 deep
+    const block = r.groups["fit-test"][0].parts.find((p) => p.name === "SOCKETS")!;
+    const c = DEFAULT_PARAMS.pegClearance, g = MAST.legGap / 2, top = MAST.pegLength + 1.5;
+    expect(inside(block.mesh, g, 0, top - 0.5)).toBe(false);
+    expect(inside(block.mesh, g + MAST.pegWidth / 2 + c + 0.1, 0, top - 0.5)).toBe(true);
+    expect(inside(block.mesh, g, 0, top - MAST.pegLength - 0.3 - 0.3)).toBe(true);
+    // the stadium's wall has the same sockets at the four short sides
+    const d = derive(P());
+    const spot = d.lightSpots[0];
+    const sx = spot.radius * Math.cos((spot.angle * Math.PI) / 180), sy = spot.radius * Math.sin((spot.angle * Math.PI) / 180);
+    const facade = part(r, "FACADE");
+    const along = [-Math.sin((spot.angle * Math.PI) / 180), Math.cos((spot.angle * Math.PI) / 180)];
+    expect(inside(facade.mesh, sx + along[0] * g, sy + along[1] * g, d.wallHeight - 1)).toBe(false);
+    expect(inside(facade.mesh, sx, sy, d.wallHeight - 1)).toBe(true);
+  });
+
+  it("the building is a chamfered square: long sides front/back/left/right, floodlights on the short diagonals", () => {
+    const d = derive(P());
+    expect(d.sides.map((s) => s.kind)).toEqual(["front", "short", "side", "short", "back", "short", "side", "short"]);
+    expect(d.sides[0].length).toBeGreaterThan(d.sides[1].length);
+    expect(d.lightSpots.map((s) => s.angle).sort((a, b) => a - b)).toEqual([-135, -45, 45, 135]);
+    expect(d.wallThickness).toBeGreaterThanOrEqual(MAST.pegDepth + 2 * MAST.wallAround);
+    const regular = derive(P({ cornerSize: 1 }));
+    expect(regular.sides[0].length).toBeCloseTo(regular.sides[1].length, 6);
   });
 });
 
 describe("parameter rules and automatic raises", () => {
-  it("wall raised over the top row, base margin widened for the plinths, lights above the wall", () => {
-    const r = generate(P({ wallHeight: 10, baseMargin: 2, lightHeight: 20 }), null);
+  it("wall raised to the top row and thickened for the floodlight legs", () => {
+    const r = generate(P({ wallHeight: 10, wallThickness: 2 }), null);
     expect(errorsOf(r)).toEqual([]);
     expect(messages(r)).toMatch(/Exterior wall raised/);
+    expect(messages(r)).toMatch(/thickened to 4.0 mm/);
     expect(stadiumParts(r).map((p) => p.name)).toContain("FACADE");
-    expect(messages(r)).toMatch(/Base margin widened/);
-    expect(messages(r)).toMatch(/Floodlights raised/);
+    const thin = generate(P({ wallThickness: 2, lights: "none" }), null);
+    expect(derive(P({ wallThickness: 2, lights: "none" })).wallThickness).toBe(2);
+    expect(errorsOf(thin)).toEqual([]);
   });
   it("too big for the bed, floor under target, rim under two nozzles", () => {
     expect(errorsOf(generate(P({ innerDiameter: 160, bedSize: 150 }), null))[0]).toMatch(/does not fit a 150 mm bed/);
@@ -151,8 +172,8 @@ describe("parameter rules and automatic raises", () => {
       { innerDiameter: 120, depth: 50, rows: 8, sections: 12, wallHeight: 80, baseMargin: 12, bedSize: 350 },
       { lights: "attached" as const },
       { lights: "none" as const },
-      { sections: 5, rows: 1 },
-      { sections: 16, rowRise: 1.2, rowTread: 2 },
+      { sections: 5, rows: 1, cornerSize: 1 },
+      { sections: 16, rowRise: 1.2, rowTread: 2, cornerSize: 0.3, frontApron: 0 },
     ] as Partial<StadiumParams>[]) {
       const r = generate(P(patch), null);
       expect(errorsOf(r), JSON.stringify(patch)).toEqual([]);
@@ -160,10 +181,11 @@ describe("parameter rules and automatic raises", () => {
       expect(r.groups.floodlights.length).toBe(patch.lights === "separate" || patch.lights === undefined ? 4 : 0);
     }
   });
-  it("attached lights: masts fused into the structure, heads and lamps their own colours", () => {
+  it("attached lights: towers standing on the wall, heads and lamps their own colours", () => {
     const r = generate(P({ lights: "attached" }), null);
     expect(stadiumParts(r).map((p) => p.name)).toContain("LAMP_HEADS");
-    expect(bounds(stadiumParts(r)).maxZ).toBeCloseTo(DEFAULT_PARAMS.baseThickness + PLINTH.height - 1 + DEFAULT_PARAMS.lightHeight, 5);
+    expect(stadiumParts(r).map((p) => p.name)).toContain("TOWERS");
+    expect(bounds(stadiumParts(r)).maxZ).toBeCloseTo(derive(P()).wallHeight + DEFAULT_PARAMS.lightHeight, 5);
     expect(messages(r)).toMatch(/wobbly/);
   });
 });

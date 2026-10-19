@@ -22,6 +22,16 @@ export function polygonRing(n: number, apothem: number): Ring {
 }
 export const polygon = (n: number, apothem: number): CrossSection => cs([polygonRing(n, apothem)]);
 
+/**
+ * The building outline: a square with its corners cut off. `a` is the distance from the centre to the
+ * long sides (front, back, left, right), `b` the distance to the four short diagonal sides. A regular
+ * octagon has b = a; b = a·√2 is a plain square. Counter-clockwise, the front side at −Y.
+ */
+export function octagonRing(a: number, b: number): Ring {
+  const c = Math.min(a, Math.max(0, b * Math.SQRT2 - a));
+  return [[a, -c], [a, c], [c, a], [-c, a], [-a, c], [-a, -c], [-c, -a], [c, -a]];
+}
+
 /** Ring of `n` points on a circle. */
 export function circleRing(r: number, n: number): Ring {
   const ring: Ring = [];
