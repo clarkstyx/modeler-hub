@@ -28,12 +28,12 @@ const emblem: Artwork = {
 
 const cases: [string, StadiumParams, Artwork | null][] = [
   ["default", P({}), null],
-  ["small-tealight", P({ innerDiameter: 40, depth: 12, rows: 2, sections: 6, wallHeight: 20, lightHeight: 30, text: "CUP" }), null],
-  ["large-softball", P({ innerDiameter: 120, depth: 50, rows: 8, sections: 12, wallHeight: 80, baseMargin: 12, bedSize: 350 }), null],
+  ["small-tealight", P({ innerDiameter: 40, depth: 12, rows: 2, stairsPerSide: 0, wallHeight: 20, lightHeight: 30, text: "CUP" }), null],
+  ["large-softball", P({ innerDiameter: 120, depth: 50, rows: 8, stairsPerSide: 3, wallHeight: 80, baseMargin: 12, bedSize: 350 }), null],
   ["attached-lights", P({ lights: "attached" }), null],
   ["no-lights", P({ lights: "none", baseMargin: 3 }), null],
-  ["five-sections", P({ sections: 5, rows: 3 }), null],
-  ["sixteen-sections", P({ sections: 16, rowRise: 1.2, rowTread: 2, aisleWidth: 1 }), null],
+  ["no-mid-stairs", P({ stairsPerSide: 0, rows: 3 }), null],
+  ["three-stairs", P({ stairsPerSide: 3, rowRise: 1.2, rowTread: 2, aisleWidth: 1 }), null],
   ["regular-octagon", P({ cornerSize: 1, rows: 6, rowTread: 4 }), null],
   ["square-corners", P({ cornerSize: 0.3, frontApron: 0 }), null],
   ["thin-wall-no-lights", P({ wallThickness: 2, lights: "none" }), null],

@@ -118,7 +118,7 @@ export default function App() {
           <Num label="Rows" value={params.rows} set={(v) => set("rows", Math.round(v))} {...LIMITS.rows} unit="" />
           <Num label="Row rise" value={params.rowRise} set={(v) => set("rowRise", v)} {...LIMITS.rowRise} />
           <Num label="Row depth (tread)" value={params.rowTread} set={(v) => set("rowTread", v)} {...LIMITS.rowTread} />
-          <Num label="Seating sections" value={params.sections} set={(v) => set("sections", Math.round(v))} {...LIMITS.sections} unit="" hint="Stairs run between the sections." />
+          <Num label="Stairs per side" value={params.stairsPerSide} set={(v) => set("stairsPerSide", Math.round(v))} {...LIMITS.stairsPerSide} unit="" hint="Rows run straight along each of the eight sides, with a stair at every bend; this adds stairs in the middle of the sides." />
           <Num label="Aisle (stairs) width" value={params.aisleWidth} set={(v) => set("aisleWidth", v)} {...LIMITS.aisleWidth} />
         </Section>
 

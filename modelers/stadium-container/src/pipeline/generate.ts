@@ -67,7 +67,7 @@ export function generate(params: StadiumParams, art: Artwork | null): GenerateRe
       acrossFlats: 2 * d.baseOuter,
       height: d.height,
       wallHeight: d.wallHeight,
-      seatingWidth: params.rows * params.rowTread,
+      seatingWidth: d.seatsOut,
       seatingHeight: params.rows * params.rowRise,
       lightHeight: d.lightHeight,
       capHeight: built.capHeight,

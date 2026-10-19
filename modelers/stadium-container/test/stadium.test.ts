@@ -71,8 +71,8 @@ describe("default stadium", () => {
     const d = derive(P());
     const s = part(r, "STRUCTURE");
     const ri = DEFAULT_PARAMS.innerDiameter / 2;
-    // (points sit a little off the y = 0 seam of the revolved surfaces so the ray never grazes an edge)
-    const y = 0.37;
+    // (points sit off the y = 0 line, away from the stair in the middle of the right side and off any mesh seam)
+    const y = 6.37;
     // empty inside the cavity, just inside the wall and just above the floor
     expect(inside(s.mesh, ri - 0.6, y, d.zFloor + 0.5)).toBe(false);
     expect(inside(s.mesh, 0.2, y, d.zRim - 0.5)).toBe(false);
@@ -139,6 +139,24 @@ describe("default stadium", () => {
     expect(inside(facade.mesh, sx, sy, d.wallHeight - 1)).toBe(true);
   });
 
+  it("rows run straight along the sides: the first riser is at the same distance all along the front, further out at the corners", () => {
+    const d = derive(P());
+    const s = part(r, "STRUCTURE");
+    const z = d.zRim + 1;
+    // just outside the first row's inner edge: solid (the step); just inside: air (the deck), at two spots along the front
+    for (const x of [5, 18]) {
+      expect(inside(s.mesh, x, -(d.seatA + 0.5), z)).toBe(true);
+      expect(inside(s.mesh, x, -(d.seatA - 0.5), z)).toBe(false);
+    }
+    // on the diagonal the first row starts at seatB > seatA (the deck is wider at the corners)
+    expect(d.seatB).toBeGreaterThan(d.seatA);
+    const u = Math.SQRT1_2;
+    expect(inside(s.mesh, (d.seatB + 0.5) * u, -(d.seatB + 0.5) * u, z)).toBe(true);
+    expect(inside(s.mesh, (d.seatB - 0.5) * u, -(d.seatB - 0.5) * u, z)).toBe(false);
+    // the cavity stays round: empty at seatA - wall - 0.5 in every direction
+    expect(inside(s.mesh, (d.ri - 0.5) * u, (d.ri - 0.5) * u, d.zRim - 1)).toBe(false);
+  });
+
   it("the building is a chamfered square: long sides front/back/left/right, floodlights on the short diagonals", () => {
     const d = derive(P());
     expect(d.sides.map((s) => s.kind)).toEqual(["front", "short", "side", "short", "back", "short", "side", "short"]);
@@ -168,12 +186,12 @@ describe("parameter rules and automatic raises", () => {
   });
   it("small, large, attached lights and no lights all export", () => {
     for (const patch of [
-      { innerDiameter: 40, depth: 12, rows: 2, sections: 6, wallHeight: 20, lightHeight: 30 },
-      { innerDiameter: 120, depth: 50, rows: 8, sections: 12, wallHeight: 80, baseMargin: 12, bedSize: 350 },
+      { innerDiameter: 40, depth: 12, rows: 2, stairsPerSide: 0, wallHeight: 20, lightHeight: 30 },
+      { innerDiameter: 120, depth: 50, rows: 8, stairsPerSide: 3, wallHeight: 80, baseMargin: 12, bedSize: 350 },
       { lights: "attached" as const },
       { lights: "none" as const },
-      { sections: 5, rows: 1, cornerSize: 1 },
-      { sections: 16, rowRise: 1.2, rowTread: 2, cornerSize: 0.3, frontApron: 0 },
+      { stairsPerSide: 2, rows: 1, cornerSize: 1 },
+      { stairsPerSide: 3, rowRise: 1.2, rowTread: 2, cornerSize: 0.3, frontApron: 0 },
     ] as Partial<StadiumParams>[]) {
       const r = generate(P(patch), null);
       expect(errorsOf(r), JSON.stringify(patch)).toEqual([]);

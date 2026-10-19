@@ -1,7 +1,8 @@
 # Stadium Container — notes for Claude Code
 
 A miniature baseball stadium around an open round container (a baseball fits the default): stepped
-seating; a chamfered-square building (long front/back/left/right sides, four short diagonals) with
+seating in straight rows parallel to the eight sides (nested offset octagons around the round cavity,
+stairs at the bends and mid-side); a chamfered-square building (long front/back/left/right sides, four short diagonals) with
 columns, window bands, arched doors and awnings; the logo tower on the front, name banners over the
 entrances on the two short sides beside it, and four lattice floodlight towers plugged into the wall top
 on the short sides. One of Clark's Valencia Modelers, kept in the

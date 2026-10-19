@@ -1,7 +1,9 @@
 # Stadium Container
 
 A miniature baseball stadium wrapped around an open round container. A baseball (about 74 mm) sits in
-the default cavity; the seats step up around it. The building is a square with its corners cut off:
+the default cavity; the seats step up around it in straight rows parallel to the eight sides, with a
+flat deck between the round rim and the first row and stairs at every bend. The building is a square
+with its corners cut off:
 the front carries the entrance tower with your logo; the two short sides beside it carry the ballpark's
 name on a banner over a main entrance with its awning; all four short diagonal sides carry a lattice
 floodlight tower (two legs, X bracing, 6 × 3 lamps) whose legs plug into the wall top. A terrace in front leaves room for
@@ -11,7 +13,7 @@ Valencia Modelers; the hub serves it at `/m/stadium-container/`.
 ## What you can change
 
 - **Container**: inside diameter, usable depth, rim width, floor thickness.
-- **Seating**: rows, row rise and depth, number of sections, aisle width.
+- **Seating**: rows, row rise and depth, stairs per side (0–3, on top of the stairs at the eight bends), stair width.
 - **Building**: corner size (1 = regular octagon, smaller = squarer), exterior wall height (raised
   automatically to the top row), wall thickness (thickened automatically to 4 mm so the floodlight legs fit),
   front terrace, concourse width, base thickness and margin.

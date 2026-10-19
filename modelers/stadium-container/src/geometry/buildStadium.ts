@@ -4,7 +4,7 @@ import { kernel, track, type Manifold } from "../shared/kernel";
 import { manifoldToMesh } from "../shared/mesh";
 import { box, cs, csBounds, mIntersect, mSubtract, mUnion, prism, segmentsFor } from "../shared/shapes";
 import { buildFloodlight, placeFlat, placeStanding, socketBoxes, type Floodlight } from "./buildFloodlight";
-import { archRing, at, extrudeX, extrudeY, octagonRing, rectRing, revolve, spin } from "./frames";
+import { archRing, at, circle, extrudeX, extrudeY, octagonRing, rectRing, spin } from "./frames";
 import { layoutSign, layoutWingText } from "./sign";
 
 /** One printed object: the stadium, one floodlight, or the fit test. */
@@ -84,18 +84,18 @@ function doorway(face: number, w: number, h: number, angle: number, floorZ: numb
 export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult {
   const d = derive(p);
   const issues: Issue[] = [];
-  const N = Math.round(p.sections);
-  const seg = Math.min(480, Math.ceil(segmentsFor(d.rSeats) / (2 * N)) * 2 * N);
+  const seg = segmentsFor(d.ri);
   const zBase = p.baseThickness;
-  const r0 = d.ri + p.wall;
   const t = d.wallThickness;
   /** The building outline grown outwards by `out` (negative = inwards). */
   const oct = (out: number) => cs([octagonRing(d.wallOuter + out, d.shortOuter + out)]);
+  /** The seating outline `out` beyond the first row's inner edge. */
+  const seatOct = (out: number) => cs([octagonRing(d.seatA + out, d.seatB + out)]);
   const seats: Manifold[] = []; // accent: slabs on the treads
-  const accent: Manifold[] = []; // accent: awnings, the band, wing lettering
+  const accent: Manifold[] = []; // accent: awnings, the band, the name banners
   const signage: Manifold[] = []; // sign colour: the panel
   const doorSkins: Manifold[] = []; // sign colour, inside the wall
-  const signArt: Manifold[] = []; // facade colour, raised on the sign
+  const signArt: Manifold[] = []; // facade colour, raised on the sign and the banners
   const emblemGrey: Manifold[] = []; // structure colour pieces of the emblem
   const facadeParts: Manifold[] = []; // facade colour: the wall ring, columns, tower
 
@@ -108,32 +108,28 @@ export function buildStadium(p: StadiumParams, art: Artwork | null): BuildResult
   let body = mUnion([base, block]);
   facadeParts.push(prism(track(oct(0).subtract(oct(-t))), zBase, d.wallHeight));
 
-  // ---- 2. the bowl: the cavity, the rim ledge, and everything above the ledge out to the last row
-  body = mSubtract(body, revolve([[0, d.zFloor], [d.ri, d.zFloor], [d.ri, d.zRim], [d.rSeats, d.zRim], [d.rSeats, d.zSeatTop + big], [0, d.zSeatTop + big]], seg));
+  // ---- 2. the bowl: the round cavity, then the air above every row (straight rows parallel to the eight sides)
+  const cut: Manifold[] = [prism(circle(d.ri, seg), d.zFloor, d.zSeatTop + 1)];
+  for (let k = 1; k <= p.rows; k++) cut.push(prism(seatOct((k - 1) * p.rowTread), d.zRim + (k - 1) * p.rowRise, d.zRim + k * p.rowRise + (k === p.rows ? big : 0)));
+  body = mSubtract(body, mUnion(cut));
 
-  // ---- 3. seating: a stepped ring standing on the ledge; stair aisles with half steps; a raised seat slab on each tread
-  const steps: [number, number][] = [[r0, d.zRim]];
-  for (let k = 1; k <= p.rows; k++) steps.push([r0 + (k - 1) * p.rowTread, d.zRim + k * p.rowRise], [r0 + k * p.rowTread, d.zRim + k * p.rowRise]);
-  steps.push([d.rSeats, d.zRim]);
-  const aisleBoxes = (w: number) => mUnion(d.aisleAngles.map((a) => sideBox(a, -w / 2, -(d.rSeats + 1), d.zRim - 1, w / 2, -(r0 - 1), d.zSeatTop + 2)));
+  // ---- 3. stairs through the seating (each row split into two half steps) and a raised seat slab on every row
+  const reach = d.seatsOut + 3;
+  const aisleBoxes = (w: number) => mUnion(d.aisles.map((s) => at(track(box(-w / 2, -reach, d.zRim - 1, w / 2, 2, d.zSeatTop + 2).rotate([0, 0, s.angle + 90])), s.x, s.y, 0)));
   const aisles = aisleBoxes(p.aisleWidth);
-  const halfSteps = p.rowTread / 2 >= 0.8 && p.rowRise / 2 >= 2 * p.layerHeight;
-  const stairProfile: [number, number][] = [[r0, d.zRim]];
-  for (let k = 1; k <= p.rows; k++) {
-    const ri = r0 + (k - 1) * p.rowTread, zk = d.zRim + (k - 1) * p.rowRise;
-    if (halfSteps) stairProfile.push([ri, zk + p.rowRise / 2], [ri + p.rowTread / 2, zk + p.rowRise / 2]);
-    stairProfile.push([ri + (halfSteps ? p.rowTread / 2 : 0), zk + p.rowRise], [ri + p.rowTread, zk + p.rowRise]);
+  if (p.rowTread / 2 >= 0.8 && p.rowRise / 2 >= 2 * p.layerHeight) {
+    const halfSteps: Manifold[] = [];
+    for (let k = 1; k <= p.rows; k++) halfSteps.push(prism(seatOct((k - 1) * p.rowTread + p.rowTread / 2), d.zRim + k * p.rowRise - p.rowRise / 2, d.zRim + k * p.rowRise + 0.01));
+    body = dropSlivers(mSubtract(body, mIntersect(mUnion(halfSteps), aisles)));
   }
-  stairProfile.push([d.rSeats, d.zRim]);
-  body = mUnion([body, dropSlivers(mSubtract(revolve(steps, seg), aisles)), dropSlivers(mIntersect(revolve(stairProfile, seg), aisles))]);
   const slabW = p.rowTread - SEAT.front - SEAT.back;
   if (slabW >= SEAT.minWidth) {
-    const slabs: [number, number][][] = [];
+    const slabs: Manifold[] = [];
     for (let k = 1; k <= p.rows; k++) {
-      const ri = r0 + (k - 1) * p.rowTread + SEAT.front, z = d.zRim + k * p.rowRise;
-      slabs.push(rectRing(ri, z, ri + slabW, z + SEAT.raise));
+      const o = (k - 1) * p.rowTread + SEAT.front, z = d.zRim + k * p.rowRise;
+      slabs.push(prism(track(seatOct(o + slabW).subtract(seatOct(o))), z, z + SEAT.raise));
     }
-    seats.push(dropSlivers(mSubtract(revolve(slabs, seg), aisleBoxes(p.aisleWidth + 2 * SEAT.back))));
+    seats.push(dropSlivers(mSubtract(mUnion(slabs), aisleBoxes(p.aisleWidth + 2 * SEAT.back))));
   }
 
   // ---- 4. exterior architecture, side by side: corner columns, pilasters, doors with awnings, lettering, window bands

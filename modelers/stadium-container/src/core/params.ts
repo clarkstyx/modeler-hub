@@ -31,9 +31,9 @@ export interface StadiumParams {
   rowRise: number;
   /** Depth of each row. */
   rowTread: number;
-  /** Seating sections (stairs between them). */
-  sections: number;
-  /** Width of the stairs between sections. */
+  /** Stairs through the seating in the middle of each side (0–3); there is always a stair at each of the eight bends. */
+  stairsPerSide: number;
+  /** Width of the stairs through the seating. */
   aisleWidth: number;
 
   // --- building: a square with its corners cut off, long sides front/back/left/right, four short diagonal sides
@@ -88,7 +88,7 @@ export const DEFAULT_PARAMS: StadiumParams = {
   rows: 5,
   rowRise: 2.5,
   rowTread: 3,
-  sections: 8,
+  stairsPerSide: 1,
   aisleWidth: 2,
   cornerSize: 0.75,
   wallHeight: 44,
@@ -120,7 +120,7 @@ export const LIMITS = {
   rows: { min: 1, max: 12, step: 1 },
   rowRise: { min: 1.2, max: 6, step: 0.1 },
   rowTread: { min: 2, max: 8, step: 0.5 },
-  sections: { min: 4, max: 16, step: 1 },
+  stairsPerSide: { min: 0, max: 3, step: 1 },
   aisleWidth: { min: 1, max: 5, step: 0.5 },
   cornerSize: { min: 0.3, max: 1, step: 0.05 },
   wallHeight: { min: 10, max: 140, step: 1 },
@@ -167,7 +167,7 @@ export const AWNING = { out: 2.2, lip: 0.8, extra: 2 };
 /** Red band along the top of the wall: height and how far it stands out (in two half steps). */
 export const TRIM = { height: 1.6, out: 0.6, skin: 0.8 };
 /** Entrance tower: how far it stands out of the wall, how far it rises above it, and its width as a share of the side. */
-export const TOWER = { out: 3, above: 8, widthShare: 0.5, minWidth: 26, maxWidth: 70 };
+export const TOWER = { out: 3, above: 8, widthShare: 0.6, minWidth: 26, maxWidth: 70 };
 /** Sign panel on the tower: standoff, margins, raised artwork height. */
 export const SIGN = { raise: 0.8, margin: 1.6, textRaise: 0.8, minCap: 3.5, maxCap: 9 };
 /**
@@ -204,8 +204,11 @@ export interface Derived {
   zFloor: number;
   /** Rim height (top of the container wall). */
   zRim: number;
-  /** Outer radius of the seating. */
-  rSeats: number;
+  /** Seating: the first row's inner edge is an octagon with these long- and short-side apothems; every row is
+   * `rowTread` further out, so the outer edge is `seatA + seatsOut`, `seatB + seatsOut`. */
+  seatA: number;
+  seatB: number;
+  seatsOut: number;
   /** Top of the last row = concourse level. */
   zSeatTop: number;
   /** Exterior wall thickness actually built. */
@@ -228,8 +231,8 @@ export interface Derived {
   sides: Side[];
   /** The eight corners: direction and distance from the centre. */
   corners: { angle: number; radius: number }[];
-  /** Stair aisles between the seating sections, degrees. */
-  aisleAngles: number[];
+  /** Stairs through the seating: a start point (on the first row's inner edge) and the direction they run outwards, degrees. */
+  aisles: { x: number; y: number; angle: number }[];
   /** Entrance tower width, and its front face distance from the centre. */
   towerWidth: number;
   towerFront: number;
@@ -249,17 +252,19 @@ export const shortApothem = (a: number, s: number) => a * (SQRT2 - s * (SQRT2 - 
 
 /** Every dimension that follows from the parameters, with the automatic raises applied. */
 export function derive(p: StadiumParams): Derived {
-  const N = Math.round(p.sections);
   const ri = p.innerDiameter / 2;
   const zFloor = p.floor;
   const zRim = zFloor + p.depth;
-  const rSeats = ri + p.wall + p.rows * p.rowTread;
+  // The seating octagon touches the rim ledge at the middle of the long sides; the building grows from it by equal offsets.
+  const seatA = ri + p.wall;
+  const seatB = shortApothem(seatA, p.cornerSize);
+  const seatsOut = p.rows * p.rowTread;
   const zSeatTop = zRim + p.rows * p.rowRise;
   const wallThickness = p.lights === "none" ? p.wallThickness : Math.max(p.wallThickness, MAST.pegDepth + 2 * MAST.wallAround);
-  const wallInner = rSeats + p.concourse;
+  const wallInner = seatA + seatsOut + p.concourse;
+  const shortInner = seatB + seatsOut + p.concourse;
   const wallOuter = wallInner + wallThickness;
-  const shortOuter = shortApothem(wallOuter, p.cornerSize);
-  const shortInner = shortOuter - wallThickness;
+  const shortOuter = shortInner + wallThickness;
   const wallHeight = Math.max(p.wallHeight, zSeatTop + 0.4);
   // Corner of the octagon: a long side at distance a meets a diagonal at distance b at (a, c), c = b√2 − a.
   const c = shortOuter * SQRT2 - wallOuter;
@@ -270,7 +275,21 @@ export function derive(p: StadiumParams): Derived {
   const cornerRadius = Math.hypot(wallOuter, c);
   const cornerHalf = Math.atan2(c, wallOuter) * DEG;
   const corners = sides.filter((s) => s.kind !== "short").flatMap((s) => [{ angle: norm(s.angle - cornerHalf), radius: cornerRadius }, { angle: norm(s.angle + cornerHalf), radius: cornerRadius }]);
-  const aisleAngles = Array.from({ length: N }, (_, k) => norm(-90 + 180 / N + (360 * k) / N));
+  // Stairs: one at every bend of the seating (they run along the corner's bisector, which is where the bend moves as
+  // the rows step out), plus up to three straight stairs per side, perpendicular to the rows.
+  const c0 = seatB * SQRT2 - seatA;
+  const aisles: { x: number; y: number; angle: number }[] = [];
+  const octVerts: [number, number][] = [[seatA, -c0], [seatA, c0], [c0, seatA], [-c0, seatA], [-seatA, c0], [-seatA, -c0], [-c0, -seatA], [c0, -seatA]];
+  octVerts.forEach(([x, y], i) => aisles.push({ x, y, angle: norm(-22.5 + 45 * i) }));
+  const n = Math.round(p.stairsPerSide);
+  for (const s of sides) {
+    const inner = s.kind === "short" ? seatB : seatA;
+    const half = s.kind === "short" ? (SQRT2 * (seatA - c0)) / 2 : c0;
+    if (2 * half < (n + 1) * 2 * p.aisleWidth) continue;
+    const offsets = n === 1 ? [0] : n === 2 ? [-half * 0.45, half * 0.45] : n === 3 ? [-half * 0.55, 0, half * 0.55] : [];
+    const ang = rad(s.angle);
+    for (const o of offsets) aisles.push({ x: inner * Math.cos(ang) - o * Math.sin(ang), y: inner * Math.sin(ang) + o * Math.cos(ang), angle: s.angle });
+  }
   const lightSpots = p.lights === "none" ? [] : sides.filter((s) => s.kind === "short").map((s) => ({ angle: s.angle, radius: shortOuter - wallThickness / 2 }));
   const baseOuter = wallOuter + p.baseMargin;
   const baseShort = shortOuter + p.baseMargin;
@@ -280,7 +299,7 @@ export function derive(p: StadiumParams): Derived {
   const lightHeight = p.lights === "none" ? 0 : p.lightHeight;
   const footprint = Math.max(2 * baseOuter, 2 * baseOuter + p.frontApron, 2 * (baseShort * SQRT2 - baseOuter) + 2 * p.baseMargin);
   const height = Math.max(towerTop, p.lights === "attached" ? wallHeight + lightHeight : 0);
-  return { ri, zFloor, zRim, rSeats, zSeatTop, wallThickness, wallInner, wallOuter, shortInner, shortOuter, wallHeight, baseOuter, baseShort, frontApron: p.frontApron, lightHeight, sides, corners, aisleAngles, towerWidth, towerFront, towerTop, lightSpots, footprint, height };
+  return { ri, zFloor, zRim, seatA, seatB, seatsOut, zSeatTop, wallThickness, wallInner, wallOuter, shortInner, shortOuter, wallHeight, baseOuter, baseShort, frontApron: p.frontApron, lightHeight, sides, corners, aisles, towerWidth, towerFront, towerTop, lightSpots, footprint, height };
 }
 
 function norm(a: number): number {

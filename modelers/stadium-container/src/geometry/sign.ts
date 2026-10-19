@@ -82,7 +82,7 @@ export function layoutSign(p: StadiumParams, art: Artwork | null, maxW: number, 
     const probe = layoutText(text, p.font, 10, 0.06, 1.2);
     if (probe.width > 0) capHeight = Math.min(capHeight, (innerW * 10) / probe.width);
     if (capHeight < 2.5) {
-      issues.push({ severity: "warning", message: `Sign text would be under 2.5 mm tall on a ${maxW.toFixed(0)} mm wide entrance; it was left off. Shorter text or more sections (a wider front) make room.` });
+      issues.push({ severity: "warning", message: `Sign text would be under 2.5 mm tall on a ${maxW.toFixed(0)} mm wide entrance; it was left off. Shorter text or a bigger container make room.` });
       capHeight = 0;
     } else {
       if (capHeight < SIGN.minCap) issues.push({ severity: "warning", message: `Sign letters are only ${capHeight.toFixed(1)} mm tall; strokes may print thinner than ${TARGETS.stroke} mm. Shorter text or a wider front helps.` });
