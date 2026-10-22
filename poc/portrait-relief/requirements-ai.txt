@@ -1,0 +1,6 @@
+# Optional PyTorch backends (bigger downloads). Install torch first from https://pytorch.org/get-started/locally/
+# picking the CUDA build that matches your driver (or the CPU build).
+transformers>=4.44
+facenet-pytorch>=2.6     # likeness score (MIT); pulls torch
+# Depth Anything 3: follow github.com/ByteDance-Seed/Depth-Anything-3 (its own package). Only Small/Base/Mono-Large are Apache-2.0.
+# MoGe-2: pip install git+https://github.com/microsoft/MoGe.git
