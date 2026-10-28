@@ -88,6 +88,20 @@ to 2–6 flat colours.
 ![Shape clicker, axolotl](docs/images/shape-axolotl.png)
 ![Traced from a sticker sheet](docs/images/shape-traced-sheet.png)
 
+## Stackable: a block per key, on paracord
+
+The **Stackable** mode prints one small base block per key instead of one long base, like the
+Super Fidget clickers: each block holds one switch under a big 21.2 mm keycap and has a cord
+tunnel along each side (Ø 5.2 mm, for 4 mm / 550 paracord). Print blocks in different colours,
+thread them on two cords and mix any colours in any order; knot the cords or add end beads to
+hold the stack. Each block can have its own colour (*Colours → Block N*), and the keycap sheet can
+print stock: *Stackable blocks → Add* puts blocks of a colour on the sheet.
+
+The tunnels are teardrops (pointed roof), so the blocks still print open side up with no support.
+Print the fit test (one block, one keycap) to check your cord slides through.
+
+![Stackable blocks on paracord](docs/images/stackable.png)
+
 ## Two key-clicker styles
 
 - **Keyring**: the base ends in a low tapered **tag with a slot** (for a split ring, ball chain or

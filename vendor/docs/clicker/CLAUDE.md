@@ -27,6 +27,7 @@ and check changes in the browser.
   id, drawn charm id, "upload" or "" for the letter). The worker resolves the ids itself (`keyPictures()`
   in `generate.ts`), so the UI only sends ids plus the uploaded artwork.
 - Each key's keycap colour: `keyCapColors[i]`, else its picture's tile colour, else `capColor` (`keyCapColor()`).
+- `mode: "stack"`: one block per key (`geometry/block.ts`) with two teardrop cord tunnels, colour per block (`blockColors`); the keycap sheet can hold `block:#hex` lines.
 - `printer` (`PRINTERS` in params) sets the bed, the filament slots and whether prints are split by
   colour; the keycap sheet (`sheet`: picture ids or `letter:A` with quantities) is keycaps only.
 - Reliefs: `planReliefs()` (`geometry/relief.ts`) decides each colour's flush / raised / engraved and
