@@ -21,7 +21,7 @@ Part of the Valencia Modelers family.
 ## Clicker bar: pictures instead of letters
 
 Under **Keys**, switch the keycap tops from **Letters** to **Pictures** and every key gets a picture,
-like the beads of a "create your own clicker" bar: click a key, then a picture for it (the 24
+like the beads of a "create your own clicker" bar: click a key, then a picture for it (the 69
 Valencia Kawaii designs, the simple shapes, your own upload), and the next key is selected for you.
 A key with no picture shows its letter, so names and pictures mix on one base. The picture is
 scaled to the flat top of the keycap (12 mm on classic keys, 15 mm on big keys) and cleaned for
@@ -44,10 +44,27 @@ toolhead per colour and does not purge, so it prints everything in one go.
 
 ![Clicker bar](docs/images/clicker-bar.png)
 
+**Tiles** (the first group in the gallery) are nine faces drawn for keycaps: fox, panda, frog,
+dino, strawberry, robot, sun, mushroom and cloud. Each has a tile colour, so its keycap prints in
+that colour (an orange fox key, a green frog key) and the face's main colour shares the keycap's
+filament. Any key can get its own colour (*Key N colour*, or *Auto* for the tile colour). With
+*Emboss: stacked by size* the faces build up in layers like moulded clay tiles. Keycaps of
+different colours print as separate prints, one per colour. Redraw or add tiles with
+`python3 scripts/draw-tiles.py`.
+
+![Tiles on a clicker bar](docs/images/tiles-bar.png)
+
+**Moods** are twelve expressions, one per keycap, each on its own colour: happy, laughing, wink,
+tongue out, sleepy, surprised, love, angry, crying, cool, dizzy and shy. A bar or a sheet of them
+is a set of different moods. Drawn by the same script; the same Tiles and Moods are in the Icon
+Bead modeler under *Valencia*.
+
+![Moods](docs/images/moods.png)
+
 ## Shape clicker: the picture is the button
 
-One switch, and the button is a picture: pick one of the 24 **Valencia Kawaii** designs (Everyday
-and Christmas), a simple shape, or **upload your own PNG, JPG or SVG**. The **whole picture is kept**
+One switch, and the button is a picture: pick one of the 69 **Valencia Kawaii** designs (Tiles, Moods,
+Everyday, Christmas, Pets, Food and Squishy), a simple shape, or **upload your own PNG, JPG or SVG**. The **whole picture is kept**
 by default, never cropped: the clicker grows to fit it, and separate parts (a sticker sheet) are
 joined by a backing. You can also pick just one sticker from a sheet. Photos and drawings are traced
 to 2–6 flat colours.
@@ -63,11 +80,27 @@ to 2–6 flat colours.
   *Step*, 0.4 mm). Any colour can be pinned to flush, raised or engraved, and you can **click a
   colour on the 3D view** to cycle it flush → raised → engraved. The same options apply to charms
   and to the pictures on keycaps.
+- Pictures are cleaned for the nozzle: lines thinner than 0.4 mm and specks under 0.5 mm² are
+  dropped, so auto-traced art prints clean. Drawing guidelines for new charms: `docs/ART_PROMPT.md`.
 - Palm-sized: 35 mm by default. The switch needs a solid area about 20 mm across, so very thin
   pictures are enlarged a little, or get a small backing pad behind them.
 
 ![Shape clicker, axolotl](docs/images/shape-axolotl.png)
 ![Traced from a sticker sheet](docs/images/shape-traced-sheet.png)
+
+## Stackable: a block per key, on paracord
+
+The **Stackable** mode prints one small base block per key instead of one long base, like the
+Super Fidget clickers: each block holds one switch under a big 21.2 mm keycap and has a cord
+tunnel along each side (Ø 5.2 mm, for 4 mm / 550 paracord). Print blocks in different colours,
+thread them on two cords and mix any colours in any order; knot the cords or add end beads to
+hold the stack. Each block can have its own colour (*Colours → Block N*), and the keycap sheet can
+print stock: *Stackable blocks → Add* puts blocks of a colour on the sheet.
+
+The tunnels are teardrops (pointed roof), so the blocks still print open side up with no support.
+Print the fit test (one block, one keycap) to check your cord slides through.
+
+![Stackable blocks on paracord](docs/images/stackable.png)
 
 ## Two key-clicker styles
 

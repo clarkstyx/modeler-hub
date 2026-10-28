@@ -19,13 +19,15 @@ and check changes in the browser.
   plastic (like the NSHOP 7-key). `brandMark` can put it under the first switch or on the side.
 - Clark slices in **OrcaSlicer / Anycubic Slicer**, not Bambu Studio. They import our 3MFs as
   geometry on one plate (no plate list), so multi-colour downloads are one 3MF per main colour in a zip.
-- Pictures: `src/art/` holds the Valencia Kawaii SVG library (V4 pack: flat polygons, ≤4 colours, a
-  `translate` on each path, read by `parseSimpleSvg`, which also runs in the worker and tests) and the PNG/JPG tracer (`trace.ts`,
+- Pictures: `src/art/` holds the Valencia Kawaii SVG library (69 files in seven groups, the nine Tiles and twelve Moods drawn by `scripts/draw-tiles.py` with a `data-tile` keycap colour, also copied into the Icon Bead modeler's `charms/Valencia`: flat polygons,
+  ≤4 colours, a `translate` on each path, read by `parseSimpleSvg`, which also runs in the worker and tests) and the PNG/JPG tracer (`trace.ts`,
   following the hub's image-to-multicolor playbook). Picture colours are named ("Black", "Cream")
   so settings and reliefs are per colour.
 - Keycap tops are letters or, for the "clicker bar", a picture per key (`capStyle`, `keyPictures`: library
   id, drawn charm id, "upload" or "" for the letter). The worker resolves the ids itself (`keyPictures()`
   in `generate.ts`), so the UI only sends ids plus the uploaded artwork.
+- Each key's keycap colour: `keyCapColors[i]`, else its picture's tile colour, else `capColor` (`keyCapColor()`).
+- `mode: "stack"`: one block per key (`geometry/block.ts`) with two teardrop cord tunnels, colour per block (`blockColors`); the keycap sheet can hold `block:#hex` lines.
 - `printer` (`PRINTERS` in params) sets the bed, the filament slots and whether prints are split by
   colour; the keycap sheet (`sheet`: picture ids or `letter:A` with quantities) is keycaps only.
 - Reliefs: `planReliefs()` (`geometry/relief.ts`) decides each colour's flush / raised / engraved and
