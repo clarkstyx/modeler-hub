@@ -21,7 +21,7 @@ Part of the Valencia Modelers family.
 ## Clicker bar: pictures instead of letters
 
 Under **Keys**, switch the keycap tops from **Letters** to **Pictures** and every key gets a picture,
-like the beads of a "create your own clicker" bar: click a key, then a picture for it (the 57
+like the beads of a "create your own clicker" bar: click a key, then a picture for it (the 69
 Valencia Kawaii designs, the simple shapes, your own upload), and the next key is selected for you.
 A key with no picture shows its letter, so names and pictures mix on one base. The picture is
 scaled to the flat top of the keycap (12 mm on classic keys, 15 mm on big keys) and cleaned for
@@ -54,9 +54,16 @@ different colours print as separate prints, one per colour. Redraw or add tiles 
 
 ![Tiles on a clicker bar](docs/images/tiles-bar.png)
 
+**Moods** are twelve expressions, one per keycap, each on its own colour: happy, laughing, wink,
+tongue out, sleepy, surprised, love, angry, crying, cool, dizzy and shy. A bar or a sheet of them
+is a set of different moods. Drawn by the same script; the same Tiles and Moods are in the Icon
+Bead modeler under *Valencia*.
+
+![Moods](docs/images/moods.png)
+
 ## Shape clicker: the picture is the button
 
-One switch, and the button is a picture: pick one of the 57 **Valencia Kawaii** designs (Tiles,
+One switch, and the button is a picture: pick one of the 69 **Valencia Kawaii** designs (Tiles, Moods,
 Everyday, Christmas, Pets, Food and Squishy), a simple shape, or **upload your own PNG, JPG or SVG**. The **whole picture is kept**
 by default, never cropped: the clicker grows to fit it, and separate parts (a sticker sheet) are
 joined by a backing. You can also pick just one sticker from a sheet. Photos and drawings are traced
