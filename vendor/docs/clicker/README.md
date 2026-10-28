@@ -21,7 +21,7 @@ Part of the Valencia Modelers family.
 ## Clicker bar: pictures instead of letters
 
 Under **Keys**, switch the keycap tops from **Letters** to **Pictures** and every key gets a picture,
-like the beads of a "create your own clicker" bar: click a key, then a picture for it (the 24
+like the beads of a "create your own clicker" bar: click a key, then a picture for it (the 64
 Valencia Kawaii designs, the simple shapes, your own upload), and the next key is selected for you.
 A key with no picture shows its letter, so names and pictures mix on one base. The picture is
 scaled to the flat top of the keycap (12 mm on classic keys, 15 mm on big keys) and cleaned for
@@ -46,8 +46,8 @@ toolhead per colour and does not purge, so it prints everything in one go.
 
 ## Shape clicker: the picture is the button
 
-One switch, and the button is a picture: pick one of the 24 **Valencia Kawaii** designs (Everyday
-and Christmas), a simple shape, or **upload your own PNG, JPG or SVG**. The **whole picture is kept**
+One switch, and the button is a picture: pick one of the 64 **Valencia Kawaii** designs (Everyday,
+Christmas, Pets, Food, Squishy and Oddballs), a simple shape, or **upload your own PNG, JPG or SVG**. The **whole picture is kept**
 by default, never cropped: the clicker grows to fit it, and separate parts (a sticker sheet) are
 joined by a backing. You can also pick just one sticker from a sheet. Photos and drawings are traced
 to 2–6 flat colours.
