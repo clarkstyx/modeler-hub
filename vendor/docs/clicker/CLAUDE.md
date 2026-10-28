@@ -19,8 +19,8 @@ and check changes in the browser.
   plastic (like the NSHOP 7-key). `brandMark` can put it under the first switch or on the side.
 - Clark slices in **OrcaSlicer / Anycubic Slicer**, not Bambu Studio. They import our 3MFs as
   geometry on one plate (no plate list), so multi-colour downloads are one 3MF per main colour in a zip.
-- Pictures: `src/art/` holds the Valencia Kawaii SVG library (flat polygons, ≤4 colours, read by
-  `parseSimpleSvg`, which also runs in the worker and tests) and the PNG/JPG tracer (`trace.ts`,
+- Pictures: `src/art/` holds the Valencia Kawaii SVG library (V4 pack: flat polygons, ≤4 colours, a
+  `translate` on each path, read by `parseSimpleSvg`, which also runs in the worker and tests) and the PNG/JPG tracer (`trace.ts`,
   following the hub's image-to-multicolor playbook). Picture colours are named ("Black", "Cream")
   so settings and reliefs are per colour.
 - Keycap tops are letters or, for the "clicker bar", a picture per key (`capStyle`, `keyPictures`: library
@@ -28,6 +28,9 @@ and check changes in the browser.
   in `generate.ts`), so the UI only sends ids plus the uploaded artwork.
 - `printer` (`PRINTERS` in params) sets the bed, the filament slots and whether prints are split by
   colour; the keycap sheet (`sheet`: picture ids or `letter:A` with quantities) is keycaps only.
+- Reliefs: `planReliefs()` (`geometry/relief.ts`) decides each colour's flush / raised / engraved and
+  stack height for the Shape button, the charm and keycap pictures; part names end in the colour
+  name, which is how a click on the 3D view (`Preview3D.onPick`) finds the colour to cycle.
 - Charm layer colours are roles (`@base`, `@cap`, `@letter`) so a clicker prints with 3 filaments.
 - `src/shared/` is a copy of the hub's `packages/geometry/src`. Fix shared bugs in the hub first.
 - Dark sidebar UI, plain React, no UI framework.

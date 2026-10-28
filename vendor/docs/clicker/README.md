@@ -58,6 +58,11 @@ to 2–6 flat colours.
 - **Tray**: the same outline, bigger by a wall (1.8 mm), with the button sunk into it so there is
   no gap. A thin sleeve holds the switch; the rest is hollow. The ring loop sits on the tray's
   highest point. Smooth, grooved or ridged wall.
+- **Emboss**, like the Image Keychain: **Flat** (each colour at its own setting) or **stacked by
+  size, darkness or brightness** (the first colour stays flush, each next one steps up by the
+  *Step*, 0.4 mm). Any colour can be pinned to flush, raised or engraved, and you can **click a
+  colour on the 3D view** to cycle it flush → raised → engraved. The same options apply to charms
+  and to the pictures on keycaps.
 - Palm-sized: 35 mm by default. The switch needs a solid area about 20 mm across, so very thin
   pictures are enlarged a little, or get a small backing pad behind them.
 
