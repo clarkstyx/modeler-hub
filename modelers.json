@@ -198,6 +198,16 @@
       "tier": "seller",
       "status": "live",
       "makerworld": ""
+    },
+    {
+      "id": "rubber-spinner",
+      "name": "Rubber Spinner",
+      "repo": "clarkstyx/rubber-spinner",
+      "tagline": "A press-and-spin fidget ball in your own colour mix: swappable petals, a ratchet and one rubber band.",
+      "category": "Toys",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
     }
   ]
 }
