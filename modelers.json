@@ -170,6 +170,16 @@
       "scad": "makerworld"
     },
     {
+      "id": "custom-spinner",
+      "name": "Custom Spinner",
+      "repo": "clarkstyx/custom-spinner",
+      "tagline": "A keychain spinner with your own logo or picture on both face plates, colours pre-split for the AMS.",
+      "category": "Keychains",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "clicker",
       "name": "Clicker Maker",
       "repo": "clarkstyx/clicker",
