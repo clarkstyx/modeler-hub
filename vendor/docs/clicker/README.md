@@ -63,6 +63,8 @@ to 2–6 flat colours.
   *Step*, 0.4 mm). Any colour can be pinned to flush, raised or engraved, and you can **click a
   colour on the 3D view** to cycle it flush → raised → engraved. The same options apply to charms
   and to the pictures on keycaps.
+- Pictures are cleaned for the nozzle: lines thinner than 0.4 mm and specks under 0.5 mm² are
+  dropped, so auto-traced art prints clean. Drawing guidelines for new charms: `docs/ART_PROMPT.md`.
 - Palm-sized: 35 mm by default. The switch needs a solid area about 20 mm across, so very thin
   pictures are enlarged a little, or get a small backing pad behind them.
 
