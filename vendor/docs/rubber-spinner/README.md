@@ -12,7 +12,7 @@ Part of Clark's Valencia Modelers family (hub: `clarkstyx/modeler-hub`, served a
 
 | Part | Count | Prints | What it does |
 |---|---|---|---|
-| Petal | 5–8 | on its flat back | A slice of the ball with a hinge tongue on top and the band groove at its equator. Snaps onto a pin under the hub. Any colour each. |
+| Petal | 5–8 | on its flat back | A slice of the ball with a hinge tongue on top and a tunnel for the band at its equator. Snaps onto a pin under the hub. Any colour each. |
 | Hub | 1 | upside down | The top: a disc with a boss for the button, ears with a hinge pin per petal, a tube down to a flange with saw teeth. |
 | Shaft | 1 | foot down | Stands still. Pivot foot, a collar, then three twisted lobes. |
 | Nut | 1 | flat side down | Rides the shaft's twist under the hub; its teeth grip the hub's teeth one way and slide over them the other way. |
@@ -33,7 +33,7 @@ the plate, a ZIP with one STL per part and an assembly README.
 The shaft stands still on its pivot foot. Everything else, the hub, nut, cap, button and petals,
 slides down the shaft when you press the top. The petals hang from pins under the hub and their
 tips sit on the bottom ring, so as the hub comes down they have no choice but to swing outward:
-the ball opens into a flower (54° at the defaults) and the band in the equator groove stretches.
+the ball opens into a flower (54° at the defaults) and the band, which runs through a tunnel inside every petal at the equator, stretches. It cannot slip off: it only shows at the seams.
 The nut comes down too, but it sits on the shaft's twisted lobes, so it has to turn; its saw teeth
 push into the hub's teeth and the whole ball turns with it, 0.83 of a turn per press. Let go: the
 band pulls the petals shut, which pushes the hub back up; the nut turns back the free way and the
