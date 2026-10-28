@@ -170,6 +170,16 @@
       "scad": "makerworld"
     },
     {
+      "id": "clicker",
+      "name": "Clicker Maker",
+      "repo": "clarkstyx/clicker",
+      "tagline": "Keycap clickers on MX switches: your name, a charm on a dovetail, or a picture on every key for a clicker bar.",
+      "category": "Keychains",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "grinch-ornament",
       "name": "Grinch Ornament",
       "repo": "clarkstyx/grinch-ornament-generator",
