@@ -210,6 +210,16 @@
       "makerworld": ""
     },
     {
+      "id": "phone-stand",
+      "name": "Phone Stand Keychain",
+      "repo": "clarkstyx/Phonestand_keychain_can_opener",
+      "tagline": "A keychain that flips open into a phone stand: printed in one piece, with a keyring, bottle opener and your name.",
+      "category": "Keychains",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "rubber-spinner",
       "name": "Rubber Spinner",
       "repo": "clarkstyx/rubber-spinner",
