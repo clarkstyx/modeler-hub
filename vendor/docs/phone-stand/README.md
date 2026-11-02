@@ -23,6 +23,9 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
   the phone is up). Inlay (flush, its own colour), raised, or engraved. Four fonts, two lines,
   shrinks to fit.
 - **Colours:** bar, flap and text each get a filament slot in the 3MF.
+- **Angle grooves:** up to five V-grooves across the ledge (as many as fit). The phone's bottom edge
+  rests in one; the groove nearest the hinge stands it steepest, the dip at the hook is the most
+  reclined. The readout lists every angle, e.g. 61° / 50° / 39° on the Small preset.
 - **Fit and look:** hinge clearance, flap thickness and taper (thicker at the hinge), how far it sinks
   below the top when folded, rounded edges, hook wall, click grip (how far the hook lip overhangs the
   folded flap), the dip under the flap tip.
