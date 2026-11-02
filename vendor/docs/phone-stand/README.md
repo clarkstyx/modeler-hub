@@ -23,8 +23,18 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
 - **Colours:** bar, flap and text each get a filament slot in the 3MF.
 - **Fit:** hinge clearance, flap thickness and how far it sinks below the top when folded, hook wall,
   click grip (how far the hook lip overhangs the folded flap), the dip under the flap tip.
+- **Batch:** a list of names, one per line ("ANNA x3" for three), and copies of each. The stands
+  are packed onto the bed in list order (a new plate starts when the bed is full), each one its own
+  object in the slicer (`03_ZOE`), with a plate switcher in the preview.
+- **Printers:** Bambu Lab A1 Combo (256 mm, AMS lite), Anycubic Kobra X Combo (260 mm, ACE 2 Pro),
+  Flashforge Creator 5 Pro (256 mm, four toolheads, no purging) or another bed size. The choice sets
+  the bed the plate is packed for, warns when a print needs more colours than the printer holds,
+  and writes the print notes (layers, walls, brim, which slot gets which part) into the sidebar and
+  into the README of every ZIP.
 - The readout shows the folded size, how far the stand rises above the bar, the angle the phone
   leans at, the ledge depth and the weight; the preview can show the stand open (as printed) or folded.
+- Exports: 3MF per plate (colours and settings embedded), STL per plate, or a ZIP with every plate
+  as 3MF + STL, `manifest.csv` and the print notes.
 
 ## Print it
 
@@ -41,7 +51,13 @@ npm run dev        # http://localhost:5184
 npm test           # vitest: sizes, clearance in both poses, click lip, options, rules, exports
 npm run validate   # presets, every option and slider edge; writes out/*.3mf
 npm run build      # production build (the hub passes --base=/m/phone-stand/)
+npm run artifact   # build + artifact/page.html and assets for publishing as a claude.ai page
 ```
+
+The app is also published as a claude.ai page (artifact) so it can be used without the hub; the
+`downloads` capability saves files there (STL and 3MF arrive wrapped in a .zip, which the viewer's
+sandbox allows). Republish after a change: `npm run artifact`, then publish `artifact/page.html`
+with the files in `artifact/assets/` beside it.
 
 ## How it is built
 

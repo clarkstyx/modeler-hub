@@ -14,8 +14,13 @@ vibe-codes: explain in plain words, keep changes small, and verify in the browse
   it (centre = 0), z up from the bed. Side-plane profiles are extruded across the bar with `prismY`.
   The flap is drawn folded (pointing +x) and turned about the pin afterwards; its text goes on
   before the turn.
-- `src/pipeline/` — worker protocol; `generate.ts` validates, builds, checks every mesh, places the
-  stand on the bed. Export only from a result whose `exportable` is true.
+- `src/pipeline/` — worker protocol; `generate.ts` validates, builds one stand per distinct name,
+  checks every mesh, and packs the batch onto plates (`shelfPack` from the shared engine). Export
+  only from a result whose `exportable` is true. Each stand is its own slicer object.
+- Printers live in `src/core/params.ts` (`PRINTERS`, `printNotes`): bed, filament slots, slicer and
+  the colour notes. Add a printer there; nothing else needs to know.
+- `scripts/artifact-page.mjs` turns `dist/` into `artifact/page.html` + assets for the claude.ai
+  page; publish with the `downloads` capability.
 - `src/shared/` — copy of the hub's `packages/geometry`. Fix bugs there and copy the file here by hand.
 - `docs/DESIGN.md` — the mechanism, the dimensions, and the measurements of the original.
 
