@@ -31,6 +31,9 @@ vibe-codes: explain in plain words, keep changes small, and verify in the browse
 - The ledge sits 0.2 mm below the hinge slot's floor on purpose: a single T-shaped floor face
   triangulates into a zero-area triangle and fails the mesh check.
 - Circles use a multiple of four segments so the lowest line of a cylinder is on the bed exactly.
+- The bar's rounded or chamfered edges come from a convex hull of stepped outlines (`edgedBar`).
+  Keep every plan outline convex, or that breaks. Stacking thin prisms instead left tangent
+  contacts with the ring hole and the dip that failed the mesh check.
 - Dark sidebar, plain React, no framework beyond that. Same look as the other modelers.
 - Colour-ready 3MF: bar, flap and text are separate parts of one object. Settings are embedded so a
   downloaded 3MF reopens in the app.
