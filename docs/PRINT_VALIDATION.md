@@ -47,6 +47,8 @@ Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo
 | Knot bead ridges | smooth patterns, ridges ≤ 1.2 mm deep, overhang warned over 60° and refused over 72°, ridges fade at the rims, wall ≥ 2 nozzle widths between bore and valleys | design choice; the coil in the reference photo printed fine at a similar depth | **Unverified physically.** Print the snake and coil presets, check the ridge undersides. |
 | Checklist tag | 55 × 75 × 2 mm card, details 0.8 mm raised, 5 mm hole centred 6 mm in, letters never under 2.5 mm, tick cut out of its box | design choice; 55 × 75 mm sized to the Elf on the Shelf reference photo | **Unverified physically.** Print the nice-list preset in 3 colours; check the small letters and that the elf can hold it. |
 | Gridfinity label slot | 12 mm high × 1.2 mm thick | a common size, **not** a standard: slots differ between bin designs | **Unverified.** The app's fit-test strip prints 11.6 / 12.0 / 12.4 mm; record the one that fits your bins here. |
+| Phone stand keychain hinge | 0.3 mm clearance everywhere between the flap and the bar; ⌀5 mm pin bridged inside the knuckle; knuckle radius = half the bar so it sits on the bed | common print-in-place gap for a 0.4 mm nozzle; measured ≈ 0.25–0.3 mm on the MakerWorld original | **Unverified physically.** Print the Small preset flat, flap open, no supports; the flap must turn free after one firm twist. Record the clearance that works here. |
+| Phone stand keychain click lip | hook lip overhangs the folded flap by 0.2 mm (45° underside); flap sunk 1.5 mm below the top; 1.5 mm dip under the tip | design choice; the original uses a flexing C-hook instead | **Unverified physically.** Check it clicks shut and that a fingernail opens it from the dip. |
 
 ## Required before claiming a fit (future engines)
 
@@ -80,6 +82,9 @@ Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo
 | 2026-10-13 | box-modeler | 23 unit tests (default, min, max, long/unicode text, SVG multicolour, dividers, every preset, calibration set, 3MF/STL/recipe) | vitest in Node | pass |
 | 2026-10-13 | box-modeler | 18 export cases + calibration | `npm run validate` | pass, all watertight, 0 overlaps |
 | 2026-10-13 | box-modeler | app under `/m/box-modeler/`, preset switch, closed view, 3MF download | headless Chromium (SwiftShader) | pass, 0 console errors |
+| 2026-11-02 | phone-stand | 9 unit tests (size, flap–bar clearance ≥ 0.29 mm in the open and folded poses, click lip grips the tip, presets, ring/opener volumes, text styles, rules, 3MF/STL/settings) | vitest in Node | pass |
+| 2026-11-02 | phone-stand | 24 export cases (presets, text, opener, 8–16 mm thick, 22–60 mm wide, 60–88°, 14–60 mm flap, 0.15–0.6 mm clearance, lip and dip extremes) | `npm run validate` | pass, all watertight |
+| 2026-11-02 | phone-stand | app under `/m/phone-stand/` from the hub pull, open and folded views, name inlay on the tail and the flap | headless Chromium (SwiftShader) | pass, 0 console errors, 0 failed requests |
 | 2026-10-13 | all 13 modelers | hub pull + build | `node scripts/pull.mjs --no-fetch` | 13/13 ok |
 | 2026-10-13 | trinket-tray, grinch, dumpling, desktop-sign, jerry-can, phone-grip | existing suites | `npm test` / `npm run check` | 117 / 103 / 156 / 22 / smoke / 14 variants pass |
 | 2026-10-14 | grinch / dumpling ornaments | name font under a sub-path | `--base=/m/x/` build in Chromium | 404 + font error before the fix, none after |
