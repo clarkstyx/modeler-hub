@@ -15,14 +15,17 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
   part of the bar, with the chosen clearance (0.3 mm) everywhere. Printed flat with the flap open.
 - **Sizes:** Small (72 × 35 × 11 mm), Large (76 × 35 × 12 mm, cased phones), Short (no keychain
   tail), or anything in between: width, thickness, flap length, opening angle and tail length.
-- **Keychain end:** keyring hole (diameter or none), bottle-opener slot (9 mm × 24 mm through the
-  tail: the far edge hooks under the cap, the near edge presses on top).
+- **Keychain end:** keyring hole (diameter or none), the can tab lifter from the original (a thin
+  slit in the end of the tail: slide the lip under a drink can's ring pull and lever it up), and an
+  optional bottle-opener slot (9 mm × 24 mm through the tail: the far edge hooks under the cap, the
+  near edge presses on top).
 - **Your name:** on the flat tail top (best for two colours) or on the back of the flap (shows while
   the phone is up). Inlay (flush, its own colour), raised, or engraved. Four fonts, two lines,
   shrinks to fit.
 - **Colours:** bar, flap and text each get a filament slot in the 3MF.
-- **Fit:** hinge clearance, flap thickness and how far it sinks below the top when folded, hook wall,
-  click grip (how far the hook lip overhangs the folded flap), the dip under the flap tip.
+- **Fit and look:** hinge clearance, flap thickness and taper (thicker at the hinge), how far it sinks
+  below the top when folded, rounded edges, hook wall, click grip (how far the hook lip overhangs the
+  folded flap), the dip under the flap tip.
 - **Batch:** a list of names, one per line ("ANNA x3" for three), and copies of each. The stands
   are packed onto the bed in list order (a new plate starts when the bed is full), each one its own
   object in the slicer (`03_ZOE`), with a plate switcher in the preview.
