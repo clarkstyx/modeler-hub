@@ -13,6 +13,9 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
 
 - **One object, no assembly.** The flap's hinge barrel sits in a slot in the bar around a pin that is
   part of the bar, with the chosen clearance (0.3 mm) everywhere. Printed flat with the flap open.
+- **Folds into one block.** The flap is the full width of the bar past the hinge, its edges match
+  the bar's, its tongue tucks under the hook's hood, and the pin shows as a cap on each side: folded,
+  only a seam line gives the hinge away.
 - **Three looks:** Soft (pill-rounded ends and edges, rounded flap), Classic (plain bar, lightly
   rounded), Stealth (chamfered edges, a tail that tapers towards the ring, a fin-shaped flap).
 - **Sizes:** Small (72 × 35 × 11 mm), Large (76 × 35 × 12 mm, cased phones), Short (no keychain
