@@ -42,6 +42,7 @@ P1-3 above and two batch 2 follow-ups (the Trinket pinch fix and bundled fonts).
 | P2-3 | MX clicker family | new engine | 5 clicker products | Cherry MX plate cut-out 14.0 mm, 1.5 mm plate, stem cross 4.0 × 1.1 mm from the datasheet; calibration coupon required |
 | P2-4 | Image Keychain ornament/plaque presets; Name Tag strap slot + magnet pockets; Letter Beads pet-collar preset | existing | Image to Ornament, Printed-Photo Plaque, Bag & Luggage Tag, Name Badge, Pet Collar Beads | – |
 | P2-5 | Phone stand keychain (print-in-place kickstand, keyring, bottle opener, name inlay) | ✅ own engine: `clarkstyx/Phonestand_keychain_can_opener`, id `phone-stand`, Maker; our version of the most-printed MakerWorld phone stand (`docs/DESIGN.md` there has the measurements) | Phone Stand Keychain, Short desk stand, Bottle-opener keychain | first print: hinge clearance and click lip unverified (see `PRINT_VALIDATION.md`); MakerWorld free version |
+| P2-6 | Pop-up finger clicker (character keycap + hidden 3:1 lever + sliding finger on the Shape clicker) | clicker repo, `popup.ts` | Rude raindrop (free MakerWorld), any character + hand set (Seller) | plan in `POPUP_FINGER_CLICKER.md`; mechanism coupon must be printed first |
 
 ## Batch 5
 
