@@ -19,7 +19,8 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
 - **Three looks:** Soft (pill-rounded ends and edges, rounded flap), Classic (plain bar, lightly
   rounded), Stealth (chamfered edges, a tail that tapers towards the ring, a fin-shaped flap).
 - **Sizes:** Small (72 × 35 × 11 mm), Large (76 × 35 × 12 mm, cased phones), Short (no keychain
-  tail), or anything in between: width, thickness, flap length, opening angle and tail length.
+  tail), Printed v1 (the numbers of the first print that worked), or anything in between: width,
+  thickness, flap length, opening angle and tail length.
 - **Keychain end:** keyring hole (diameter or none), the can tab lifter from the original (a thin
   slit in the end of the tail: slide the lip under a drink can's ring pull and lever it up), and an
   optional bottle-opener slot (9 mm × 24 mm through the tail: the far edge hooks under the cap, the
@@ -50,7 +51,9 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
 
 ## Print it
 
-Print as placed: flat on the bed, flap open, **no supports**. PLA or PETG, 0.2 mm layers, 3 walls.
+Print as placed: by default **standing on its long edge** with the flap sticking out sideways and
+the hinge pin vertical, the way the original prints and the way the first print worked; or flat on
+the bed with "Print orientation" under Printer. **No supports** either way. PLA or PETG, 0.2 mm layers, 3 walls.
 After printing, work the flap back and forth once to free the hinge (the pin bridges inside the
 barrel). If the hinge is stuck, raise the clearance to 0.35–0.4 mm; if it is sloppy, lower it.
 Not printed yet: see the test log in the hub's `docs/PRINT_VALIDATION.md` before calling a fit verified.
@@ -80,3 +83,38 @@ and the geometry agree. The bar and flap profiles are drawn in the side plane an
 the bar. The slot in the bar is the flap's whole swing (every angle from folded to open) grown by the
 clearance, so the flap turns freely and the tail of the bar is its stop. Every part is checked
 (closed, consistently wound, no degenerate triangles, positive volume) before export is allowed.
+
+## AI assistant (Phase 0 proof of concept)
+
+A chat panel beside the modeler. Describe a change in plain words ("make the keyring hole 6 mm",
+"put my name on the flap", "make 12 of these for Ana, Ben and Cara"). The assistant proposes
+*settings*, never geometry or code; the modeler's own engine builds the proposal, checks every mesh,
+and shows it beside the current model. Nothing changes until you press **Apply**, and **Undo**
+restores the settings from before the last applied proposal.
+
+Every proposed change is listed with its status, so nothing is adjusted quietly:
+
+| Status | Meaning |
+|---|---|
+| APPLIED | used exactly as asked |
+| ADJUSTED | changed to fit the limits (for example a 9 mm keyring hole becomes 8 mm, the maximum), with the reason |
+| REJECTED | not a setting, wrong type, or not one of the choices; left alone, with the reason |
+| UNCHANGED | already that value |
+
+A proposal that the engine refuses (an error such as "the flap is too thick for the bar") cannot be
+applied or exported. A change that touches the hinge or the click lip is flagged **Print test
+required**: an unchanged latch setting does not prove the snap-lock still works.
+
+Running it:
+
+```bash
+cp .env.example .env.local      # add your ANTHROPIC_API_KEY; the key stays in the local proxy
+npm run dev                     # http://localhost:5184
+# without a key: http://localhost:5184/?ai=mock answers the 20 evaluation instructions with scripted replies
+npm test                        # includes the 20 scenarios with mocked replies
+npm run eval:live               # the same 20 scenarios against the live model (needs the key)
+```
+
+Exports wait while a proposal is pending. The hosted hub build does not include the proxy, so the
+panel reports "no key" there until a hosted endpoint exists (not part of Phase 0). Details, results
+and limits: `docs/AI_EDITOR.md`.

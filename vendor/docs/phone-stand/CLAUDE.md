@@ -22,6 +22,15 @@ vibe-codes: explain in plain words, keep changes small, and verify in the browse
 - `scripts/artifact-page.mjs` turns `dist/` into `artifact/page.html` + assets for the claude.ai
   page; publish with the `downloads` capability.
 - `src/shared/` — copy of the hub's `packages/geometry`. Fix bugs there and copy the file here by hand.
+- `src/ai/` — the AI assistant (Phase 0 of the Valencia AI CAD Engine). `schema.ts` derives the
+  settings schema from `params.ts` (a test fails if a setting has no description); `patch.ts` checks
+  a proposed change and labels every row APPLIED / ADJUSTED / REJECTED / UNCHANGED, never clamping
+  quietly; `session.ts` holds the rules for Apply, Cancel and Undo (a proposal applies only when the
+  engine built it without errors); `prompt.ts` builds what the model sees; `provider.ts` is the seam
+  to whichever model answers; `mock.ts` + `scenarios.ts` are the 20 scripted evaluation cases.
+  The model only ever proposes settings; `generate()` decides. See `docs/AI_EDITOR.md`.
+- `server/` — Node only: `claude.ts` makes the API call, `aiProxy.ts` is the Vite dev/preview
+  middleware that holds the key (`.env.local`). Nothing in `server/` is bundled for the browser.
 - `docs/DESIGN.md` — the mechanism, the dimensions, and the measurements of the original.
 
 ## Conventions
@@ -47,4 +56,9 @@ npm run dev        # port 5184
 npm test
 npm run validate   # headless build of presets and edge settings, writes out/*.3mf
 npm run check      # typecheck + test + build
+npm run eval:live  # the 20 assistant scenarios against the live model (needs ANTHROPIC_API_KEY)
+npm run screenshot # browser walkthrough of the assistant in mock mode, writes docs/screenshot-ai.png
 ```
+
+The assistant's tests use mocked model replies: they prove the pipeline around the model, not the
+model. Say which one you ran. The app opens with `?ai=mock` for scripted replies without a key.
