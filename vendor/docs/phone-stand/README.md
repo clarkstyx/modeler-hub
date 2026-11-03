@@ -32,9 +32,9 @@ Our own design of the "small smartphone stand, print in place" idea that is popu
   rests in one; the groove nearest the hinge stands it steepest, the dip at the hook is the most
   reclined. The readout lists every angle, e.g. 61° / 50° / 39° on the Small preset.
 - **Fit and look:** hinge clearance, flap thickness and taper (thicker at the hinge), how far it sinks
-  below the top when folded, rounded edges, hook wall, the click hood (the hook's top reaches over the
-  folded flap's thinner tongue, flush with the bar; the flap flexes 1 mm to snap under it), the dip
-  under the flap tip.
+  below the top when folded, rounded edges, hook wall, the click (a leaf spring in the hook whose nose snaps
+  over the folded flap's tongue, flush with the top; the leaf bends 0.4 mm, under 1 % strain), the
+  dip under the flap tip.
 - **Batch:** a list of names, one per line ("ANNA x3" for three), and copies of each. The stands
   are packed onto the bed in list order (a new plate starts when the bed is full), each one its own
   object in the slicer (`03_ZOE`), with a plate switcher in the preview.
