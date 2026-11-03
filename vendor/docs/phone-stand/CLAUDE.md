@@ -14,7 +14,7 @@ Valencia Modelers' side-printed, sleek EDC capsule keychain phone stand. Explain
 
 - **Side-printed bed contact:** both `BODY` and open `FLAP` sit flat on `z = 0` and reach `z = width`, with all Z-transitions (perimeter bevels, internal hinge cones, front hook cutout, keyring pocket, soda-lifter ends, backrest crest) at `≤ 45°` from vertical so zero supports and zero brim are needed.
 - **Non-touching print-in-place clearance:** `minDistance(FLAP, BODY) >= clearance` in both the printed pose and the resting folded pose (`test/stand.test.ts`).
-- **The click is the only intended interference:** `Layout.click` (leaf, slit, nose, notch) is the one place body and flap overlap, and only while the tip passes the nose in the last ~4° of closing, by at most `latch`. The test `the leaf-spring click only touches the flap...` measures it; keep it green. The `detent*` / `rotResistance` settings do nothing (kept for old saved settings).
+- **The click is the only intended interference:** `Layout.click` (skin spring, hidden slit, side caps, nose, notch) is the one place body and flap overlap, and only while the tip passes the nose in the last ~4° of closing, by at most `latch`. The test `the leaf-spring click only touches the flap...` measures it; keep it green. The `detent*` / `rotResistance` settings do nothing (kept for old saved settings).
 - Nothing with the click has been printed yet. When a print happens, log it in the hub's `docs/PRINT_VALIDATION.md` and adjust `latch` from what was learned.
 
 ## Commands
