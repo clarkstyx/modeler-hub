@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" font-family="Arial, Helvetica, sans-serif" font-size="12">
+<style>.tray{fill:#2b2b2b}.trayback{fill:#3d3d3d}.cap{fill:#6cc24a;stroke:#1d5e12;stroke-width:1.5}
+.lever{fill:#f2b134;stroke:#8a5a00;stroke-width:1.5}.finger{fill:#9ad66f;stroke:#1d5e12;stroke-width:1.5}
+.sw{fill:#9aa;stroke:#456;stroke-width:1}.lbl{fill:#222}.dim{stroke:#c33;stroke-width:1;fill:none}.t{fill:#c33;font-size:11}</style>
+<rect width="800" height="400" fill="#fff"/>
+<text x="20" y="14" font-size="13" font-weight="bold" class="lbl">Pop-up finger clicker, front view (the plane the lever turns in). Print scale is 4 px = 1 mm.</text>
+<g transform="translate(0,0)">
+<text x="40" y="36" font-weight="bold" class="lbl">1. At rest: finger hidden in the fist</text>
+<path class="tray" d="M40,300 h250 v-150 h-8 v142 h-234 v-142 h-8 z"/>
+<rect class="trayback" x="48" y="150" width="234" height="142"/>
+<rect fill="#fff" x="281" y="236" width="10" height="40"/>
+<rect class="sw" x="134" y="215" width="32" height="60"/>
+<rect class="sw" x="146" y="200" width="8" height="15"/>
+<circle cx="250" cy="250" r="6" fill="#555" stroke="#222"/>
+<g transform="translate(250,250) rotate(21)">
+<rect class="lever" x="-32" y="-6" width="112" height="12" rx="6"/>
+<circle cx="-24" cy="0" r="4" fill="#fff" stroke="#8a5a00"/>
+<rect x="56" y="-3" width="22" height="6" rx="3" fill="#fff" stroke="#8a5a00"/>
+<circle cx="0" cy="0" r="3" fill="#333"/></g>
+<g transform="translate(0,0)">
+<path class="cap" d="M150,40 C170,110 240,140 240,185 C240,194 234,200 226,200 L74,200 C66,200 60,194 60,185 C60,140 130,110 150,40 Z"/>
+<path class="cap" d="M213.59406976406717,200 h26 v52 h-26 v-8 h18 v-36 h-18 z"/>
+</g>
+<circle cx="227.6" cy="241.4" r="4" fill="#fff" stroke="#8a5a00"/>
+<rect class="tray" x="298" y="190" width="40" height="100" rx="8"/>
+<rect fill="#eee" x="308" y="196" width="20" height="90"/>
+<rect class="finger" x="310" y="201.8" width="16" height="80" rx="6"/>
+<circle cx="318" cy="275.8" r="3" fill="#333"/>
+</g>
+<g transform="translate(390,0)">
+<text x="40" y="36" font-weight="bold" class="lbl">2. Pressed: cap down 4 mm, finger up ~12 mm</text>
+<path class="tray" d="M40,300 h250 v-150 h-8 v142 h-234 v-142 h-8 z"/>
+<rect class="trayback" x="48" y="150" width="234" height="142"/>
+<rect fill="#fff" x="281" y="236" width="10" height="40"/>
+<rect class="sw" x="134" y="215" width="32" height="60"/>
+<rect class="sw" x="146" y="217" width="8" height="-2"/>
+<circle cx="250" cy="250" r="6" fill="#555" stroke="#222"/>
+<g transform="translate(250,250) rotate(-21)">
+<rect class="lever" x="-32" y="-6" width="112" height="12" rx="6"/>
+<circle cx="-24" cy="0" r="4" fill="#fff" stroke="#8a5a00"/>
+<rect x="56" y="-3" width="22" height="6" rx="3" fill="#fff" stroke="#8a5a00"/>
+<circle cx="0" cy="0" r="3" fill="#333"/></g>
+<g transform="translate(0,17)">
+<path class="cap" d="M150,40 C170,110 240,140 240,185 C240,194 234,200 226,200 L74,200 C66,200 60,194 60,185 C60,140 130,110 150,40 Z"/>
+<path class="cap" d="M213.59406976406717,200 h26 v52 h-26 v-8 h18 v-36 h-18 z"/>
+</g>
+<circle cx="227.6" cy="258.6" r="4" fill="#fff" stroke="#8a5a00"/>
+<rect class="tray" x="298" y="190" width="40" height="100" rx="8"/>
+<rect fill="#eee" x="308" y="196" width="20" height="90"/>
+<rect class="finger" x="310" y="150.2" width="16" height="80" rx="6"/>
+<circle cx="318" cy="224.2" r="3" fill="#333"/>
+</g>
+<!-- dims on panel 2 -->
+<path class="dim" d="M440,200 v17 M436,200 h8 M436,217 h8"/><text x="400" y="213" class="t">4 mm</text>
+<path class="dim" d="M736,201.8 v51.6 M732,201.8 h8 M732,150.2 h8"/>
+<text x="740" y="180" class="t">12 mm</text>
+<text x="40" y="330" class="lbl" font-size="11">Black = tray (printed as one piece: back, walls, pivot peg, wall slot, fist with a tunnel). Green = body keycap with a C-shaped fork underneath.</text>
+<text x="40" y="348" class="lbl" font-size="11">Orange = lever on the peg: short arm 6 mm (pin held by the fork), long arm 18 mm (slot holds the finger's pin). Light green = finger slider.</text>
+<text x="40" y="366" class="lbl" font-size="11">The MX switch spring pushes the cap back up; the fork and slot pull the lever and finger back too, so it works upside down on a keyring.</text>
+<text x="40" y="384" class="lbl" font-size="11">All five parts print flat on the bed without supports: tray open side up, cap face up, lever and finger lying flat.</text>
+</svg>
