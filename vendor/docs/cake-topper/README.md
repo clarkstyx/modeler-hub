@@ -18,7 +18,9 @@ One of the [Valencia Modelers](https://github.com/clarkstyx/modeler-hub).
 - **Words**: name, age, and a message with one line per row (“Happy ⏎ Birthday”).
 - **Order**: any top-to-bottom order of name, age and message. The emblem always sits behind
   the middle row, so whichever word is in the middle lands on it (like the “7” on the capsule ball).
-- **Print as**: one piece (everything in one file, colours stacked on the plate) or separate
+- **Print as**: one piece for an AMS (colours side by side on the plate), one piece for a
+  printer **without an AMS** (every colour stops at a different height and the app lists the
+  layers to pause at so you can swap filament by hand), or separate
   pieces (every colour piece flat on its own, laid out beside the plate, with 0.4 mm pockets in
   the plate and emblem showing exactly where each piece glues on).
 - **Letters**: five fonts (four from three.js plus Dancing Script, SIL Open Font Licence), height
@@ -33,6 +35,14 @@ Print as placed: plate on the bed, colours up, no supports. Load the 3MF in Bamb
 OrcaSlicer as one object with multiple parts and give each colour a filament. The capsule ball
 theme uses five colours (plate, words, red, white, black); reuse one or print the pieces
 separately if your AMS holds four.
+
+### Printing colours without an AMS
+
+Choose "One piece, no AMS". The readout lists "Pause at layer N, load <colour>" for each swap.
+In Bambu Studio or OrcaSlicer, after slicing: open the layer slider, drag to each listed layer,
+right-click the slider's plus handle and choose **Add Pause**. Print; when the printer stops,
+unload the filament, load the next colour and resume. The sides of the taller parts show a
+stripe of the earlier colour, the tops show the right one.
 
 Keep the sticks out of what gets eaten, or wrap them: PLA is not food-safe.
 
