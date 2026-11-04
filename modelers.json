@@ -248,6 +248,16 @@
       "tier": "maker",
       "status": "live",
       "makerworld": ""
+    },
+    {
+      "id": "cake-topper",
+      "name": "Cake Topper",
+      "repo": "clarkstyx/Cake-Topper",
+      "tagline": "Birthday cake toppers: name, age and a wish on a pokeball, star, heart or rainbow, one piece or glue-on parts.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
     }
   ]
 }
