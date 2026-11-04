@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders · Valencia Modelers</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/orders.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/"><span class="dot"></span><span data-site-name>Modelers</span></a>
+        <nav>
+          <a href="/show/">Show page</a>
+          <a href="/show/sign/">Booth sign</a>
+          <button class="btn" id="refresh" type="button">Refresh</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="panel" id="keypanel" hidden>
+        <h1>Orders</h1>
+        <p class="muted">Paste the ORDERS_KEY you set in Cloudflare (Settings → Environment variables). It is kept on this phone only.</p>
+        <input id="key" type="password" placeholder="ORDERS_KEY" autocomplete="off" />
+        <button class="btn primary" id="savekey" type="button">Open the orders</button>
+        <p class="err" id="keyerr" hidden></p>
+      </section>
+
+      <section id="list" hidden>
+        <div class="bar">
+          <h1>Orders</h1>
+          <div class="sum" id="sum"></div>
+        </div>
+        <div class="chips" id="chips"></div>
+        <div class="orders" id="orders"></div>
+        <p class="muted small"><a id="csv" href="#">Download everything as CSV</a> · <a href="#" id="forget">Forget the key on this device</a></p>
+      </section>
+    </main>
+
+    <script type="module">
+      import { bootOrders } from '/src/orders.js';
+      bootOrders();
+    </script>
+  </body>
+</html>
