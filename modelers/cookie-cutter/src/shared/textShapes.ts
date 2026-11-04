@@ -2,22 +2,32 @@
 import { Font } from "three/examples/jsm/loaders/FontLoader.js";
 import type { Ring } from "./types";
 
-/** The bundled three.js typeface fonts (MIT / Apache 2.0, shipped with three). */
-export type FontId = "sans" | "rounded" | "serif" | "droidSans";
+/** The bundled three.js typeface fonts (MIT / Apache 2.0, shipped with three), plus any an app registers. */
+export type BuiltinFontId = "sans" | "rounded" | "serif" | "droidSans";
+export type FontId = BuiltinFontId | (string & {});
 // three.js typeface JSON fonts (MgOpen / Droid licences allow redistribution), so text works offline.
 import rounded from "three/examples/fonts/optimer_bold.typeface.json";
 import sans from "three/examples/fonts/helvetiker_bold.typeface.json";
 import serif from "three/examples/fonts/gentilis_bold.typeface.json";
 import droidSans from "three/examples/fonts/droid/droid_sans_bold.typeface.json";
 
-const DATA: Record<FontId, unknown> = { rounded, sans, serif, droidSans };
+const DATA: Record<string, unknown> = { rounded, sans, serif, droidSans };
 const fonts = new Map<FontId, Font>();
 const capRatio = new Map<FontId, number>();
+
+/** Adds a typeface JSON (e.g. one converted from a Google Font) under `id`, so layoutText can use it. */
+export function registerFont(id: string, data: unknown): void {
+  DATA[id] = data;
+  fonts.delete(id);
+  capRatio.delete(id);
+}
 
 function font(id: FontId): Font {
   let f = fonts.get(id);
   if (!f) {
-    f = new Font(DATA[id] as ConstructorParameters<typeof Font>[0]);
+    const data = DATA[id];
+    if (!data) throw new Error(`Unknown font "${id}".`);
+    f = new Font(data as ConstructorParameters<typeof Font>[0]);
     fonts.set(id, f);
   }
   return f;

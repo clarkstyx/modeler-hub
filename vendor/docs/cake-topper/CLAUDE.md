@@ -8,14 +8,20 @@ explain in plain words, keep changes small, and verify in the browser.
 ## Layout
 
 - `src/core/params.ts` every setting (`TopperParams`), limits, the `STYLES` table (label, what
-  the three emblem colour pickers mean, the colours a theme loads), row orders.
+  the three emblem colour pickers mean, the colours a theme loads), `LAYOUT_PRESETS` (sizes and
+  font a layout brings along), row orders. `src/core/fonts.ts` registers Dancing Script
+  (`src/fonts/`, converted from the TTF with opentype.js into the three.js typeface format).
 - `src/core/recipe.ts` settings-file round trip; `validateParams.ts` checks before any geometry.
 - `src/geometry/emblems.ts` the emblem of each theme as coloured 2D pieces centred on the origin.
   Adding a theme = one function here + one `STYLES` entry.
-- `src/geometry/buildTopper.ts` the build: rows shrunk to fit the width and stacked, emblem
-  behind the middle row, words raised one layer (two where they sit on the emblem), plate =
+- `src/geometry/buildTopper.ts` the build. Layouts only decide what goes in each *slot* (a
+  horizontal band with a word and/or emblem pieces): rows = three words, theme emblem in slot 1;
+  bigNumber = the age is the emblem, the name sits across it; script = no plate, the words plus
+  bridges, dot stems and sticks are one single-colour part. Slots are stacked, words shrink to
+  fit the width, words rise one layer (carved out over the emblem so they rest on it), plate =
   outline around everything (+ a 4 mm "closing" and bars when support is on) + sticks.
-  "Separate" output lays every colour piece flat beside the plate as its own 3MF object.
+  "Separate" output lays every colour piece flat beside the plate as its own 3MF object, with
+  0.4 mm glue-on pockets in the plate and in emblem pieces.
 - `src/pipeline/` runs everything in a Web Worker; `generate.ts` validates every mesh and
   blocks export on errors.
 - `src/ui/` React sidebar (`App.tsx`) and the three.js preview.
