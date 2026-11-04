@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booth sign · Valencia Modelers</title>
+    <meta name="robots" content="noindex" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="/src/sign.css" />
+  </head>
+  <body>
+    <div class="tools">
+      <label>Link in the QR code <input id="url" type="url" /></label>
+      <button id="print" type="button">Print this sign</button>
+      <span class="hint">Letter / A4, portrait. Set the paper margins to “none” or “minimum” in the print dialog.</span>
+    </div>
+    <section class="sign" id="sign">
+      <div class="head">
+        <h1 data-show-title>Design your own 3D print</h1>
+        <p class="sub" data-show-tagline></p>
+      </div>
+      <div class="qr" data-qr></div>
+      <p class="scan">Scan with your phone camera</p>
+      <ol class="steps">
+        <li>Tap a design</li>
+        <li>Type your name, pick colours and fonts</li>
+        <li>Tap <b>Order this design</b></li>
+        <li>Pay here at the booth</li>
+      </ol>
+      <ul class="prices" data-prices></ul>
+      <p class="foot" data-show-turnaround></p>
+      <p class="brand" data-site-name></p>
+    </section>
+    <script type="module">
+      import { bootSign } from '/src/show.js';
+      bootSign();
+    </script>
+  </body>
+</html>
