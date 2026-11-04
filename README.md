@@ -14,11 +14,14 @@ docs/                  gap analysis vs Create.Blitch, roadmap, engine architectu
 scripts/pull.mjs       clones + builds every modeler into public/m/<id>/ (also copies their docs + skills)
 index.html             home page: cards grouped by category, locked/unlocked per tier
 pricing/, login/       plans page, members-only page
+show/, orders/         craft-show tiles + printable QR sign, and the private order list (docs/CRAFT_SHOW.md)
+show.json              craft-show config: tiles, prices, on/off
 functions/             Cloudflare Pages Functions: the gate + Patreon login
   _middleware.js         checks the session cookie on /m/<id>/
   auth/login.js          sends the browser to Patreon
   auth/callback.js       reads the patron's tier, sets the signed cookie
   api/me.js              "who am I" for the pages
+  api/orders/            craft-show orders in Cloudflare D1 (owner key to read)
 vendor/docs/<id>/      each modeler's README + CLAUDE.md (+ its MakerWorld .scad), refreshed by pull
 .claude/skills/        hub skills + each modeler's skills (copied as <id>--<skill>)
 .github/workflows/     nightly + on-push: pull, build, deploy to Cloudflare Pages

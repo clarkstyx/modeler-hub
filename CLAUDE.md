@@ -9,7 +9,7 @@ changes small, and verify in the browser.
 
 - `modelers.json` is the single source of truth: every modeler, its repo (or `path` for one that lives
   in this repo under `modelers/`), tier and category. The pages, the gate and the pull script all read it.
-- `modelers/<id>/` holds modelers that have not moved to their own repo yet (`gridfinity-labels`, `cookie-cutter`). Same rules
+- `modelers/<id>/` holds modelers that have not moved to their own repo yet (`gridfinity-labels`, `cookie-cutter`, `mistletoe-ornament`). Same rules
   as a separate repo: a Vite app with its own package.json and tests; `npm run pull <id>` builds it.
 - `packages/geometry/` is the shared engine code (manifold kernel, shapes, mesh checks, 3MF/STL, text).
   `npm run sync-shared` copies it into each local modeler's `src/shared/`; edit the package, never a copy.
@@ -21,7 +21,11 @@ changes small, and verify in the browser.
   `public/m/` and `vendor/repos/` are gitignored build products; `vendor/docs/` and the copied skills are
   committed so sessions here know every modeler's conventions without cloning them.
 - `functions/` are Cloudflare Pages Functions (ES modules, Web Crypto only, no Node APIs).
-  `_middleware.js` is the gate, `auth/*` is Patreon OAuth, `api/me.js` is the session lookup.
+  `_middleware.js` is the gate, `auth/*` is Patreon OAuth, `api/me.js` is the session lookup,
+  `api/orders/*` is the craft-show order book (Cloudflare D1).
+- `show.json` + `docs/CRAFT_SHOW.md`: craft-show mode (QR → `/show/` tiles → modelers open without
+  Patreon and get an "Order this design" button → `/orders/` for Clark). `_lib/show.js` and
+  `_lib/orders.js` take the config as a parameter so `npm test` can run them in Node.
 - The hub pages are plain HTML + one module (`src/site.js`). No framework; keep it that way.
 
 ## Conventions

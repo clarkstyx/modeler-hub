@@ -1,0 +1,18 @@
+/* Craft-show page: big thumbs-friendly tiles for phones. */
+.show-hero { padding-block: 28px 10px; }
+.show-hero h1 { font-size: clamp(28px, 7vw, 44px); }
+.pill.live { color: var(--green); border-color: rgba(79, 192, 122, 0.4); }
+.steps { margin: 0; padding-left: 22px; color: var(--muted); display: grid; gap: 6px; font-size: 15px; }
+.steps b { color: var(--fg); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; padding-block: 18px 10px; }
+.tile { display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 14px; padding: 18px 16px; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); text-decoration: none; min-height: 96px; }
+.tile:active { transform: scale(0.99); }
+.tile .emoji { font-size: 40px; line-height: 1; text-align: center; }
+.tile h3 { font-size: 19px; margin-bottom: 4px; }
+.tile p { margin: 0; color: var(--muted); font-size: 14px; }
+.tile .price { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--gold); white-space: nowrap; }
+.tile .price small { display: block; color: var(--muted); font-size: 12px; font-weight: 500; text-align: right; }
+.tile .go { grid-column: 2 / -1; color: var(--accent-2); font-weight: 600; font-size: 14px; }
+.small { font-size: 13.5px; }
+.panel.closed { margin-block: 20px; }
+[hidden] { display: none !important; }

@@ -1,0 +1,85 @@
+{
+  "_comment": "Craft-show mode. enabled=true opens every tile below without a Patreon login (after the phone visits /show/) and adds the 'Order this design' button inside those modelers. Prices are CAD. Flip enabled to false and push after the show.",
+  "enabled": true,
+  "title": "Design your own 3D print",
+  "tagline": "Pick a design, type your name, choose the colours. We print it for you.",
+  "turnaround": "Orders are printed within 3 to 5 business days after payment and can be picked up or shipped.",
+  "payNote": "Show your order number at the booth to pay (cash, e-transfer or card).",
+  "currency": "CAD",
+  "cookieDays": 3,
+  "tiles": [
+    {
+      "id": "phone-grip",
+      "name": "Pop Socket Topper",
+      "emoji": "📱",
+      "blurb": "Puffy bubble letters that glue onto a pop socket. Up to three lines, your colours.",
+      "hint": "Type 1, 2 or 3 lines of text, pick a font and colours, then order.",
+      "prices": [
+        {
+          "label": "1 line of text",
+          "cad": 7
+        },
+        {
+          "label": "2 lines of text",
+          "cad": 8
+        },
+        {
+          "label": "3 lines of text",
+          "cad": 10
+        }
+      ]
+    },
+    {
+      "id": "grinch-ornament",
+      "name": "Grinch Ornament",
+      "emoji": "🎄",
+      "blurb": "Nine Grinch poses with your name in bubble letters. Four colours.",
+      "hint": "Pick a pose, type the name, choose the four colours, then order.",
+      "prices": [
+        {
+          "label": "One ornament",
+          "cad": 12
+        }
+      ]
+    },
+    {
+      "id": "dumpling-ornament",
+      "name": "Dumpling Ornament",
+      "emoji": "🥟",
+      "blurb": "A cute dumpling in a bamboo steamer with a name and an accessory.",
+      "hint": "Type the name, pick an accessory and colours, then order.",
+      "prices": [
+        {
+          "label": "One ornament",
+          "cad": 12
+        }
+      ]
+    },
+    {
+      "id": "name-ornaments",
+      "name": "Snowflake Name Ornament",
+      "emoji": "❄️",
+      "blurb": "Your name in chunky letters across a snowflake. Pick the snowflake, letter and backing colours.",
+      "hint": "Type the name, pick the snowflake style and the three colours, then order.",
+      "prices": [
+        {
+          "label": "One ornament",
+          "cad": 10
+        }
+      ]
+    },
+    {
+      "id": "phone-stand",
+      "name": "Phone Stand Keychain",
+      "emoji": "🔑",
+      "blurb": "A keychain that flips open into a phone stand, with your name on the side.",
+      "hint": "Type the name for the side, pick colours, then order.",
+      "prices": [
+        {
+          "label": "One keychain",
+          "cad": 10
+        }
+      ]
+    }
+  ]
+}
