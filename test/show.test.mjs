@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { validateOrder, orderNumber, isOwner, STATUSES } from '../functions/_lib/orders.js';
+import { validateOrder, validateSale, orderNumber, isOwner, PRODUCTION, PAYMENT, csvCell, validContact } from '../functions/_lib/orders.js';
 import { isShowModeler, publicShow, showCookieTtl, verifyShowCookie } from '../functions/_lib/show.js';
 import { signSession, cookieHeader } from '../functions/_lib/session.js';
 
@@ -62,7 +62,46 @@ test('page url is kept as a path, screenshots must be small images, settings are
 test('order numbers and statuses', () => {
   assert.equal(orderNumber(7), 'VM007');
   assert.equal(orderNumber(1234), 'VM1234');
-  assert.deepEqual(STATUSES.slice(0, 2), ['new', 'paid']);
+  assert.deepEqual(PRODUCTION.slice(0, 2), ['pending', 'queued']);
+  assert.deepEqual(PAYMENT, ['unpaid', 'paid', 'refunded']);
+});
+
+test('contact must be a real phone number or email', () => {
+  assert.equal(validContact('416-555-0100'), true);
+  assert.equal(validContact('(306) 555 0199'), true);
+  assert.equal(validContact('sam@example.com'), true);
+  assert.equal(validContact('sam@example'), false);
+  assert.equal(validContact('call me'), false);
+  assert.equal(validContact('12345'), false);
+});
+
+test('the client key is kept for idempotency, the preset names the product and price option', () => {
+  const r = validateOrder({ ...good, clientKey: 'abc-123_XYZ!!' }, show);
+  assert.equal(r.order.client_key, 'abc-123_XYZ');
+  assert.equal(validateOrder(good, show).order.client_key, null);
+  assert.equal(r.order.preset, `${firstTile.id}:${firstTile.prices[0].label}:${show.version || 1}`);
+  assert.equal(r.order.shot_status, 'none');
+  assert.equal(validateOrder({ ...good, qty: 21 }, show).ok, false);
+});
+
+test('csv cells cannot start a spreadsheet formula', () => {
+  assert.equal(csvCell('=1+1'), "'=1+1");
+  assert.equal(csvCell('+1'), "'+1");
+  assert.equal(csvCell('-5'), "'-5");
+  assert.equal(csvCell('@x'), "'@x");
+  assert.equal(csvCell('a,b'), '"a,b"');
+  assert.equal(csvCell('say "hi"'), '"say ""hi"""');
+  assert.equal(csvCell('plain'), 'plain');
+});
+
+test('a quick sale is priced from the stock list', () => {
+  const stock = show.stock[0];
+  const r = validateSale({ lines: [{ sku: stock.sku, qty: 2 }], payment_method: 'cash' }, show);
+  assert.equal(r.ok, true);
+  assert.equal(r.sale.total_cad, stock.cad * 2);
+  assert.equal(validateSale({ lines: [{ sku: 'nope', qty: 1 }], payment_method: 'cash' }, show).ok, false);
+  assert.equal(validateSale({ lines: [{ sku: stock.sku, qty: 1 }], payment_method: 'bitcoin' }, show).ok, false);
+  assert.equal(validateSale({ lines: [], payment_method: 'cash' }, show).ok, false);
 });
 
 test('the show cookie opens the gate, anything else does not', async () => {
@@ -87,4 +126,5 @@ test('owner check: ORDERS_KEY bearer or an owner email session', async () => {
   const patron = await signSession({ sub: '2', level: 2, email: 'someone@else.com' }, env.SESSION_SECRET, 3600);
   assert.equal(await isOwner(new Request('https://x.test/api/orders', { headers: { Cookie: `mh_session=${patron}` } }), env), false);
   assert.equal(await isOwner(new Request('https://x.test/api/orders', { headers: { Authorization: 'Bearer ' } }), { ORDERS_KEY: '' }), false);
+  assert.equal(await isOwner(new Request('https://x.test/api/orders', { headers: { Authorization: 'Bearer k3' } }), env), false);
 });

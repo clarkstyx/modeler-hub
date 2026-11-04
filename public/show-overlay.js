@@ -44,6 +44,8 @@
     '.ghost{width:100%;margin-top:8px;padding:12px;border-radius:12px;border:1px solid #2b2f37;background:transparent;color:#e8eaee;font-weight:600;font-size:15px;cursor:pointer}',
     '.err{color:#f3b43a;font-size:14px;margin-top:8px}',
     '.done{text-align:center;padding:10px 0}',
+    '.done h3{margin:14px 0 4px;font-size:17px;font-family:Sora,"Segoe UI",system-ui,sans-serif}',
+    '.done .status{font-size:15px;margin:0 0 8px}.done .status b{color:#f3b43a}',
     '.num{font-family:Sora,"Segoe UI",system-ui,sans-serif;font-size:44px;font-weight:700;letter-spacing:.02em;margin:8px 0;color:#4fc07a}',
     '.shot{display:block;width:100%;max-height:180px;object-fit:contain;border-radius:10px;background:#15171b;margin:10px 0;border:1px solid #2b2f37}',
     '.x{position:absolute;right:12px;top:10px;background:none;border:0;color:#9aa0ab;font-size:26px;cursor:pointer;line-height:1}',
@@ -97,6 +99,11 @@
     if (shot) return cb(shot);
     requestAnimationFrame(function () { cb(snapshot()); });
   }
+  function newKey() {
+    try { if (crypto.randomUUID) return crypto.randomUUID().replace(/-/g, ''); } catch (e) {}
+    var a = new Uint8Array(16); try { crypto.getRandomValues(a); } catch (e) { for (var i = 0; i < 16; i++) a[i] = Math.random() * 256; }
+    return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+  }
   function settingsSnapshot() {
     var out = {}, size = 0;
     try {
@@ -117,14 +124,21 @@
     root.appendChild(el('style', { text: CSS }));
     var cur = show.currency || 'CAD';
     var lowest = Math.min.apply(null, tile.prices.map(function (p) { return p.cad; }));
-    var fab = el('button', { class: 'fab', type: 'button', onclick: open, html: 'Order this design <small>· from ' + money(lowest, cur) + '</small>' });
+    var fab = el('button', { class: 'fab', type: 'button', onclick: open, html: 'Order this design <small>· pay at booth · from ' + money(lowest, cur) + '</small>' });
     var back = el('a', { class: 'back', href: '/show/', text: '‹ All', title: 'All designs' });
     var bar = el('div', { class: 'bar' }, [back, fab]);
     root.appendChild(bar);
     document.body.appendChild(host);
 
+    var DRAFT = 'vm-show-draft:' + tile.id;
     var state = { priceIndex: 0, qty: 1 };
-    var dim, sheet;
+    try { var saved = JSON.parse(localStorage.getItem(DRAFT) || 'null'); if (saved && typeof saved === 'object') state = saved; } catch (e) {}
+    if (!state.clientKey) state.clientKey = newKey();
+    if (!(state.priceIndex >= 0 && state.priceIndex < tile.prices.length)) state.priceIndex = 0;
+    if (!(state.qty >= 1)) state.qty = 1;
+    var dim, sheet, sending = false;
+    function remember() { try { localStorage.setItem(DRAFT, JSON.stringify(state)); } catch (e) {} }
+    function forget() { try { localStorage.removeItem(DRAFT); } catch (e) {} }
     function close() { if (dim) dim.remove(); if (sheet) sheet.remove(); dim = sheet = null; bar.style.display = ''; }
     function open() {
       bar.style.display = 'none';
@@ -140,79 +154,104 @@
         var radio = el('input', { type: 'radio', name: 'price' });
         radio.checked = i === state.priceIndex;
         var o = el('label', { class: 'opt' + (i === state.priceIndex ? ' on' : '') }, [radio, el('span', { text: p.label }), el('b', { text: money(p.cad, cur) })]);
-        o.addEventListener('click', function () { if (state.priceIndex !== i) { state.priceIndex = i; renderForm(); } });
+        o.addEventListener('click', function () { if (state.priceIndex !== i) { state.priceIndex = i; remember(); renderForm(); } });
         opts.appendChild(o);
       });
       var total = function () { return money(tile.prices[state.priceIndex].cad * state.qty, cur); };
+      var maxQty = show.maxQty || 20;
       var qtyLabel = el('span', { text: String(state.qty) });
       var totalEl = el('b', { text: total() });
       var qty = el('div', { class: 'qty' }, [
-        el('button', { type: 'button', 'aria-label': 'fewer', text: '−', onclick: function () { state.qty = Math.max(1, state.qty - 1); qtyLabel.textContent = state.qty; totalEl.textContent = total(); } }),
+        el('button', { type: 'button', 'aria-label': 'fewer', text: '−', onclick: function () { state.qty = Math.max(1, state.qty - 1); qtyLabel.textContent = state.qty; totalEl.textContent = total(); remember(); refreshSummary(); } }),
         qtyLabel,
-        el('button', { type: 'button', 'aria-label': 'more', text: '+', onclick: function () { state.qty = Math.min(20, state.qty + 1); qtyLabel.textContent = state.qty; totalEl.textContent = total(); } }),
+        el('button', { type: 'button', 'aria-label': 'more', text: '+', onclick: function () { state.qty = Math.min(maxQty, state.qty + 1); qtyLabel.textContent = state.qty; totalEl.textContent = total(); remember(); refreshSummary(); } }),
       ]);
       var name = el('input', { type: 'text', autocomplete: 'name', placeholder: 'Your name', maxlength: '80' });
       var contact = el('input', { type: 'tel', autocomplete: 'tel', placeholder: 'Phone or email', maxlength: '120' });
-      var fulfil = el('select', {}, [el('option', { value: 'pickup', text: 'Pick up at the booth / local pickup' }), el('option', { value: 'ship', text: 'Ship it to me (shipping extra)' })]);
+      var fulfil = el('select', {}, [el('option', { value: 'pickup', text: 'Pick up at the booth / local pickup' }), el('option', { value: 'ship', text: 'Ship it to me (shipping quoted separately)' })]);
       var notes = el('textarea', { placeholder: tile.hint || 'Names, colours, font…', maxlength: '1000' });
       name.value = state.customer || ''; contact.value = state.contact || ''; notes.value = state.notes || ''; fulfil.value = state.fulfil || 'pickup';
-      var keep = function () { state.customer = name.value; state.contact = contact.value; state.notes = notes.value; state.fulfil = fulfil.value; };
+      var keep = function () { state.customer = name.value; state.contact = contact.value; state.notes = notes.value; state.fulfil = fulfil.value; remember(); };
       [name, contact, notes, fulfil].forEach(function (f) { f.addEventListener('input', keep); f.addEventListener('change', keep); });
-      var submit = el('button', { class: 'btn', type: 'button', text: 'Place order' });
+      var summary = el('p', { class: 'muted', style: 'margin:4px 0 0' });
+      var refreshSummary = function () { summary.textContent = tile.name + ' · ' + tile.prices[state.priceIndex].label + ' × ' + state.qty + ' · ' + (fulfil.value === 'ship' ? 'shipping (quoted separately)' : 'pickup'); };
+      fulfil.addEventListener('change', refreshSummary); refreshSummary();
+      var submit = el('button', { class: 'btn', type: 'button', text: 'Save design & order' });
+      var isEmail = function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); };
       submit.addEventListener('click', function () {
+        if (sending) return;
         keep();
         if (!name.value.trim()) return renderForm('Please type your name.');
-        if (contact.value.trim().length < 5) return renderForm('Please leave a phone number or email.');
-        submit.disabled = true; submit.textContent = 'Saving…';
+        var c = contact.value.trim();
+        if (!(isEmail(c) || c.replace(/\D/g, '').length >= 7)) return renderForm('Please leave a phone number (at least 7 digits) or an email address.');
+        sending = true;
+        submit.disabled = true; submit.textContent = 'Saving your design…';
+        var finish = function (msg) { sending = false; renderForm(msg); };
         snapshotAsync(function (shot) {
-          fetch('/api/orders', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              modeler: tile.id, priceIndex: state.priceIndex, qty: state.qty,
-              customer: name.value, contact: contact.value, fulfil: fulfil.value, notes: notes.value,
-              pageUrl: location.pathname + location.search + location.hash,
-              settings: settingsSnapshot(), screenshot: shot,
-            }),
-          }).then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
+          var payload = JSON.stringify({
+            modeler: tile.id, priceIndex: state.priceIndex, qty: state.qty, clientKey: state.clientKey,
+            customer: name.value, contact: contact.value, fulfil: fulfil.value, notes: notes.value,
+            pageUrl: location.pathname + location.search + location.hash,
+            settings: settingsSnapshot(), screenshot: shot,
+          });
+          var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+          var timer = ctrl && setTimeout(function () { ctrl.abort(); }, 25000);
+          fetch('/api/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: payload, signal: ctrl && ctrl.signal })
+            .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
             .then(function (res) {
-              if (!res.body || !res.body.ok) return renderForm((res.body && res.body.error) || 'Could not save the order. Please show your screen at the booth.');
+              if (timer) clearTimeout(timer);
+              if (!res.body || !res.body.ok) {
+                if (res.status >= 500 || res.status === 503) return finish((res.body && res.body.error) || 'The order could not be saved right now. Tap "Save design & order" to try again, or show this screen at the booth.');
+                return finish((res.body && res.body.error) || 'Could not save the order. Please show your screen at the booth.');
+              }
+              sending = false;
+              forget();
               renderDone(res.body, shot);
             })
-            .catch(function () { renderForm('No connection. Please show your screen at the booth and we will write it down.'); });
+            .catch(function () { if (timer) clearTimeout(timer); finish('No connection right now. Your details are kept on this phone: tap "Save design & order" again when you have signal, or show this screen at the booth and we will write it down.'); });
         });
       });
       [
         el('button', { class: 'x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close }),
         el('h2', { text: 'Order: ' + tile.name }),
-        el('p', { class: 'muted', text: 'Set the design the way you like it first. What you see in the preview is what we print.' }),
+        el('p', { class: 'muted', text: 'Set the design the way you like it first. What you see in the preview is what we print, after you pay at the booth.' }),
         el('label', { text: 'Option' }), opts,
         el('label', { text: 'How many' }, [qty]),
-        el('label', { text: 'Your name' }, [name]),
-        el('label', { text: 'Phone or email' }, [contact]),
+        el('label', { text: 'Your name (for pickup, not the name on the product)' }, [name]),
+        el('label', { text: 'Phone or email (one is enough)' }, [contact]),
         el('label', { text: 'Pickup or shipping' }, [fulfil]),
         el('label', { text: 'Notes (the names, colours, font you chose)' }, [notes]),
         err ? el('div', { class: 'err', text: err }) : null,
         el('div', { class: 'total' }, [el('span', { text: 'Total' }), totalEl]),
+        summary,
         submit,
-        el('p', { class: 'muted', text: show.turnaround || '' }),
+        el('p', { class: 'muted', text: (show.madeToOrder || '') + ' ' + ((show.production && show.production.regular) || '') }),
       ].forEach(function (c) { if (c) sheet.appendChild(c); });
       sheet.scrollTop = 0;
     }
     function renderDone(res, shot) {
       sheet.innerHTML = '';
+      var prod = res.production || {};
+      var bulk = prod.bulkThreshold && state.qty >= prod.bulkThreshold;
       [
         el('button', { class: 'x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close }),
         el('div', { class: 'done' }, [
-          el('h2', { text: 'Order saved!' }),
+          el('h2', { text: res.duplicate ? 'Already saved!' : 'Your design has been saved!' }),
+          el('p', { class: 'muted', text: 'Order number' }),
           el('div', { class: 'num', text: res.number }),
           el('p', { text: tile.name + ' · ' + tile.prices[state.priceIndex].label + ' × ' + state.qty + ' · ' + money(res.total_cad, res.currency || cur) }),
-          shot ? el('img', { class: 'shot', src: shot, alt: 'Your design' }) : null,
-          el('p', { class: 'muted', text: res.payNote || 'Show this number at the booth to pay.' }),
-          el('p', { class: 'muted', text: res.turnaround || '' }),
+          el('p', { class: 'status', html: 'Status: <b>Awaiting payment</b>' }),
+          shot ? el('img', { class: 'shot', src: shot, alt: 'Your design' }) : el('p', { class: 'muted', text: 'The preview picture could not be captured on this phone. Your settings were saved; please show your screen at the booth.' }),
+          el('h3', { text: 'Next step: pay at our booth' }),
+          el('p', { class: 'muted', text: res.payNote || 'Show your order number to our staff to confirm your purchase.' }),
+          el('p', { class: 'muted', text: [prod.regular, bulk ? prod.bulk : '', prod.shipping].filter(Boolean).join(' ') }),
+          el('p', { class: 'muted', text: 'Take a screenshot of this screen to keep your number.' }),
         ]),
         el('a', { class: 'btn', href: '/show/', text: 'Design another one' }),
         el('button', { class: 'ghost', type: 'button', text: 'Back to this design', onclick: close }),
       ].forEach(function (c) { if (c) sheet.appendChild(c); });
+      state = { priceIndex: 0, qty: 1, clientKey: newKey() };
+      sheet.scrollTop = 0;
     }
   }
 })();

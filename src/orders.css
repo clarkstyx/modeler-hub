@@ -33,3 +33,32 @@
 .empty { color: var(--muted); padding: 30px 0; text-align: center; }
 #key { font: inherit; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
 [hidden] { display: none !important; }
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font: inherit; font-weight: 600; padding: 8px 12px; cursor: pointer; }
+.tab.on { color: var(--fg); border-bottom-color: var(--accent); }
+.filters { display: grid; gap: 8px; margin-bottom: 14px; }
+#q { font: inherit; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg-2); color: var(--fg); width: 100%; }
+.status.unpaid { color: var(--accent-2); border-color: rgba(255, 106, 92, 0.5); }
+.status.queued { color: var(--gold); border-color: rgba(243, 180, 58, 0.5); }
+.status.pending { color: var(--muted); }
+.status.completed, .status.refunded { color: var(--muted); }
+.order.completed, .order.cancelled { opacity: 0.6; }
+.order .meta { color: var(--muted); font-size: 12.5px; display: flex; gap: 12px; flex-wrap: wrap; }
+.order .actions select { font: inherit; padding: 7px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.h2 { font-size: 18px; margin: 20px 0 10px; }
+.qgroup { margin-bottom: 18px; }
+.qgroup h3 { font-size: 15px; color: var(--gold); margin-bottom: 8px; }
+.qrow { display: grid; grid-template-columns: 70px 1fr auto; gap: 10px; align-items: center; background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; margin-bottom: 6px; font-size: 14px; }
+.qrow .thumb { width: 70px; height: 52px; object-fit: contain; border-radius: 6px; background: #1b1d22; }
+.qrow .nothumb { width: 70px; height: 52px; border-radius: 6px; background: #1b1d22; display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+.sale { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; display: grid; gap: 10px; }
+.sale .line { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; }
+.sale .line .qty { display: flex; align-items: center; gap: 2px; }
+.sale .line .qty button { width: 36px; height: 36px; font: inherit; font-size: 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+.sale .line .qty span { min-width: 28px; text-align: center; font-weight: 700; }
+.sale .line .price { color: var(--muted); font-size: 13.5px; min-width: 60px; text-align: right; }
+.sale .foot { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 10px; }
+.sale .foot .total { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin-right: auto; }
+.sale select, .sale input { font: inherit; padding: 8px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
+.srow { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.srow .muted { font-size: 12.5px; }
