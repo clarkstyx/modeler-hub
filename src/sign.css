@@ -19,6 +19,7 @@ html, body { margin: 0; background: #e9e9e9; color: #111; font: 16px/1.4 Inter, 
 .prices li { display: flex; justify-content: space-between; gap: 12px; }
 .prices li span:last-child { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .prices li .opt { color: #666; font-weight: 400; }
+.made { margin: -0.1in 0 0; font-weight: 700; font-size: 13pt; }
 .foot { margin: 0; color: #444; font-size: 11.5pt; }
 .brand { margin: 0; font-family: Sora, system-ui, sans-serif; font-weight: 700; color: #999; letter-spacing: 0.04em; text-transform: uppercase; font-size: 10pt; }
 @media print {

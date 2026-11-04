@@ -1,11 +1,25 @@
 {
   "_comment": "Craft-show mode. enabled=true opens every tile below without a Patreon login (after the phone visits /show/) and adds the 'Order this design' button inside those modelers. Prices are CAD. Flip enabled to false and push after the show.",
   "enabled": true,
-  "title": "Design your own 3D print",
-  "tagline": "Pick a design, type your name, choose the colours. We print it for you.",
-  "turnaround": "Orders are printed within 3 to 5 business days after payment and can be picked up or shipped.",
-  "payNote": "Show your order number at the booth to pay (cash, e-transfer or card).",
+  "version": 1,
+  "title": "Personalized 3D prints",
+  "tagline": "Create your own, starting at $7. Choose a product, add your name and colours, preview it in 3D, and pay at our booth.",
+  "madeToOrder": "Made to order: printed after the show.",
+  "production": {
+    "_comment": "Wording shown to customers. dayType: 'business' or 'calendar'. bulkThreshold: quantity from which the bulk wording applies, or null to never show it.",
+    "regular": "Regular custom orders: 3 to 5 business days after payment.",
+    "bulk": "Bulk orders: at least 7 to 10 business days, depending on quantity.",
+    "bulkThreshold": null,
+    "dayType": "business",
+    "shipping": "Pickup or shipping available. Shipping costs are quoted separately."
+  },
+  "payNote": "Show your order number at our booth to pay (cash, e-transfer or card). Production starts after payment and a final check of your design.",
+  "tax": {
+    "_comment": "No tax is added by the site. Prices are shown as charged. Change to 'included' or add rates only after confirming with the accountant.",
+    "mode": "none"
+  },
   "currency": "CAD",
+  "maxQty": 20,
   "cookieDays": 3,
   "tiles": [
     {
@@ -81,5 +95,33 @@
         }
       ]
     }
-  ]
+  ],
+  "stock": [
+    {
+      "sku": "clicker-1",
+      "name": "Clicker, 1 letter",
+      "cad": 5
+    },
+    {
+      "sku": "clicker-extra",
+      "name": "Clicker, extra letter",
+      "cad": 1.5
+    },
+    {
+      "sku": "keychain",
+      "name": "Keychain (ready made)",
+      "cad": 8
+    },
+    {
+      "sku": "ornament",
+      "name": "Ornament (ready made)",
+      "cad": 10
+    },
+    {
+      "sku": "phone-stand",
+      "name": "Phone stand keychain (ready made)",
+      "cad": 10
+    }
+  ],
+  "_stockComment": "Ready-made items for the Quick Sale panel on /orders/. Only the clicker prices came from Clark; the rest are placeholders to edit."
 }

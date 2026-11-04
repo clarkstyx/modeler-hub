@@ -18,14 +18,22 @@ export async function verifyShowCookie(request, secret) {
   return !!(body && body.show === 1);
 }
 
+/** The production wording without the config comment. */
+export function cleanProduction(show) {
+  const { _comment, ...rest } = show.production || {};
+  return rest;
+}
+
 /** What the show page and the in-modeler order button are allowed to read. */
 export function publicShow(show) {
   return {
     enabled: showEnabled(show),
     title: show.title,
     tagline: show.tagline,
-    turnaround: show.turnaround,
+    madeToOrder: show.madeToOrder,
+    production: cleanProduction(show),
     payNote: show.payNote,
+    maxQty: show.maxQty || 20,
     currency: show.currency || 'CAD',
     tiles: (show.tiles || []).map((t) => ({ id: t.id, name: t.name, emoji: t.emoji, blurb: t.blurb, hint: t.hint, prices: t.prices })),
   };
