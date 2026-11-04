@@ -7,7 +7,8 @@ Valencia Modelers' side-printed, sleek EDC capsule keychain phone stand. Explain
 - `src/core/params.ts` — settings, limits, opener/text choices, presets (`standard`, `large`, `soda-slim`, `compact`), and printer profiles.
 - `src/core/layout.ts` — single source of truth for all derived dimensions (tapered capsule silhouette, conical hinge, cradle valley & ramp, phone angle, keyring eyelet, soda tab lifter, bottle opener jaw, text boxes).
 - `src/core/validateParams.ts` — pre-build parameter rules and helpful multi-colour / portrait-stability tips.
-- `src/geometry/buildStand.ts` — builds `BODY`, `FLAP`, and optional `TEXT` in the side-printed bed frame (`z ∈ [0, width]`), plus `standingParts` and `closedParts` for the 3-pose preview.
+- `src/geometry/buildStand.ts` — builds `BODY`, `FLAP`, and optional `TEXT` / `LOGO` decals (`placeDecal`: side cheek z = W, top deck y = T following the taper, flap outer face) in the side-printed bed frame (`z ∈ [0, width]`), plus `standingParts` and `closedParts` for the 3-pose preview.
+- `src/image/` — logo upload. `loadLogo.ts` (main thread only: canvas) draws the picture small and `traceMask.ts` (pure) turns dark pixels into exact pixel-edge rings, normalised to width 1, centred, y up, EvenOdd. The rings live in `params.logoRings`, so the worker, saved settings and the 3MF carry them; the original picture is not kept.
 - `src/pipeline/` — Web Worker generation, mesh validation (`validateMesh`), `shelfPack` multi-plate batch layout, and 3MF/STL/ZIP export.
 
 ## Key invariants
