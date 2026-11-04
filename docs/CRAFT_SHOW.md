@@ -60,12 +60,42 @@ database is not connected", step 1 above was not finished.
 Open `https://YOUR-DOMAIN/show/sign/` on a computer, press **Print this sign** (letter or A4,
 margins minimum). The QR code points at `/show/`. Print two: one for the table, one at eye level.
 
+## Decisions still open (confirm before Saturday)
+
+All of these live in `show.json` and are safe defaults until you change them:
+
+- **Prices** for Grinch ($12), Dumpling ($12), Name Ornament ($10) and Phone Stand ($10) are placeholders.
+  The pop socket prices ($7 / $8 / $10) are yours. Ready-made stock prices under `stock` are placeholders
+  except the clicker ($5 + $1.50 per extra letter).
+- **Tax**: the site adds no tax and shows prices as charged (`tax.mode = "none"`). Confirm with your
+  accountant whether PST/GST must be shown or added. Nothing is computed until that is decided.
+- **Production wording** says *business days* (`production.dayType`). Change the two sentences if you
+  mean calendar days.
+- **Bulk orders**: `production.bulkThreshold` is `null`, so the bulk sentence (7 to 10 business days)
+  is never shown. Set it to a quantity (for example 5) to show it on orders of that size and up.
+- **Shipping** is "quoted separately". The form never asks for an address; you get it when you contact them.
+
+## What the hub can and cannot lock down
+
+The order button lives in the hub; the modelers are separate apps. The hub records exactly what the
+customer set (settings JSON, preview JPEG, modeler build sha, preset name) and prices only from
+`show.json`, so a customer can never change a price or submit an order for a product that is not on the
+list. What the hub **cannot** do is remove sliders inside a modeler: a customer can still open "Print" or
+"Advanced" sections in the modeler itself. That is why **production starts only after you look at the
+saved design**: open "Design" on the order, check size and colours, and load the settings JSON in the
+modeler if needed. A real "customer mode" (fixed geometry, approved fonts and palettes, four-colour
+limit) has to be built inside each modeler repo and is planned after the show. The modelers already refuse
+to export unprintable geometry, so the saved settings are at least printable.
+
 ## Saturday
 
 - Your phone: keep `/orders/` open (it remembers the key). Pull down / press Refresh to see new
   orders. The **Open** chip shows what still needs attention.
-- Customer shows their number → take the money → **Mark paid**. Tap their phone number to call or
-  text them later.
+- Customer shows their number → take the money → **Mark paid…**, pick cash / e-transfer / card and the
+  amount. Paying moves the order into the **Production queue** tab; unpaid orders never appear there.
+- Ready-made items sold off the table go in the **Quick sale** tab (tap + on each item, pick how they
+  paid, Record sale). They are counted apart from custom orders.
+- The search box finds an order by number (VM012), name, phone or notes.
 - **Design** on an order shows the preview picture the customer saw, a link to the modeler page they
   were on, and their saved settings (JSON). Open the modeler, load that JSON with **Open settings**
   (where the modeler supports it) and export the 3MF. The notes field has what they typed.
@@ -75,7 +105,8 @@ margins minimum). The QR code points at `/show/`. Print two: one for the table, 
 
 ## After the show
 
-- Work through the list: **Start printing** → **Mark ready** → **Mark picked up / shipped**.
+- Work through the **Production queue** (paid only, grouped by product): **Start printing** → **Mark ready** →
+  **Picked up / shipped**. **Due date…** sets a promised date on an order.
 - **Download everything as CSV** for your records.
 - When you are done taking orders, set `"enabled": false` in `show.json` and push. The show page
   then says "The show is over", the Order button disappears, and the show modelers are back behind
@@ -98,8 +129,14 @@ every order from this file, never from the phone. `npm test` checks the file.
   JPEG of the largest canvas (if it is not blank), the modeler's `localStorage` (where most modelers
   keep their settings) and `window.__valenciaState()` if the modeler defines it, then POSTs to
   `/api/orders`.
-- `functions/api/orders/`: `POST` validates and inserts (prices from `show.json`); `GET`/`PATCH`
-  need the `ORDERS_KEY` bearer token or a Patreon session whose email is in `OWNER_EMAILS`.
+- `functions/api/orders/`: `POST` validates and inserts (prices from `show.json`), is idempotent on the
+  phone's `clientKey` (a retry or double tap returns the same order), and allows 8 orders per
+  connection per 10 minutes. `GET`/`PATCH` need the `ORDERS_KEY` bearer token or a Patreon session
+  whose email is in `OWNER_EMAILS`. Payment (`unpaid/paid/refunded`, method, amount, time) and
+  production (`pending/queued/printing/ready/completed/cancelled`) are separate columns; production
+  cannot advance on an unpaid order. Settings, screenshot and prices are never editable.
+- `functions/api/sales/`: walk-up sales of ready-made stock, priced from `show.json → stock`.
+- CSV exports quote cells that start with `=`, `+`, `-` or `@` so a note cannot run as a formula.
 - `functions/_lib/orders.js` has the table and the validation; `test/show.test.mjs` covers it.
 - The modelers themselves are untouched. A modeler can make the saved design exact by exposing
   `window.__valenciaState = () => currentSettings` (the Mistletoe Ornament does).

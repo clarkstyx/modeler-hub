@@ -36,9 +36,33 @@
           <h1>Orders</h1>
           <div class="sum" id="sum"></div>
         </div>
-        <div class="chips" id="chips"></div>
-        <div class="orders" id="orders"></div>
-        <p class="muted small"><a id="csv" href="#">Download everything as CSV</a> · <a href="#" id="forget">Forget the key on this device</a></p>
+        <div class="tabs" id="tabs">
+          <button class="tab on" data-view="orders" type="button">Orders</button>
+          <button class="tab" data-view="queue" type="button">Production queue</button>
+          <button class="tab" data-view="sales" type="button">Quick sale</button>
+        </div>
+
+        <div id="view-orders">
+          <div class="filters">
+            <input id="q" type="search" placeholder="Search order number, name, phone, notes" />
+            <div class="chips" id="chips"></div>
+          </div>
+          <div class="orders" id="orders"></div>
+          <p class="muted small"><a id="csv" href="#">Download orders as CSV</a> · <a href="#" id="forget">Forget the key on this device</a></p>
+        </div>
+
+        <div id="view-queue" hidden>
+          <p class="muted small">Paid orders only, oldest first, grouped by product. Unpaid orders never appear here.</p>
+          <div id="queue"></div>
+        </div>
+
+        <div id="view-sales" hidden>
+          <p class="muted small">Ready-made items sold at the table. Kept apart from custom orders. Items and prices come from <code>show.json → stock</code>.</p>
+          <div class="sale" id="sale"></div>
+          <h2 class="h2">Today's sales</h2>
+          <div id="sales"></div>
+          <p class="muted small"><a id="salescsv" href="#">Download sales as CSV</a></p>
+        </div>
       </section>
     </main>
 

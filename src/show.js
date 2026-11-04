@@ -15,7 +15,12 @@ function fillShowText() {
   fillChrome();
   document.querySelectorAll('[data-show-title]').forEach((el) => { el.textContent = show.title; });
   document.querySelectorAll('[data-show-tagline]').forEach((el) => { el.textContent = show.tagline; });
-  document.querySelectorAll('[data-show-turnaround]').forEach((el) => { el.textContent = show.turnaround; });
+  document.querySelectorAll('[data-made-to-order]').forEach((el) => { el.textContent = show.madeToOrder; });
+  const prod = show.production || {};
+  const lines = [prod.regular, prod.bulkThreshold ? prod.bulk : '', prod.shipping].filter(Boolean).join(' ');
+  document.querySelectorAll('[data-show-production]').forEach((el) => { el.textContent = lines; });
+  const lowest = Math.min(...show.tiles.flatMap((t) => t.prices.map((p) => p.cad)));
+  document.querySelectorAll('[data-from-price]').forEach((el) => { el.textContent = money(lowest).replace(/ \w+$/, ''); });
 }
 
 export function renderTiles() {
