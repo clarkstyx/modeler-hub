@@ -1,82 +1,26 @@
-# Phone Stand Keychain
+# Phone Stand Keychain (v2 — Permanent Snap-Lock)
 
-A **print-in-place keychain phone stand**: a flat bar with a kickstand flap hinged in the middle.
-Flip the flap up, sit the phone's bottom edge on the ledge against the hook, lean it back on the
-flap. Fold the flap down and it clicks flat into the bar: a keychain again. Keyring hole, optional
-bottle-opener slot, and your name as a flush two-colour inlay. Exported as 3MF (colours and
-settings embedded) or STL.
-
-Our own design of the "small smartphone stand, print in place" idea that is popular on MakerWorld.
-`docs/DESIGN.md` has the drawing, every dimension and what was learned from measuring the original.
+A **support-free EDC phone stand keychain** (`~70.9 × 35 × 11.5 mm` folded, `12 mm` phone slot) that folds shut into **one sleek, seamless pebble capsule** — upgraded with a **Permanent Two-Piece Snap-Lock Hinge** so you can print **Body and Flap separately** in any two filament colours (zero supports, zero AMS purge waste) and **permanently lock them together in one click**.
 
 ## What it makes
 
-- **One object, no assembly.** The flap's hinge barrel sits in a slot in the bar around a pin that is
-  part of the bar, with the chosen clearance (0.3 mm) everywhere. Printed flat with the flap open.
-- **Folds into one block.** The flap is the full width of the bar past the hinge, its edges match
-  the bar's, its tongue tucks under the hook's hood, and the pin shows as a cap on each side: folded,
-  only a seam line gives the hinge away.
-- **Three looks:** Soft (pill-rounded ends and edges, rounded flap), Classic (plain bar, lightly
-  rounded), Stealth (chamfered edges, a tail that tapers towards the ring, a fin-shaped flap).
-- **Sizes:** Small (72 × 35 × 11 mm), Large (76 × 35 × 12 mm, cased phones), Short (no keychain
-  tail), or anything in between: width, thickness, flap length, opening angle and tail length.
-- **Keychain end:** keyring hole (diameter or none), the can tab lifter from the original (a thin
-  slit in the end of the tail: slide the lip under a drink can's ring pull and lever it up), and an
-  optional bottle-opener slot (9 mm × 24 mm through the tail: the far edge hooks under the cap, the
-  near edge presses on top).
-- **Your name:** on the flat tail top (best for two colours) or on the back of the flap (shows while
-  the phone is up). Inlay (flush, its own colour), raised, or engraved. Four fonts, two lines,
-  shrinks to fit.
-- **Colours:** bar, flap and text each get a filament slot in the 3MF.
-- **Angle grooves:** up to five V-grooves across the ledge (as many as fit). The phone's bottom edge
-  rests in one; the groove nearest the hinge stands it steepest, the dip at the hook is the most
-  reclined. The readout lists every angle, e.g. 61° / 50° / 39° on the Small preset.
-- **Fit and look:** hinge clearance, flap thickness and taper (thicker at the hinge), how far it sinks
-  below the top when folded, rounded edges, hook wall, the click hood (the hook's top reaches over the
-  folded flap's thinner tongue, flush with the bar; the flap flexes 1 mm to snap under it), the dip
-  under the flap tip.
-- **Batch:** a list of names, one per line ("ANNA x3" for three), and copies of each. The stands
-  are packed onto the bed in list order (a new plate starts when the bed is full), each one its own
-  object in the slicer (`03_ZOE`), with a plate switcher in the preview.
-- **Printers:** Bambu Lab A1 Combo (256 mm, AMS lite), Anycubic Kobra X Combo (260 mm, ACE 2 Pro),
-  Flashforge Creator 5 Pro (256 mm, four toolheads, no purging) or another bed size. The choice sets
-  the bed the plate is packed for, warns when a print needs more colours than the printer holds,
-  and writes the print notes (layers, walls, brim, which slot gets which part) into the sidebar and
-  into the README of every ZIP.
-- The readout shows the folded size, how far the stand rises above the bar, the angle the phone
-  leans at, the ledge depth and the weight; the preview can show the stand open (as printed) or folded.
-- Exports: 3MF per plate (colours and settings embedded), STL per plate, or a ZIP with every plate
-  as 3MF + STL, `manifest.csv` and the print notes.
-
-## Print it
-
-Print as placed: flat on the bed, flap open, **no supports**. PLA or PETG, 0.2 mm layers, 3 walls.
-After printing, work the flap back and forth once to free the hinge (the pin bridges inside the
-barrel). If the hinge is stuck, raise the clearance to 0.35–0.4 mm; if it is sloppy, lower it.
-Not printed yet: see the test log in the hub's `docs/PRINT_VALIDATION.md` before calling a fit verified.
+- **Permanent Two-Piece Snap-Lock (`perm-snap`, default):** Print **Body** and **Flap** separately, align the Flap's C-clip with the Body's internal `Ø 5.05 × 3.89 mm` cam shaft at `~43°`, and press until both localized retaining barbs click home.
+  - **25° angled lead-in ramps** + `0.48 mm` nozzle-printable barb crests spread the calibrated `1.40 mm` flexible clip arms elastically (`~1.8%` strain) into the outer knuckle flex headroom.
+  - **75° steep retaining shoulders + stress-relieved hook pockets** prevent withdrawal even at the `~43°` assembly angle, while the `Ø 5.05 mm` major cam lobes block withdrawal across `0°..85°`.
+  - **`0.30 mm` circular bearing bore** lets the Flap fold completely flush (`0°`) and open smoothly to `~85°` (`~64–67°` screen angle) with zero rotational friction.
+- **Three Snap-Fit Test Presets + Compact Hinge Coupons:** Generate **Easy Fit** (`0.35 mm` barb, `1.30 mm` wall, `72°`), **Standard Fit** (`0.45 mm` barb, `1.40 mm` wall, `75°`), and **Firm Fit** (`0.55 mm` barb, `1.50 mm` wall, `78°`) Flaps — **all mating with the exact same Body** — plus compact **Hinge-Only Test Coupons (`E`, `S`, `F`)** to dial in tolerance on your printer in minimal time and filament.
+- **Material & Orientation Controls:** Built-in **PLA / PETG** elasticity presets, **Auto / Side / Flat** print orientation selector, **`0.16 / 0.20 / 0.24 mm`** layer-height targets, and **Support-Free Geometry Optimization** (`45°` blind cheek cones, `45°` Z-ramped barb reliefs, and `45°` teardrop bores).
+- **Your logo on it:** upload a PNG, JPG or SVG (section 5). It is traced into outlines in the browser and engraved, inlaid in a second colour, or raised on the side cheek, the top deck or the flap. Set its width, nudge it along and across the face, turn it, and pick the tracing threshold for grey artwork. The outlines are saved with the settings and inside every 3MF.
+- **Click shut:** a leaf spring in the front hook snaps over a notch in the flap tip when you fold the stand flat, so the keychain stays closed in a pocket. `Folded click` sets how firm it is (`0.50 mm` default, `0` = none).
+- **Original Snap & 1-Piece Print-in-Place preserved:** Switch **Assembly mode** anytime between **Permanent Snap-Lock**, **Original Snap** (swappable at `~43°`), and **Print-in-Place** (1-piece single-spool print).
+- **Preserved EDC Features:** `12 mm` phone slot (customizable `8.5–16 mm`), `5 mm` corner keyring eyelet, sculpted underside bottle-cap opener + beveled soda-tab lifter, `45°` exterior bevels, and customizable engraved/inlaid/raised text.
 
 ## Run
 
 ```bash
 npm install
 npm run dev        # http://localhost:5184
-npm test           # vitest: sizes, clearance in both poses, click lip, options, rules, exports
-npm run validate   # presets, every option and slider edge; writes out/*.3mf
-npm run build      # production build (the hub passes --base=/m/phone-stand/)
-npm run artifact   # build + artifact/page.html and assets for publishing as a claude.ai page
+npm test           # vitest: watertightness, identical Body across Easy/Std/Firm, 0°..85° clearance, permanent lock & the click
+npm run validate   # builds 46 validation cases + out/deliverables/* (Body, Easy/Std/Firm Flaps, Hinge Coupons, ZIP)
+npm run check      # typecheck + test + production build
 ```
-
-The app is also published as a claude.ai page (artifact) so it can be used without the hub; the
-`downloads` capability saves files there (STL and 3MF arrive wrapped in a .zip, which the viewer's
-sandbox allows). Republish after a change: `npm run artifact`, then publish `artifact/page.html`
-with the files in `artifact/assets/` beside it.
-
-## How it is built
-
-Same Generation 2 layout as the other Valencia modelers, on a copy of the hub's shared engine in
-`src/shared/` (manifold kernel, mesh checks, 3MF/STL writers, text). Geometry is in
-`src/geometry/buildStand.ts`; every derived dimension is in `src/core/layout.ts` so the UI, the rules
-and the geometry agree. The bar and flap profiles are drawn in the side plane and extruded across
-the bar. The slot in the bar is the flap's whole swing (every angle from folded to open) grown by the
-clearance, so the flap turns freely and the tail of the bar is its stop. Every part is checked
-(closed, consistently wound, no degenerate triangles, positive volume) before export is allowed.

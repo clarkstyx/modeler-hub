@@ -41,7 +41,7 @@ P1-3 above and two batch 2 follow-ups (the Trinket pinch fix and bundled fonts).
 | P2-2 | Stamp maker (mirrored relief, handle, press-fit or thread) | box-modeler relief + handle module | Stamp Maker | thread/press-fit must be print-tested |
 | P2-3 | MX clicker family | new engine | 5 clicker products | Cherry MX plate cut-out 14.0 mm, 1.5 mm plate, stem cross 4.0 × 1.1 mm from the datasheet; calibration coupon required |
 | P2-4 | Image Keychain ornament/plaque presets; Name Tag strap slot + magnet pockets; Letter Beads pet-collar preset | existing | Image to Ornament, Printed-Photo Plaque, Bag & Luggage Tag, Name Badge, Pet Collar Beads | – |
-| P2-5 | Phone stand keychain (print-in-place kickstand, keyring, bottle opener, name inlay) | ✅ own engine: `clarkstyx/Phonestand_keychain_can_opener`, id `phone-stand`, Maker; our version of the most-printed MakerWorld phone stand (`docs/DESIGN.md` there has the measurements) | Phone Stand Keychain, Short desk stand, Bottle-opener keychain | first print: hinge clearance and click lip unverified (see `PRINT_VALIDATION.md`); MakerWorld free version |
+| P2-5 | Phone stand keychain (print-in-place kickstand, keyring, bottle opener, name inlay) | ✅ own engine: `clarkstyx/Phonestand_keychain_can_opener`, id `phone-stand`, Maker; our version of the most-printed MakerWorld phone stand (`docs/DESIGN.md` there has the measurements) | Phone Stand Keychain, Short desk stand, Bottle-opener keychain | base is now the capsule design Clark printed (hinge verified); the new leaf-spring click needs a print (see `PRINT_VALIDATION.md`); AI assistant to be ported back; MakerWorld free version |
 
 ## Batch 5
 
