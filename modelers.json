@@ -210,6 +210,16 @@
       "makerworld": ""
     },
     {
+      "id": "name-ornaments",
+      "name": "Name Ornament",
+      "repo": "clarkstyx/name-ornaments",
+      "tagline": "Your name in chunky letters across a snowflake, layered colours, hanging loop. Batch a whole list of names.",
+      "category": "Seasonal",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "mistletoe-ornament",
       "name": "Mistletoe Ornament",
       "path": "modelers/mistletoe-ornament",

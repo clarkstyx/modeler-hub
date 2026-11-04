@@ -15,9 +15,18 @@
       "blurb": "Puffy bubble letters that glue onto a pop socket. Up to three lines, your colours.",
       "hint": "Type 1, 2 or 3 lines of text, pick a font and colours, then order.",
       "prices": [
-        { "label": "1 line of text", "cad": 7 },
-        { "label": "2 lines of text", "cad": 8 },
-        { "label": "3 lines of text", "cad": 10 }
+        {
+          "label": "1 line of text",
+          "cad": 7
+        },
+        {
+          "label": "2 lines of text",
+          "cad": 8
+        },
+        {
+          "label": "3 lines of text",
+          "cad": 10
+        }
       ]
     },
     {
@@ -27,7 +36,10 @@
       "blurb": "Nine Grinch poses with your name in bubble letters. Four colours.",
       "hint": "Pick a pose, type the name, choose the four colours, then order.",
       "prices": [
-        { "label": "One ornament", "cad": 12 }
+        {
+          "label": "One ornament",
+          "cad": 12
+        }
       ]
     },
     {
@@ -37,17 +49,23 @@
       "blurb": "A cute dumpling in a bamboo steamer with a name and an accessory.",
       "hint": "Type the name, pick an accessory and colours, then order.",
       "prices": [
-        { "label": "One ornament", "cad": 12 }
+        {
+          "label": "One ornament",
+          "cad": 12
+        }
       ]
     },
     {
-      "id": "mistletoe-ornament",
-      "name": "Mistletoe Ornament",
-      "emoji": "🌿",
-      "blurb": "A mistletoe sprig with berries, a bow and your name on the tag. Your colours.",
-      "hint": "Type the name, choose the leaf, berry and ribbon colours, then order.",
+      "id": "name-ornaments",
+      "name": "Snowflake Name Ornament",
+      "emoji": "❄️",
+      "blurb": "Your name in chunky letters across a snowflake. Pick the snowflake, letter and backing colours.",
+      "hint": "Type the name, pick the snowflake style and the three colours, then order.",
       "prices": [
-        { "label": "One ornament", "cad": 10 }
+        {
+          "label": "One ornament",
+          "cad": 10
+        }
       ]
     },
     {
@@ -57,7 +75,10 @@
       "blurb": "A keychain that flips open into a phone stand, with your name on the side.",
       "hint": "Type the name for the side, pick colours, then order.",
       "prices": [
-        { "label": "One keychain", "cad": 10 }
+        {
+          "label": "One keychain",
+          "cad": 10
+        }
       ]
     }
   ]
