@@ -27,6 +27,8 @@ changes small, and verify in the browser.
   Patreon and get an "Order this design" button → `/orders/` for Clark). `_lib/show.js` and
   `_lib/orders.js` take the config as a parameter so `npm test` can run them in Node.
 - The hub pages are plain HTML + one module (`src/site.js`). No framework; keep it that way.
+- `public/trace/` is a standalone phone tool (no gate, no login): load a photo, trace it with the S Pen,
+  export only the strokes as SVG or transparent PNG. Plain HTML, copied through untouched by Vite.
 
 ## Conventions
 

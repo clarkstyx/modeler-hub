@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#16181d" />
+<title>Trace</title>
+<meta name="description" content="Load a photo, trace it with a pen, export only your lines as SVG or PNG." />
+<style>
+  :root {
+    --bg: #16181d; --panel: #1f2229; --line: #30343d; --text: #eef0f4; --muted: #9aa1ad;
+    --accent: #f5b041; --danger: #e5484d;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overscroll-behavior: none; }
+  body { display: flex; flex-direction: column; height: 100dvh; }
+
+  header { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--panel);
+    border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  header .title { font-weight: 700; margin-right: auto; }
+  header .title small { color: var(--muted); font-weight: 400; margin-left: 6px; }
+
+  .stage { position: relative; flex: 1; min-height: 0; overflow: hidden; background: #0d0f12;
+    touch-action: none; }
+  .stage canvas { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+  .stage canvas#ink { cursor: crosshair; }
+  .stage .empty { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(320px, 90%);
+    color: var(--muted); text-align: center; padding: 24px; }
+  .stage .empty b { color: var(--text); }
+
+  .bar { display: flex; align-items: center; gap: 6px; padding: 8px 10px; background: var(--panel);
+    border-top: 1px solid var(--line); flex-wrap: wrap; padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .bar .grow { flex: 1 1 120px; display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+
+  button, label.btn, select {
+    appearance: none; border: 1px solid var(--line); background: #2a2e37; color: var(--text);
+    border-radius: 8px; padding: 9px 12px; font: inherit; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+  button:disabled { opacity: .45; cursor: default; }
+  button.primary, label.btn.primary { background: var(--accent); color: #1a1a1a; border-color: var(--accent); }
+  button.danger { color: #ffb3b5; }
+  button.on { outline: 2px solid var(--accent); outline-offset: -2px; }
+  input[type=file] { display: none; }
+  .color { width: 40px; height: 40px; padding: 0; border-radius: 8px; border: 1px solid var(--line); background: none; }
+  .color::-webkit-color-swatch-wrapper { padding: 3px; }
+  .color::-webkit-color-swatch { border: none; border-radius: 5px; }
+  .toast { position: fixed; left: 50%; bottom: 150px; transform: translateX(-50%); background: #000c; color: #fff;
+    padding: 8px 14px; border-radius: 999px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+<header>
+  <span class="title">Trace <small>pen only, finger pans</small></span>
+  <label class="btn primary"><input id="file" type="file" accept="image/*" /> Load image</label>
+  <button id="undo" disabled>Undo</button>
+  <button id="redo" disabled>Redo</button>
+  <button id="clear" class="danger" disabled>Clear</button>
+</header>
+
+<div class="stage" id="stage">
+  <canvas id="photo"></canvas>
+  <canvas id="ink"></canvas>
+  <div class="empty" id="empty">
+    <p><b>Load an image</b>, then draw over it with your S Pen.</p>
+    <p>Only pen strokes draw. Use one finger to pan and two to zoom. Pen side button or the Erase mode removes whole strokes.</p>
+    <p>Export gives you just your lines, no photo.</p>
+  </div>
+</div>
+
+<div class="bar">
+  <button id="draw" class="on" title="Draw">✎ Draw</button>
+  <button id="erase" title="Erase strokes">⌫ Erase</button>
+  <input id="color" class="color" type="color" value="#ff3b30" title="Line colour" />
+  <div class="grow"><span>Width</span><input id="width" type="range" min="1" max="20" step="0.5" value="4" /></div>
+  <div class="grow"><span>Photo</span><input id="opacity" type="range" min="0" max="1" step="0.05" value="0.6" /></div>
+  <button id="fit" title="Fit to screen">Fit</button>
+  <button id="svg" class="primary" disabled>Export SVG</button>
+  <button id="png" disabled>Export PNG</button>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const stage = $('stage'), photo = $('photo'), ink = $('ink'), empty = $('empty');
+  const pctx = photo.getContext('2d'), ictx = ink.getContext('2d');
+  const toast = $('toast');
+
+  // ---- state -------------------------------------------------------------
+  let img = null;                 // HTMLImageElement
+  let W = 0, H = 0;               // image pixel size; strokes are stored in image pixels
+  let strokes = [];               // { points:[[x,y,p],...], color, width }
+  let redoStack = [];
+  let current = null;             // stroke being drawn
+  let mode = 'draw';
+  let view = { scale: 1, x: 0, y: 0 };   // image -> screen: screen = img*scale + offset
+  const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+
+  function say(msg) { toast.textContent = msg; toast.classList.add('show'); clearTimeout(say.t); say.t = setTimeout(() => toast.classList.remove('show'), 1800); }
+
+  // ---- loading -----------------------------------------------------------
+  $('file').addEventListener('change', (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
+    const im = new Image();
+    im.onload = () => {
+      URL.revokeObjectURL(url);
+      img = im; W = im.naturalWidth; H = im.naturalHeight;
+      strokes = []; redoStack = []; current = null;
+      photo.width = W; photo.height = H;
+      pctx.drawImage(im, 0, 0);
+      empty.style.display = 'none';
+      fit();
+      updateButtons();
+      say(`${W} × ${H} px loaded`);
+    };
+    im.onerror = () => say('Could not read that image');
+    im.src = url;
+    e.target.value = '';
+  });
+
+  // ---- view / layout -----------------------------------------------------
+  function stageSize() { const r = stage.getBoundingClientRect(); return { w: r.width, h: r.height }; }
+
+  function applyView() {
+    photo.style.width = W + 'px'; photo.style.height = H + 'px';
+    photo.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.scale})`;
+    photo.style.opacity = $('opacity').value;
+    const { w, h } = stageSize();
+    ink.style.width = w + 'px'; ink.style.height = h + 'px';
+    ink.width = Math.round(w * dpr); ink.height = Math.round(h * dpr);
+    redraw();
+  }
+
+  function fit() {
+    if (!img) return;
+    const { w, h } = stageSize();
+    const s = Math.min(w / W, h / H) * 0.98;
+    view = { scale: s, x: (w - W * s) / 2, y: (h - H * s) / 2 };
+    applyView();
+  }
+  $('fit').addEventListener('click', fit);
+  $('opacity').addEventListener('input', () => { photo.style.opacity = $('opacity').value; });
+  window.addEventListener('resize', () => { if (img) applyView(); });
+
+  function toImage(cx, cy) {
+    const r = stage.getBoundingClientRect();
+    return [(cx - r.left - view.x) / view.scale, (cy - r.top - view.y) / view.scale];
+  }
+
+  // ---- drawing -----------------------------------------------------------
+  function strokePath(ctx, s, scale, ox, oy) {
+    const pts = s.points;
+    if (!pts.length) return;
+    ctx.strokeStyle = s.color; ctx.fillStyle = s.color;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineWidth = s.width * scale;
+    if (pts.length === 1) {
+      ctx.beginPath(); ctx.arc(pts[0][0] * scale + ox, pts[0][1] * scale + oy, s.width * scale / 2, 0, Math.PI * 2); ctx.fill();
+      return;
+    }
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0] * scale + ox, pts[0][1] * scale + oy);
+    for (let i = 1; i < pts.length - 1; i++) {
+      // smooth with midpoints
+      const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+      ctx.quadraticCurveTo(pts[i][0] * scale + ox, pts[i][1] * scale + oy, mx * scale + ox, my * scale + oy);
+    }
+    const l = pts[pts.length - 1];
+    ctx.lineTo(l[0] * scale + ox, l[1] * scale + oy);
+    ctx.stroke();
+  }
+
+  function redraw() {
+    ictx.setTransform(1, 0, 0, 1, 0, 0);
+    ictx.clearRect(0, 0, ink.width, ink.height);
+    ictx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    for (const s of strokes) strokePath(ictx, s, view.scale, view.x, view.y);
+    if (current) strokePath(ictx, current, view.scale, view.x, view.y);
+  }
+
+  function updateButtons() {
+    const has = strokes.length > 0;
+    $('undo').disabled = !has; $('clear').disabled = !has;
+    $('redo').disabled = redoStack.length === 0;
+    $('svg').disabled = !has; $('png').disabled = !has;
+  }
+
+  function pushStroke(s) { strokes.push(s); redoStack = []; updateButtons(); }
+
+  // Erase: remove any stroke that passes within the eraser radius of the pen tip.
+  function eraseAt(x, y) {
+    const r = Math.max(8, $('width').valueAsNumber * 2) / view.scale;
+    let removed = false;
+    strokes = strokes.filter((s) => {
+      const hit = s.points.some((p) => Math.hypot(p[0] - x, p[1] - y) <= r + s.width / 2);
+      if (hit) { redoStack.push(s); removed = true; }
+      return !hit;
+    });
+    if (removed) { redraw(); updateButtons(); }
+  }
+
+  // ---- pointer handling: pen draws, finger pans/zooms ----------------------
+  const fingers = new Map();  // pointerId -> {x,y}
+  let pinch = null;           // {d0, scale0, cx, cy, imgCx, imgCy}
+  let penDown = false;
+
+  ink.addEventListener('pointerdown', (e) => {
+    if (!img) return;
+    e.preventDefault();
+    if (e.pointerType === 'pen' || e.pointerType === 'mouse') {
+      try { ink.setPointerCapture(e.pointerId); } catch (_) {}
+      penDown = true;
+      const [x, y] = toImage(e.clientX, e.clientY);
+      // Pen barrel button (bit 5) or eraser end => erase
+      const erasing = mode === 'erase' || (e.buttons & 32) === 32 || e.button === 5;
+      if (erasing) { current = null; eraseAt(x, y); return; }
+      current = { points: [[x, y, e.pressure || 0.5]], color: $('color').value, width: $('width').valueAsNumber, erasing: false };
+      redraw();
+    } else {
+      fingers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (fingers.size === 2) {
+        const [a, b] = [...fingers.values()];
+        const cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+        const [ix, iy] = toImage(cx, cy);
+        pinch = { d0: Math.hypot(a.x - b.x, a.y - b.y), scale0: view.scale, imgCx: ix, imgCy: iy };
+      }
+    }
+  });
+
+  ink.addEventListener('pointermove', (e) => {
+    if (!img) return;
+    if (e.pointerType === 'pen' || e.pointerType === 'mouse') {
+      if (!penDown) return;
+      let events = e.getCoalescedEvents ? e.getCoalescedEvents() : [];
+      if (!events.length) events = [e];
+      for (const ev of events) {
+        const [x, y] = toImage(ev.clientX, ev.clientY);
+        if (current) current.points.push([x, y, ev.pressure || 0.5]);
+        else if (mode === 'erase' || (e.buttons & 32) === 32) eraseAt(x, y);
+      }
+      if (current) redraw();
+    } else if (fingers.has(e.pointerId)) {
+      const prev = fingers.get(e.pointerId);
+      fingers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (fingers.size === 1) {
+        view.x += e.clientX - prev.x; view.y += e.clientY - prev.y;
+        applyView();
+      } else if (fingers.size === 2 && pinch) {
+        const [a, b] = [...fingers.values()];
+        const d = Math.hypot(a.x - b.x, a.y - b.y);
+        const s = Math.min(40, Math.max(0.05, pinch.scale0 * d / pinch.d0));
+        const r = stage.getBoundingClientRect();
+        const cx = (a.x + b.x) / 2 - r.left, cy = (a.y + b.y) / 2 - r.top;
+        view.scale = s;
+        view.x = cx - pinch.imgCx * s; view.y = cy - pinch.imgCy * s;
+        applyView();
+      }
+    }
+  });
+
+  function endPointer(e) {
+    if (e.pointerType === 'pen' || e.pointerType === 'mouse') {
+      if (!penDown) return;
+      penDown = false;
+      if (current) {
+        if (current.points.length > 0) pushStroke(simplify(current));
+        current = null;
+        redraw();
+      }
+    } else {
+      fingers.delete(e.pointerId);
+      if (fingers.size < 2) pinch = null;
+    }
+  }
+  ink.addEventListener('pointerup', endPointer);
+  ink.addEventListener('pointercancel', endPointer);
+  ink.addEventListener('pointerleave', (e) => { if (e.pointerType !== 'touch') endPointer(e); });
+  ink.addEventListener('contextmenu', (e) => e.preventDefault());
+
+  // Drop points closer than ~0.3 image px so SVGs stay small.
+  function simplify(s) {
+    const out = [s.points[0]];
+    for (let i = 1; i < s.points.length; i++) {
+      const a = out[out.length - 1], b = s.points[i];
+      if (Math.hypot(a[0] - b[0], a[1] - b[1]) >= 0.3) out.push(b);
+    }
+    return { points: out, color: s.color, width: s.width };
+  }
+
+  // ---- tools -------------------------------------------------------------
+  function setMode(m) {
+    mode = m;
+    $('draw').classList.toggle('on', m === 'draw');
+    $('erase').classList.toggle('on', m === 'erase');
+  }
+  $('draw').addEventListener('click', () => setMode('draw'));
+  $('erase').addEventListener('click', () => setMode('erase'));
+  $('undo').addEventListener('click', () => { if (strokes.length) { redoStack.push(strokes.pop()); redraw(); updateButtons(); } });
+  $('redo').addEventListener('click', () => { if (redoStack.length) { strokes.push(redoStack.pop()); redraw(); updateButtons(); } });
+  $('clear').addEventListener('click', () => {
+    if (!strokes.length) return;
+    if (!confirm('Clear all strokes?')) return;
+    redoStack = strokes.slice().reverse().concat(redoStack); strokes = []; redraw(); updateButtons();
+  });
+
+  // ---- export ------------------------------------------------------------
+  function bounds() {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    for (const s of strokes) for (const p of s.points) {
+      const r = s.width / 2;
+      x0 = Math.min(x0, p[0] - r); y0 = Math.min(y0, p[1] - r);
+      x1 = Math.max(x1, p[0] + r); y1 = Math.max(y1, p[1] + r);
+    }
+    const pad = 4;
+    x0 = Math.max(0, Math.floor(x0 - pad)); y0 = Math.max(0, Math.floor(y0 - pad));
+    x1 = Math.min(W, Math.ceil(x1 + pad)); y1 = Math.min(H, Math.ceil(y1 + pad));
+    return { x: x0, y: y0, w: Math.max(1, x1 - x0), h: Math.max(1, y1 - y0) };
+  }
+
+  function pathData(s) {
+    const pts = s.points, f = (n) => Math.round(n * 100) / 100;
+    if (pts.length === 1) return `M${f(pts[0][0])} ${f(pts[0][1])} l0.01 0`;
+    let d = `M${f(pts[0][0])} ${f(pts[0][1])}`;
+    for (let i = 1; i < pts.length - 1; i++) {
+      const mx = (pts[i][0] + pts[i + 1][0]) / 2, my = (pts[i][1] + pts[i + 1][1]) / 2;
+      d += ` Q${f(pts[i][0])} ${f(pts[i][1])} ${f(mx)} ${f(my)}`;
+    }
+    const l = pts[pts.length - 1];
+    d += ` L${f(l[0])} ${f(l[1])}`;
+    return d;
+  }
+
+  function toSVG() {
+    const b = bounds();
+    const paths = strokes.map((s) =>
+      `  <path d="${pathData(s)}" stroke="${s.color}" stroke-width="${s.width}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`
+    ).join('\n');
+    return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" viewBox="${b.x} ${b.y} ${b.w} ${b.h}" width="${b.w}" height="${b.h}">\n${paths}\n</svg>\n`;
+  }
+
+  function download(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+
+  async function share(blob, name) {
+    // On phones, the share sheet lets you save to Files / send to another app.
+    const file = new File([blob], name, { type: blob.type });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: name }); return; } catch (e) { if (e.name === 'AbortError') return; }
+    }
+    download(blob, name);
+  }
+
+  $('svg').addEventListener('click', () => {
+    share(new Blob([toSVG()], { type: 'image/svg+xml' }), 'trace.svg');
+  });
+
+  $('png').addEventListener('click', () => {
+    const b = bounds();
+    const c = document.createElement('canvas');
+    c.width = b.w; c.height = b.h;
+    const ctx = c.getContext('2d');
+    for (const s of strokes) strokePath(ctx, s, 1, -b.x, -b.y);
+    c.toBlob((blob) => blob && share(blob, 'trace.png'), 'image/png');
+  });
+
+  // Keyboard shortcuts for desktop testing
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); (e.shiftKey ? $('redo') : $('undo')).click(); }
+    if (e.key.toLowerCase() === 'e') setMode('erase');
+    if (e.key.toLowerCase() === 'd') setMode('draw');
+  });
+
+  // Keep the overlay canvas sized even before an image is loaded.
+  applyView();
+})();
+</script>
+</body>
+</html>
