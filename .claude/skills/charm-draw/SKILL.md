@@ -7,6 +7,16 @@ description: Draw a new charm, bead, topper or ornament picture in Clark's house
 
 Clark draws charms in Canva and I trace them into SVGs for the Icon Bead Modeler (`charms/<Category>/<Group>/<name>.svg`). A picture only traces well when it follows the house style below. This skill turns "draw me a penguin" into a Canva prompt that gets that style every time, checks the result, and hands it on to the tracing step.
 
+## Step 0: don't draw what Clark already has
+
+Before drawing anything, search the whole charm library in `clarkstyx/icon-bead-modeler`, every category, not just the set it would go in:
+
+```bash
+find charms -iname "*<word>*"      # e.g. find charms -iname "*burger*"
+```
+
+The Fluent emoji sets (Animals, Food, Faces, Nature, Hearts & symbols, Fun & sports, Holidays) and Line Art already cover most everyday foods, animals and objects. If a charm of that subject exists anywhere, skip it and say so, unless Clark explicitly asks for a new version of it. When he sends a picture of many things, list which ones already exist and draw only the rest.
+
 ## Step 1: work out the subject and the set
 
 Ask nothing if the request already says what to draw. Decide which set it belongs to from the subject; say the choice in one line so Clark can redirect:
