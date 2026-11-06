@@ -27,6 +27,9 @@ changes small, and verify in the browser.
   Patreon and get an "Order this design" button → `/orders/` for Clark). `_lib/show.js` and
   `_lib/orders.js` take the config as a parameter so `npm test` can run them in Node.
 - The hub pages are plain HTML + one module (`src/site.js`). No framework; keep it that way.
+- `.claude/skills/charm-draw/` is how new charm pictures get drawn with the Canva connector in the house
+  style, and `scripts/trace-charm.py` turns a picture into the SVG the Icon Bead Modeler imports. The
+  source of truth for the skill is the `clarkstyx/canva-draw-prompt` repo; this is a copy.
 
 ## Conventions
 
