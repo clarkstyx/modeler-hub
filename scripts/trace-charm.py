@@ -8,7 +8,10 @@ from PIL import Image
 
 def quantize(img_path, k, out_png, bg_white=True, all_white=False):
     im = Image.open(img_path).convert("RGBA")
-    im.thumbnail((700, 700))
+    if max(im.size) < 600:  # a small preview (e.g. Canva's 200 px thumbnail): upscale smoothly first
+        from PIL import ImageFilter
+        im = im.resize((800, 800), Image.LANCZOS).filter(ImageFilter.MedianFilter(7))
+    im.thumbnail((800, 800))
     a = np.array(im).astype(np.float32)
     alpha = a[..., 3] > 128
     rgb = a[..., :3]
