@@ -31,6 +31,11 @@ def quantize(img_path, k, out_png, bg_white=True, all_white=False):
     crit = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.5)
     _, labels, centers = cv2.kmeans(px, k, None, crit, 5, cv2.KMEANS_PP_CENTERS)
     centers = np.round(centers).astype(np.uint8)
+    # majority-vote the colour map in a small window (background doesn't vote) so boundary
+    # slivers (anti-aliased pixels that landed in a third colour) join their neighbours
+    labmap = np.full(a.shape[:2], -1, np.int32); labmap[fg] = labels.ravel()
+    votes = np.stack([cv2.boxFilter((labmap == i).astype(np.float32), -1, (5, 5), normalize=False) for i in range(k)])
+    labels = votes.argmax(axis=0)[fg].astype(np.int32).reshape(-1, 1)
     out = np.zeros(a.shape[:2] + (4,), np.uint8)
     out[fg, :3] = centers[labels.ravel()]
     out[fg, 3] = 255
