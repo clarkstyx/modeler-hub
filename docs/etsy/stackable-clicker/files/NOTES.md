@@ -5,10 +5,12 @@ headless through the modeler's own `generate()` / `clickerDownload()` / `buildKe
 
 ## Settings used
 - `mode: "stack"` (Stackable), `blockStyle: "round"` (rounded block), `keySize: "block"` (`KEY_SIZES.block`, 21.2 mm caps,
-  `capShape: "straight"`), `font: "chunky"` (Valencia Chunky), `letterRelief: "raised"`, `baseEnds: "plain"`, no charm.
+  `capShape: "straight"`), `font: "lilita"` (Lilita One, SIL OFL 1.1, for A–Z and 0–9; Clark's choice: Valencia Chunky
+  has no digits and its M read like an "n"), `letterRelief: "raised"`, `baseEnds: "plain"`, no charm.
 - Printer `a1` (Bambu Lab A1, 256 mm bed): every 3MF carries `slicerProjectSettings()` (A1 0.4, 0.20mm Standard @BBL A1,
   Bambu PLA Basic per colour).
-- StyxVal watermark on (default): hidden 0.3 mm "SV" under each block, StyxVal metadata in every 3MF (see "Licence" below).
+- StyxVal watermark on (default): hidden 0.3 mm "SV" under each block, StyxVal metadata in every 3MF, with the licence
+  fields changed to the commercial licence (see "Licence" below).
 - MX switches are not part of the product (buyer supplies one MX-style switch per block).
 
 ## Colours (modeler defaults, kept: they read well together)
@@ -44,8 +46,8 @@ STL (one watertight solid each, in print orientation, centred, on z = 0):
 | Switch | MX-style, 14.0 mm square plate hole, ledge 9.5 mm above the bed, 1.2 mm floor (closed bottom) |
 | Keycap pocket | 22.2 mm, corner r 5.8 mm (0.5 mm gap round the cap) |
 | Keycap | 21.2 × 21.2 mm, 6.0 mm body + 1.0 mm raised letter = 7.0 mm tall; straight sides, 1.1 × 1.5 mm rounded top edge; MX cross stem 4.15 × 1.30 mm |
-| Letters | 13 mm tall (Valencia Chunky; A is 12.1 mm wide, M/W 15.6 mm, I 6.2 mm), raised 1.0 mm |
-| Digits | 13 mm tall (about 9.4 mm wide), raised 1.0 mm |
+| Letters | 13 mm cap height (Lilita One; A 11.6 mm wide, M 15.0 mm, I 7.3 mm; W fitted to the 15.6 mm flat top), raised 1.0 mm |
+| Digits | about 13.3 mm tall, 9.5–10.6 mm wide, same font, raised 1.0 mm |
 | Stack pitch | 28.2 mm per letter on the cord (blocks sit end to end), so a 5-letter name is about 141 mm plus knots |
 | Assembled height | 23.6 mm (block + cap, cap rim 0.4 mm below the block top) |
 
@@ -65,11 +67,11 @@ paint stripping was needed. All sliced with no warnings.
 
 | File | Time | Filament | Changes |
 |---|---|---|---|
-| Keycaps-A-Z | 1 h 47 m | 45.70 g (Cream 41.01 g, Rose 4.68 g; prime tower 1.05 g) | 1 |
-| Keycaps-0-9 | 45 m 35 s | 18.07 g (Cream 17.13 g, Rose 0.94 g) | 1 |
+| Keycaps-A-Z (Lilita One, re-sliced) | 1 h 45 m | 45.05 g (Cream 41.84 g, Rose 3.21 g; prime tower 1.05 g) | 1 |
+| Keycaps-0-9 (sliced with the earlier font) | 45 m 35 s | 18.07 g (Cream 17.13 g, Rose 0.94 g) | 1 |
 | Keycap-BLANK | 11 m 06 s | 1.66 g | 0 |
 | Blocks-x10 | 2 h 00 m | 57.53 g (about 5.75 g a block) | 0 |
-| Fit-Test | 24 m 49 s | 7.53 g | 0 |
+| Fit-Test (sliced with the earlier font on the A) | 24 m 49 s | 7.53 g | 0 |
 
 Screenshots: `../screenshots-raw/bambu-*-loaded.png` and `bambu-*-sliced.png`.
 
@@ -77,12 +79,21 @@ Screenshots: `../screenshots-raw/bambu-*-loaded.png` and `bambu-*-sliced.png`.
 - Verified: every mesh watertight (modeler `validateMesh` on all 3MF parts; STLs re-checked separately: 0 open
   edges, 0 winding errors, one shell each, keycaps genus 0, blocks genus 2 = the two tunnels); the files load and slice
   in Bambu Studio 2.8.
-- Printed and works (from the modeler's README/CLAUDE.md): the **square** stackable block on 4 mm paracord.
-- **Not printed yet:** the **rounded** block (these files) and the **block-size keycaps** (21.2 mm straight caps,
-  Valencia Chunky). The tunnels are the same as the square block, but nothing in this pack has been printed.
-  Print the fit test before listing.
+- Printed and works: the **rounded** block (Clark's tested print, per Clark 2026-11-09; the modeler's README/CLAUDE.md
+  still only record the square block on 4 mm paracord, so log the rounded print there / in `PRINT_VALIDATION.md`).
+- **Not printed yet:** the **block-size keycaps** with **Lilita One** letters (21.2 mm straight caps). Print
+  `Fit-Test.3mf` (or one A–Z plate) before listing to check the stem fit and the letters.
+- Font: Lilita One is SIL Open Font License 1.1 (licence in the modeler's `src/fonts/LilitaOne-OFL.txt`); OFL allows
+  selling prints and models made with it.
 
-## Licence (needs Clark's decision)
-The 3MFs carry the StyxVal metadata from the modeler: LicenseTerms "Personal Use Licence ... You may not sell
-prints ... Selling printed items requires the StyxVal Merchant licence" and Description "... Personal use only."
-That contradicts a commercial-licence Etsy listing. Not changed here.
+## Licence
+Sold with a commercial licence. In every shipped 3MF (`3D/3dmodel.model`) two StyxVal fields were rewritten after export:
+- `LicenseTerms`: "Commercial licence (Valencia Holdings Inc.): you may print and sell physical prints of this design.
+  Do not share, resell or upload the files. One licence per shop."
+- `Description`: "StyxVal Stack paracord letter block system by StyxVal Studio (@styxval). Commercial licence (see
+  LicenseTerms)." (the modeler's text ended "Personal use only.")
+
+Kept as the modeler writes them: `Designer` (StyxVal Studio), `Copyright` (© 2026 Valencia Holdings Inc.), `CreationDate`
+and the SV deboss. The two changed fields no longer match the watermark tool's `config.yaml` strings
+(`core/styxvalBrand.ts` says they must), so a check that compares them to config.yaml will flag these files.
+STL files have no metadata.
