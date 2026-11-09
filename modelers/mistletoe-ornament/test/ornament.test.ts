@@ -72,6 +72,15 @@ describe("options", () => {
     expect(names(r)).not.toContain("TAG");
     expect(r.issues.some((i) => i.severity === "info")).toBe(true);
   });
+  it("blank tag: empty name with blankTag keeps a plain tag, no name part, one piece", () => {
+    const r = generate(P({ name: "", blankTag: true }));
+    expect(errorsOf(r)).toEqual([]);
+    expect(names(r)).toContain("TAG");
+    expect(names(r)).not.toContain("NAME");
+    const t = bounds(r, "TAG");
+    expect(t.maxX - t.minX).toBeCloseTo(Math.round(DEFAULT_PARAMS.size * 0.7), 0);
+    expect(r.info.thickness).toBeCloseTo(DEFAULT_PARAMS.baseThickness + DEFAULT_PARAMS.layerThickness, 6);
+  });
   it("no bow, no berries, one leaf pair still hangs together", () => {
     const r = generate(P({ bow: false, berries: 0, leafPairs: 1 }));
     expect(errorsOf(r)).toEqual([]);

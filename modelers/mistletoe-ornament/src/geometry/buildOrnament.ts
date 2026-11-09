@@ -122,14 +122,18 @@ export function buildOrnament(p: OrnamentParams): BuildResult {
   let tag = cs([]);
   let name = cs([]);
   let stalk = cs([]);
-  if (text) {
-    const tagW = Math.max(24, text.block.width + 2 * TAG_PAD);
-    const tagH = text.capH + 2 * TAG_PAD;
+  // Blank tag (empty name, blankTag on): sized for a name of about seven letters at full height.
+  const blank = !text && p.tag && p.blankTag && !p.name.trim();
+  if (text || blank) {
+    const tagW = text ? Math.max(24, text.block.width + 2 * TAG_PAD) : Math.round(Math.max(24, p.size * 0.7));
+    const tagH = (text ? text.capH : 8) + 2 * TAG_PAD;
     const tagCy = sprigBounds.minY - 1 - tagH / 2;
     tag = rect(-tagW / 2, tagCy - tagH / 2, tagW / 2, tagCy + tagH / 2, Math.min(4, tagH / 2 - 0.5));
-    name = csTranslate(text.section, 0, tagCy);
     stalk = rect(-STALK_W / 2, tagCy, STALK_W / 2, 0, 0);
-    if (p.textStyle === "flush") tag = csSubtract(tag, name);
+    if (text) {
+      name = csTranslate(text.section, 0, tagCy);
+      if (p.textStyle === "flush") tag = csSubtract(tag, name);
+    }
   }
 
   // Front-to-back order on the colour layer: berries, bow, leaves, tag.
