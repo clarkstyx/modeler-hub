@@ -9,8 +9,8 @@ headless through the modeler's own `generate()` / `clickerDownload()` / `buildKe
   has no digits and its M read like an "n"), `letterRelief: "raised"`, `baseEnds: "plain"`, no charm.
 - Printer `a1` (Bambu Lab A1, 256 mm bed): every 3MF carries `slicerProjectSettings()` (A1 0.4, 0.20mm Standard @BBL A1,
   Bambu PLA Basic per colour).
-- StyxVal watermark on (default): hidden 0.3 mm "SV" under each block, StyxVal metadata in every 3MF, with the licence
-  fields changed to the commercial licence (see "Licence" below).
+- **No watermark** (`styxvalMark: false`, Clark's choice for the commercial pack): no "SV" deboss under the blocks and no
+  StyxVal metadata. Every 3MF says Designer/CopyRight "Valencia Holdings Inc." and License = the commercial licence.
 - MX switches are not part of the product (buyer supplies one MX-style switch per block).
 
 ## Colours (modeler defaults, kept: they read well together)
