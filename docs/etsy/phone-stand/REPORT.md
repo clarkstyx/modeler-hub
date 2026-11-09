@@ -30,7 +30,10 @@ The modeler's own A1 note already says "separate colour plates"; its combined ex
   sends non-Bambu buyers to the STL.
 - Font: Fredoka Bold instance made from the OFL variable font, bundled with OFL.txt.
 
-## Still unverified (print before listing)
+## Print check (2026-11-09)
+Clark printed the Small: hinge, click and can tab lifter all work (logged in `docs/PRINT_VALIDATION.md`). The Large is still unprinted.
+
+## Previously unverified
 From `docs/PRINT_VALIDATION.md`: the **leaf-spring click** that holds the flap shut and the **can tab lifter**
 have never been printed. The hinge was verified by one print (2026-11-02). Print one Small and one Large,
 check the click and the lifter on a real can, take a real photo for the listing, and log it in
