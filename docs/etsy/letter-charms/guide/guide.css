@@ -1,0 +1,134 @@
+/* Phone Stand Keychain buyer guide: print stylesheet (US Letter). Build: see ../README.md */
+@font-face { font-family: 'Fredoka'; src: url('fonts/Fredoka-Variable.ttf') format('truetype'); font-weight: 300 700; }
+@font-face { font-family: 'Nunito'; src: url('fonts/Nunito-latin.woff2') format('woff2'); font-weight: 200 1000; }
+
+:root {
+  --cream: #FBF8FE;
+  --paper: #FFFDF9;
+  --beige: #EDE3F8;
+  --sand: #D9C8F2;
+  --red: #7B4FC9;
+  --red-soft: #EFE6FB;
+  --green: #4A1C6B;
+  --green-soft: #F1EAFB;
+  --gold: #C29A55;
+  --ink: #3A2E28;
+  --muted: #6F6157;
+}
+
+@page { size: 8.5in 11in; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font: 400 11.6pt/1.45 'Nunito', sans-serif;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+
+.page {
+  width: 8.5in; height: 11in; overflow: hidden; position: relative;
+  padding: 0.62in 0.7in 0.72in;
+  background: var(--cream);
+  page-break-after: always; break-after: page;
+}
+.page:last-child { page-break-after: auto; break-after: auto; }
+.page::before {           /* soft beige wash in the top corner */
+  content: ''; position: absolute; inset: 0 0 auto auto; width: 3.4in; height: 2.2in;
+  background: radial-gradient(ellipse at top right, var(--beige) 0%, rgba(242,231,214,0) 70%);
+  pointer-events: none;
+}
+.page > * { position: relative; }
+.folio {
+  position: absolute; left: 0.7in; right: 0.7in; bottom: 0.32in;
+  display: flex; justify-content: space-between; font-size: 8.5pt; color: var(--muted); letter-spacing: 0.04em;
+}
+
+h1, h2, h3, .num, .badge, .kicker { font-family: 'Fredoka', 'Nunito', sans-serif; }
+h1 { font-weight: 600; font-size: 40pt; line-height: 1.02; margin: 0; color: var(--red); }
+h2 { font-weight: 600; font-size: 25pt; line-height: 1.1; margin: 0 0 4pt; color: var(--ink); }
+h2 .accent { color: var(--red); }
+h3 { font-weight: 600; font-size: 14pt; margin: 0 0 3pt; color: var(--green); }
+p { margin: 0 0 7pt; }
+.kicker { font-weight: 500; font-size: 9pt; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 6pt; }
+.lede { font-size: 12.5pt; color: var(--muted); margin-bottom: 12pt; }
+.small { font-size: 9.6pt; color: var(--muted); }
+b, strong { font-weight: 800; }
+.ui { font-weight: 800; color: var(--ink); background: var(--beige); border-radius: 4pt; padding: 0 3pt; white-space: nowrap; }
+.key { font-weight: 800; border: 1px solid var(--sand); background: var(--paper); border-radius: 4pt; padding: 0 4pt; font-size: 10pt; white-space: nowrap; }
+
+.card { background: var(--paper); border: 1px solid var(--sand); border-radius: 14pt; padding: 11pt 14pt; }
+.note { border-radius: 12pt; padding: 9pt 13pt; margin: 8pt 0; }
+.note.red { background: var(--red-soft); border-left: 5pt solid var(--red); }
+.note.green { background: var(--green-soft); border-left: 5pt solid var(--green); }
+.note.gold { background: #F8EEDC; border-left: 5pt solid var(--gold); }
+.note p:last-child, .card p:last-child { margin-bottom: 0; }
+.note .t { font-family: 'Fredoka'; font-weight: 600; font-size: 12pt; display: block; margin-bottom: 1pt; }
+.note.red .t { color: var(--red); } .note.green .t { color: var(--green); } .note.gold .t { color: #8C6A2F; }
+
+/* numbered steps */
+.step { display: grid; grid-template-columns: 30pt 1fr; column-gap: 9pt; margin: 0 0 7pt; }
+.num {
+  width: 28pt; height: 28pt; border-radius: 50%; background: var(--red); color: #fff;
+  font-weight: 600; font-size: 14pt; display: flex; align-items: center; justify-content: center; margin-top: 1pt;
+}
+.step h3 { color: var(--ink); font-size: 13.5pt; margin-top: 4pt; }
+.step p { margin-bottom: 4pt; }
+.callouts { margin: 3pt 0 0; padding: 0; list-style: none; font-size: 10.6pt; }
+.callouts li { display: grid; grid-template-columns: 17pt 1fr; gap: 5pt; margin-bottom: 3pt; }
+.badge {
+  width: 16pt; height: 16pt; border-radius: 50%; background: #B83A32; color: #fff; font-size: 9pt; font-weight: 600;
+  display: inline-flex; align-items: center; justify-content: center; margin-top: 1.5pt;
+}
+
+figure { margin: 0; }
+.shot { border-radius: 10pt; overflow: hidden; border: 1px solid var(--sand); background: #2b2b2b; box-shadow: 0 2pt 8pt rgba(58,46,40,0.10); }
+.shot img { display: block; width: 100%; }
+figcaption { font-size: 8.8pt; color: var(--muted); margin-top: 3pt; }
+
+.cols { display: grid; gap: 14pt; }
+.cols.two { grid-template-columns: 1fr 1fr; }
+.cols.side { grid-template-columns: 1.08fr 1fr; align-items: start; }
+.cols.side-r { grid-template-columns: 1fr 1.12fr; align-items: start; }
+
+table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 10.4pt; }
+th { font-family: 'Fredoka'; font-weight: 600; text-align: left; color: var(--green); padding: 5pt 8pt; border-bottom: 2px solid var(--sand); }
+td { padding: 4pt 7pt; border-bottom: 1px solid var(--beige); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+
+.pill { display: inline-block; font-family: 'Fredoka'; font-weight: 500; font-size: 8.6pt; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 2pt 8pt; border-radius: 99pt; background: var(--green); color: #fff; vertical-align: 3pt; margin-left: 6pt; }
+.pill.red { background: var(--red); }
+.pill.gold { background: var(--gold); }
+.swatch { display: inline-block; width: 10pt; height: 10pt; border-radius: 3pt; border: 1px solid rgba(0,0,0,0.25); vertical-align: -1pt; margin-right: 2pt; }
+
+/* cover */
+.cover { padding-top: 0.55in; }
+.cover .title-block { text-align: center; }
+.cover h1 { font-size: 46pt; }
+.cover .subtitle { font-family: 'Fredoka'; font-weight: 500; font-size: 15pt; color: var(--green); margin-top: 6pt; }
+.hero { position: relative; height: 3.05in; margin: 10pt 0 4pt; }
+.hero img { position: absolute; filter: drop-shadow(0 6pt 8pt rgba(58,46,40,0.18)); }
+.hero .main { height: 3.0in; left: 50%; transform: translateX(-50%); top: 0; }
+.hero .left { height: 1.8in; left: 0.25in; top: 1.05in; transform: rotate(-7deg); }
+.hero .right { height: 1.75in; right: 0.2in; top: 1.1in; transform: rotate(6deg); }
+.snow { position: absolute; color: var(--sand); font-size: 16pt; }
+
+.flow { display: flex; gap: 6pt; align-items: stretch; margin: 6pt 0 2pt; }
+.flow div { flex: 1; background: var(--paper); border: 1px solid var(--sand); border-radius: 11pt; padding: 7pt 7pt 8pt; text-align: center; font-size: 9.8pt; line-height: 1.25; }
+.flow div b { display: block; font-family: 'Fredoka'; font-weight: 600; font-size: 15pt; color: var(--red); margin-bottom: 1pt; }
+.flow .arrow { flex: 0 0 auto; background: none; border: none; padding: 0; align-self: center; color: var(--gold); font-size: 14pt; }
+
+.gallery { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8pt 10pt; }
+.gallery figure { text-align: center; }
+.gallery img { height: 1.22in; max-width: 100%; object-fit: contain; filter: drop-shadow(0 3pt 4pt rgba(58,46,40,0.15)); }
+.gallery figcaption { font-family: 'Fredoka'; font-weight: 500; font-size: 10.5pt; color: var(--ink); }
+
+.faq { break-inside: avoid; margin-bottom: 8.5pt; }
+.faq h3 { color: var(--red); font-size: 12.6pt; margin-bottom: 1pt; }
+.faq p { font-size: 10.6pt; margin-bottom: 2pt; }
+
+/* denser pages (Tinkercad, print settings) */
+.dense p, .dense .callouts { font-size: 10.6pt; line-height: 1.38; }
+.dense .step { margin-bottom: 5pt; }
+.dense table { font-size: 9.8pt; }
