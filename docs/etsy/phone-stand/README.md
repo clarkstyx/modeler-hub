@@ -11,6 +11,7 @@ as a digital download on Etsy: Small and Large sizes, can tab lifter only (no bo
 | `files/` | The same files unzipped. |
 | `guide/` | Editable source of `START-HERE-Phone-Stand-Keychain.pdf` (HTML, CSS, fonts, screenshots, renders). |
 | `REPORT.md` | How the files were checked in the real slicers, what was found, what is still unverified. |
+| `seller/` | **Seller Licence edition**: its own ZIP, `ETSY-LISTING-SELLER.md`, `SELLER-LICENSE.txt` and 7 listing images. Guide source: `guide/guide-seller.html` (adds page 8). |
 | `scripts/` | How the files were made (see below). |
 
 ## Rebuild
@@ -22,4 +23,5 @@ as a digital download on Etsy: Small and Large sizes, can tab lifter only (no bo
 3. Renders: `scripts/pose_text.py` puts the Bambu name onto the generator's folded/standing poses; render with the
    printable-launch-kit `render_3mf.mjs`.
 4. PDF: `RENDER_DEPS=<dir with playwright-core> node scripts/build_pdf.mjs guide/guide.html guide/START-HERE-Phone-Stand-Keychain.pdf`
-   (fails on page overflow). Listing images: `cd listing-images && RENDER_DEPS=… node render.mjs`.
+   (fails on page overflow); same for `guide/guide-seller.html`. Listing images: `cd listing-images && RENDER_DEPS=… node render.mjs`;
+   seller images: `node render.mjs listing-seller.html i1,i6,i7 ../seller/listing-images/seller-`.
