@@ -6,7 +6,7 @@ import { missingCharacters } from "../shared/textShapes";
 export function validateParams(p: OrnamentParams): Issue[] {
   const issues: Issue[] = [];
   const name = p.name.trim();
-  if (p.tag && name.length === 0) issues.push({ severity: "info", message: "No name yet: the tag is left off. Type a name to add it." });
+  if (p.tag && !p.blankTag && name.length === 0) issues.push({ severity: "info", message: "No name yet: the tag is left off. Type a name to add it." });
   if (name.length > MAX_NAME_LENGTH) issues.push({ severity: "error", message: `The name is too long (${name.length} letters, at most ${MAX_NAME_LENGTH}).` });
   const missing = missingCharacters(name, p.font);
   if (missing.length) issues.push({ severity: "error", message: `The font has no shape for: ${missing.join(" ")}. Try another font or remove them.` });
