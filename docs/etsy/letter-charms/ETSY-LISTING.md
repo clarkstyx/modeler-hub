@@ -4,7 +4,7 @@
 - **Upload:** `Letter-Charms-Etsy-Download.zip` (2.6 MB: 36 STL, 2 Bambu 3MF, START-HERE PDF, LICENSE.txt).
 - **Photos (in order):** `listing-images/01…06-listing.jpg` (02 is the cleaned booth ad).
 - **Title (128 characters):** Letter Charms STL A-Z 0-9 for 4mm Paracord, Two Cord Horizontal Hole Chunky Letter Beads, Bambu 3MF, Commercial License Included
-- **Tags (13):** letter beads stl, paracord charms, letter charms stl, chunky letter beads, alphabet beads stl, paracord keychain, 3d print file, bambu 3mf, name keychain stl, commercial license, 4mm paracord beads, keychain charms stl, craft fair item
+- **Tags (13):** letter beads stl, paracord charms, letter charms stl, chunky letter beads, alphabet beads stl, paracord keychain, 3d print file, bambu 3mf, name keychain stl, commercial license, 4mm paracord beads, keychain charms stl, horizontal hole
 - **Description:** `description.txt`.
 
 ## Market check (2026-11-09, Etsy search, ~40 listings)
