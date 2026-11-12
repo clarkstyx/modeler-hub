@@ -139,6 +139,16 @@
       "makerworld": ""
     },
     {
+      "id": "stadium-container",
+      "name": "Stadium Container",
+      "path": "modelers/stadium-container",
+      "tagline": "A miniature ballpark around an open round container: stepped seats, your name over the gate, floodlights, four colours. Fits a baseball.",
+      "category": "Home",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "knot-bead",
       "name": "Knot Bead",
       "repo": "clarkstyx/knot-bead",

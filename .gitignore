@@ -6,3 +6,4 @@ public/build-info.json
 .dev.vars
 .wrangler/
 .DS_Store
+out/

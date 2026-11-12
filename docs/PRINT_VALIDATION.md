@@ -11,7 +11,7 @@ observed.
 - Minimum printable wall: 2 nozzle widths (0.8 mm). Minimum visible detail: 1 nozzle width.
 - Letters under 5 mm cap height get a warning; strokes under 1 nozzle width are reported as lost.
 
-## Automatic checks (box-modeler, gridfinity-labels, cookie-cutter, trinket-tray, phone-grip)
+## Automatic checks (box-modeler, gridfinity-labels, cookie-cutter, stadium-container, trinket-tray, phone-grip)
 
 | Check | How | Result |
 |---|---|---|
@@ -19,7 +19,8 @@ observed.
 | Winding | no repeated directed edge | error |
 | Degenerate triangles | area < 1e-10 mm² or repeated index | error (box-modeler welds coincident vertices and flips flat triangles first, so these are now 0 in all test cases) |
 | Volume | signed volume > 0 | error |
-| Overlap | pairwise `intersect().volume()` of parts in one object > 0.01 mm³ | error |
+| Overlap | pairwise `intersect().volume()` of parts in one object > 0.01 mm³ | error (stadium-container: in `npm test` / `npm run validate`, since its colour volumes are built touching by construction) |
+| One piece | `decompose()` of the structural body has one real piece (zero-volume shells from coplanar cuts are dropped) | error (stadium-container) |
 | Thin walls | parameter rules (wall ≥ 2 × nozzle, rail skin ≥ 2 × nozzle, lip ≥ 2 layers, floor under engraving ≥ 0.6 mm) | error or auto-cap with an info note |
 | Thin decoration | morphological opening of the decoration at nozzle/2 and nozzle; area lost reported | warning |
 | Bed fit | outer size vs bed; box + lid side by side | error / warning |
@@ -46,6 +47,7 @@ Run them headlessly: `npm test` and `npm run validate` in the `box-modeler` repo
 | Gridfinity label width | grid units × 42 mm − 6 mm end clearance (1 unit = 36 mm) | 42 mm pitch is the published Gridfinity grid; the clearance is a design choice | unverified |
 | Knot bead ridges | smooth patterns, ridges ≤ 1.2 mm deep, overhang warned over 60° and refused over 72°, ridges fade at the rims, wall ≥ 2 nozzle widths between bore and valleys | design choice; the coil in the reference photo printed fine at a similar depth | **Unverified physically.** Print the snake and coil presets, check the ridge undersides. |
 | Checklist tag | 55 × 75 × 2 mm card, details 0.8 mm raised, 5 mm hole centred 6 mm in, letters never under 2.5 mm, tick cut out of its box | design choice; 55 × 75 mm sized to the Elf on the Shelf reference photo | **Unverified physically.** Print the nice-list preset in 3 colours; check the small letters and that the elf can hold it. |
+| Stadium container | cavity ⌀ 76 × 28 mm, rim 2.0, floor and base 2.4, exterior wall 2.0, awning undersides at 45°, top band in two 0.3 mm steps, raised details 0.6–0.8, letters ≥ 3.5 mm cap; floodlight towers 2 mm thick lattice (legs 2.4 wide, 8 mm apart) printed flat, two pegs 1.6 × 2 × 4 mm per tower into sockets in the wall top (wall thickened to 4 mm) at 0.15 mm clearance per side | design choices sized to a baseball (≈ 74 mm) and the 0.4 mm / 0.20 mm targets | **Unverified physically.** Print the peg fit test first and record the winning clearance here; check the 0.6 mm step of the top band and the 0.8 mm letters. |
 | Gridfinity label slot | 12 mm high × 1.2 mm thick | a common size, **not** a standard: slots differ between bin designs | **Unverified.** The app's fit-test strip prints 11.6 / 12.0 / 12.4 mm; record the one that fits your bins here. |
 | Phone stand keychain hinge | 0.2 mm clearance around the hinge; printed on its side with 45° cones (print-in-place) or a cam shaft the separate flap snaps onto | Clark's first print of this capsule design (2026-11-02, Argon export): hinge turns, phone stands | **Verified by one print** (both the one-piece and the separate-flap exports). |
 | Phone stand keychain tab lifter | 2.4 mm slit, 9 mm deep, over a 1 mm lip whose leading edge is thinned by the 1.2 mm edge rounding | measured on the MakerWorld original (0.8 mm lip) | **Unverified physically.** Check the lip slides under a can's ring pull and survives levering it. |
