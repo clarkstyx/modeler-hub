@@ -46,6 +46,7 @@ export default defineConfig({
         show: resolve(__dirname, 'show/index.html'),
         sign: resolve(__dirname, 'show/sign/index.html'),
         orders: resolve(__dirname, 'orders/index.html'),
+        privacy: resolve(__dirname, 'privacy/index.html'),
       },
     },
   },
