@@ -7,3 +7,11 @@ pages_build_output_dir = "dist"
 [vars]
 MAKER_MIN_CENTS = "400"
 SELLER_MIN_CENTS = "1200"
+
+# Craft-show orders (functions/api/orders/*). Create the database once, then
+# paste its id here and push (docs/CRAFT_SHOW.md, "Connect the database"):
+#   npx wrangler d1 create modeler-hub-orders
+# [[d1_databases]]
+# binding = "ORDERS_DB"
+# database_name = "modeler-hub-orders"
+# database_id = "PASTE-THE-ID-HERE"

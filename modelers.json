@@ -210,6 +210,26 @@
       "makerworld": ""
     },
     {
+      "id": "name-ornaments",
+      "name": "Name Ornament",
+      "repo": "clarkstyx/name-ornaments",
+      "tagline": "Your name in chunky letters across a snowflake, layered colours, hanging loop. Batch a whole list of names.",
+      "category": "Seasonal",
+      "tier": "seller",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "mistletoe-ornament",
+      "name": "Mistletoe Ornament",
+      "path": "modelers/mistletoe-ornament",
+      "tagline": "A mistletoe sprig with berries, a bow and your name on the tag. Up to five colours, prints flat.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
       "id": "phone-stand",
       "name": "Phone Stand Keychain",
       "repo": "clarkstyx/Phonestand_keychain_can_opener",
@@ -225,6 +245,16 @@
       "repo": "clarkstyx/rubber-spinner",
       "tagline": "A press-and-spin fidget ball in your own colour mix: swappable petals, a ratchet and one rubber band.",
       "category": "Toys",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
+    },
+    {
+      "id": "cake-topper",
+      "name": "Cake Topper",
+      "repo": "clarkstyx/Cake-Topper",
+      "tagline": "Birthday cake toppers: name, age and a wish on a capsule ball, star, heart or rainbow, one piece or glue-on parts.",
+      "category": "Seasonal",
       "tier": "maker",
       "status": "live",
       "makerworld": ""
