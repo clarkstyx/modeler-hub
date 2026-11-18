@@ -44,3 +44,6 @@ Images: `pins/pin-1.png` … `pin-10.png` (1000 × 1500).
 
 ## Manual posting (until Pinterest is connected)
 In the Pinterest app: **+** › **Pin** › pick the image › paste the title and description › **Link**: the URL above › choose the board › **Publish**.
+
+## Bulk upload (schedules all 10)
+Pinterest: **Settings › Import content › Upload .csv** › `pins-bulk.csv`. One pin a day, 20–29 Nov 2026 (01:00 UTC = early evening in Canada). Create the three boards first; names must match exactly.
