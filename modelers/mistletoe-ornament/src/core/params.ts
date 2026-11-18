@@ -20,6 +20,8 @@ export interface OrnamentParams {
   bow: boolean;
   /** Show the name tag under the sprig (off when the name is empty). */
   tag: boolean;
+  /** With an empty name, keep a blank tag (for typing the name in the slicer). */
+  blankTag: boolean;
   textStyle: TextStyle;
 
   baseThickness: number;
@@ -43,6 +45,7 @@ export const DEFAULT_PARAMS: OrnamentParams = {
   berries: 5,
   bow: true,
   tag: true,
+  blankTag: false,
   textStyle: "raised",
   baseThickness: 1.6,
   layerThickness: 1.0,

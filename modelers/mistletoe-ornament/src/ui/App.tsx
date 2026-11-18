@@ -96,6 +96,7 @@ export default function App() {
           <Choice label="Font" value={params.font} set={(v) => set("font", v as FontId)} options={(Object.keys(FONT_LABELS) as FontId[]).map((f) => ({ value: f, label: FONT_LABELS[f] }))} />
           <Choice label="Letters" value={params.textStyle} set={(v) => set("textStyle", v as TextStyle)} options={(Object.keys(TEXT_STYLE_LABELS) as TextStyle[]).map((t) => ({ value: t, label: TEXT_STYLE_LABELS[t] }))} />
           <label className="field check"><input type="checkbox" checked={params.tag} onChange={(e) => set("tag", e.target.checked)} /> Show the name tag</label>
+          {params.tag && !params.name.trim() && <label className="field check"><input type="checkbox" checked={params.blankTag} onChange={(e) => set("blankTag", e.target.checked)} /> Keep a blank tag (type the name in the slicer)</label>}
         </Section>
 
         <Section title="2 · Sprig">
