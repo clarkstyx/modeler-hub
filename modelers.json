@@ -258,6 +258,16 @@
       "tier": "maker",
       "status": "live",
       "makerworld": ""
+    },
+    {
+      "id": "glow-studio",
+      "name": "Glow Studio",
+      "repo": "clarkstyx/Valencia-Glow",
+      "tagline": "Turn any photo into a light-up lithophane ornament: complete bauble or heart kit with frames and LED cap.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "hidden",
+      "makerworld": ""
     }
   ]
 }
