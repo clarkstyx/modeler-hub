@@ -44,6 +44,7 @@ export default defineConfig({
         pricing: resolve(__dirname, 'pricing/index.html'),
         login: resolve(__dirname, 'login/index.html'),
         show: resolve(__dirname, 'show/index.html'),
+        workshop: resolve(__dirname, 'workshop/index.html'),
         sign: resolve(__dirname, 'show/sign/index.html'),
         orders: resolve(__dirname, 'orders/index.html'),
       },
