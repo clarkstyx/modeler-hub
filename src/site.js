@@ -39,10 +39,11 @@ export function renderAccount(me) {
     slot.innerHTML = `<span class="who" title="Running on this computer: every modeler is unlocked and login is off.">Local preview · all unlocked</span>`;
   } else if (me.loggedIn) {
     const tierName = Object.values(tiers).find((t) => t.level === me.level)?.label || 'Member';
-    slot.innerHTML = `<span class="who">Hi <b></b> · ${tierName}</span> <a class="btn" href="/auth/logout">Log out</a>`;
+    const manage = me.via === 'stripe' ? `<a href="/api/portal" title="Change card, switch plan or cancel">Manage</a> ` : '';
+    slot.innerHTML = `<span class="who">Hi <b></b> · ${tierName}</span> ${manage}<a class="btn" href="/auth/logout">Log out</a>`;
     slot.querySelector('b').textContent = me.name || 'there';
   } else {
-    slot.innerHTML = `<a class="btn primary" href="/auth/login?next=${encodeURIComponent(location.pathname)}">Log in with Patreon</a>`;
+    slot.innerHTML = `<a class="btn" href="/login/?next=${encodeURIComponent(location.pathname)}">Log in</a>`;
   }
 }
 
@@ -54,8 +55,8 @@ function card(m, me) {
   const open = unlocked
     ? `<a class="btn primary" href="/m/${m.id}/">Open</a>`
     : me.loggedIn
-      ? `<a class="btn primary" href="/pricing/">Upgrade to ${tiers[m.tier].label}</a>`
-      : `<a class="btn primary" href="/auth/login?next=${encodeURIComponent('/m/' + m.id + '/')}">Log in to open</a>`;
+      ? `<a class="btn primary" href="/pricing/?next=${encodeURIComponent('/m/' + m.id + '/')}">Upgrade to ${tiers[m.tier].label}</a>`
+      : `<a class="btn primary" href="/pricing/?next=${encodeURIComponent('/m/' + m.id + '/')}">Get ${tiers[m.tier].label}</a>`;
   const mw = m.makerworld ? `<a class="mw" href="${m.makerworld}" target="_blank" rel="noopener">Free version on MakerWorld ↗</a>` : '';
   el.innerHTML = `
     <div class="head"><h3></h3><span class="pill ${m.tier}">${tiers[m.tier].label}</span></div>
@@ -83,27 +84,58 @@ export function renderCards(me) {
   }
 }
 
+// The plan cards. Names, prices and bullet points live in modelers.json
+// ("tiers"), so changing them there changes the page. The amount really charged
+// is set on the Stripe price: keep the two the same.
+const patreonLive = () => site.patreonUrl && !site.patreonUrl.includes('REPLACE_ME');
+
 export function renderTiers() {
   const root = document.querySelector('[data-tiers]');
   if (!root) return;
-  const count = (tier) => modelers.filter((m) => levelOf(m.tier) <= levelOf(tier)).length;
-  root.innerHTML = `
-    <div class="tier">
-      <h3>Free</h3><div class="price">$0</div>
-      <ul><li>${count('free')} free modelers</li><li>Single-colour STL and 3MF</li><li>Free versions on MakerWorld</li></ul>
-      <a class="btn" href="/">Browse</a>
-    </div>
-    <div class="tier hot">
-      <h3>Maker</h3><div class="price">$4 <small>/ month</small></div>
-      <ul><li>All ${count('maker')} Maker modelers</li><li>Multi-colour 3MF, parts pre-split for the AMS</li><li>SVG and image upload</li><li>Save and load settings</li><li>Personal use</li></ul>
-      <a class="btn primary" data-patreon href="#" target="_blank" rel="noopener">Join on Patreon</a>
-    </div>
-    <div class="tier">
-      <h3>Seller</h3><div class="price">$12 <small>/ month</small></div>
-      <ul><li>Everything in Maker, all ${count('seller')} modelers</li><li>Commercial licence to sell prints</li><li>Batch plates (many names, one file)</li><li>Early access and requests</li></ul>
-      <a class="btn primary" data-patreon href="#" target="_blank" rel="noopener">Join on Patreon</a>
-    </div>`;
+  const next = new URLSearchParams(location.search).get('next');
+  const count = (tier) => modelers.filter((m) => m.status !== 'hidden' && levelOf(m.tier) <= levelOf(tier)).length;
+  root.innerHTML = '';
+  for (const [id, t] of Object.entries(tiers)) {
+    const paid = t.level > 0;
+    const el = document.createElement('div');
+    el.className = 'tier' + (t.featured ? ' hot' : '');
+    el.dataset.tier = id;
+    const checkout = `/api/checkout?plan=${id}` + (next ? `&next=${encodeURIComponent(next)}` : '');
+    el.innerHTML = `
+      <h3></h3>
+      <div class="price">$${Number(t.price) || 0}${paid ? ' <small>/ month</small>' : ''}</div>
+      <ul><li>${count(id)} modelers</li></ul>
+      ${paid
+        ? `<a class="btn primary" data-checkout href="${checkout}">Choose ${t.label}</a>`
+        : `<a class="btn" href="/#modelers">Browse</a>`}
+      ${paid && patreonLive() ? `<a class="alt" data-patreon href="#" target="_blank" rel="noopener">or join on Patreon</a>` : ''}`;
+    el.querySelector('h3').textContent = t.label;
+    const list = el.querySelector('ul');
+    for (const line of t.perks || [t.blurb]) {
+      const li = document.createElement('li');
+      li.textContent = line;
+      list.appendChild(li);
+    }
+    root.appendChild(el);
+  }
   fillChrome();
+}
+
+/** Marks the plan a member already has. On your own computer there is no payment server, so the button says so. */
+export function markPlans(me) {
+  document.querySelectorAll('.tier[data-tier]').forEach((el) => {
+    const t = tiers[el.dataset.tier];
+    const btn = el.querySelector('[data-checkout]');
+    if (!btn) return;
+    if (me.dev) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        btn.textContent = 'Checkout runs on the live site';
+      });
+    } else if (me.loggedIn && me.level >= t.level) {
+      btn.outerHTML = `<span class="btn current">${me.level === t.level ? 'Your plan ✓' : 'Included in your plan'}</span>`;
+    }
+  });
 }
 
 export async function boot() {
@@ -111,5 +143,6 @@ export async function boot() {
   renderTiers();
   const me = await whoAmI();
   renderAccount(me);
+  markPlans(me);
   renderCards(me);
 }

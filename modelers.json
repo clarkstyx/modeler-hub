@@ -10,16 +10,23 @@
     "free": {
       "label": "Free",
       "level": 0,
+      "price": 0,
+      "perks": ["Single-colour STL and 3MF", "Free versions on MakerWorld", "No account needed"],
       "blurb": "Open to everyone."
     },
     "maker": {
       "label": "Maker",
       "level": 1,
+      "price": 4,
+      "featured": true,
+      "perks": ["Multi-colour 3MF, parts pre-split for the AMS", "SVG and image upload", "Save and load settings", "Personal use", "Cancel any time"],
       "blurb": "All modelers, multi-colour 3MF, SVG upload, saved settings."
     },
     "seller": {
       "label": "Seller",
       "level": 2,
+      "price": 12,
+      "perks": ["Everything in Maker", "Commercial licence to sell prints", "Batch plates (many names, one file)", "Early access and requests", "Cancel any time"],
       "blurb": "Everything in Maker plus a commercial licence to sell prints, batch plates, early access and requests."
     }
   },

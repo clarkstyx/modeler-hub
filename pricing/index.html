@@ -23,11 +23,23 @@
 
     <main class="wrap">
       <section class="hero">
-        <h1>Plans</h1>
-        <p>Membership runs through Patreon. Join a tier there, then come back and press "Log in with Patreon". Your tier unlocks instantly, and cancelling on Patreon ends access at the end of the month.</p>
+        <h1>Membership plans</h1>
+        <p>Choose a plan, pay by card, and the modelers unlock right away. Monthly plans renew until you cancel, and you can cancel any time.</p>
+        <p class="notice" id="note" hidden></p>
       </section>
       <div class="tiers" data-tiers></div>
-      <p class="muted">Commercial licence (Seller tier): you may sell physical prints made with any modeler, in any quantity, while your membership is active. You may not resell or redistribute the exported files themselves.</p>
+
+      <ol class="steps">
+        <li><b>Choose a plan</b>Pay by card on our secure checkout page, run by Stripe.</li>
+        <li><b>Come straight back</b>You land here already signed in, with your modelers unlocked.</li>
+        <li><b>Design and download</b>Type, slide, export the 3MF or STL, print.</li>
+      </ol>
+
+      <section class="faq">
+        <details><summary>How do I sign in on another device?</summary><p>Press "Log in", type the email you paid with, and we send you a sign-in link. No password to remember.</p></details>
+        <details><summary>How do I cancel or change plan?</summary><p>Press "Manage" at the top of the page when you are signed in. You keep access until the end of the month you paid for.</p></details>
+        <details><summary>Can I sell what I print?</summary><p>With the Seller plan, yes: you may sell physical prints made with any modeler, in any quantity, while your membership is active. You may not resell or share the exported files themselves. Other plans are for personal use.</p></details>
+      </section>
     </main>
 
     <footer>
@@ -37,10 +49,17 @@
       </div>
     </footer>
     <script type="module">
-      import { fillChrome, renderTiers, whoAmI, renderAccount } from '/src/site.js';
+      import { fillChrome, renderTiers, markPlans, whoAmI, renderAccount } from '/src/site.js';
       fillChrome();
       renderTiers();
-      whoAmI().then(renderAccount);
+      whoAmI().then((me) => { renderAccount(me); markPlans(me); });
+      const notes = {
+        setup: 'Card checkout is not switched on yet. Please check back soon.',
+        stripe: 'The checkout page could not be opened. Please try again in a minute.',
+        plan: 'That plan does not exist. Please choose one below.',
+      };
+      const e = new URLSearchParams(location.search).get('error');
+      if (e) { const el = document.getElementById('note'); el.textContent = notes[e] || 'Something went wrong. Please try again.'; el.hidden = false; }
     </script>
   </body>
 </html>

@@ -92,6 +92,53 @@ Done when: free, Maker and Seller behave differently.
 
 In `modelers.json`: `site.patreonUrl`, `site.makerworldProfile`. Commit and push; the site redeploys.
 
+### 1.7 Sell memberships on the site itself (You, 45 min)
+
+The "Choose Maker / Choose Seller" buttons take a card payment through Stripe and unlock the site the
+moment the payment goes through. No Patreon account needed. Patreon keeps working next to it; you can
+use either or both. Stripe keeps about 2.9% + 30¢ per payment and pays the rest to your bank.
+
+1. Make an account at https://stripe.com and finish "Activate payments" (business details, bank account).
+2. Product catalogue → Add product, twice:
+   - **Maker**: recurring, monthly, $4.
+   - **Seller**: recurring, monthly, $12.
+   Open each product and copy its **price ID** (starts with `price_`).
+3. Developers → API keys → copy the **Secret key** (starts with `sk_live_`). Keep it private.
+4. Settings → Billing → Customer portal → turn it on (lets members cancel, switch plan, change card).
+5. Cloudflare → your Pages project → Settings → Environment variables → Production. Add:
+
+   | Name | Value |
+   |---|---|
+   | `STRIPE_SECRET_KEY` | the secret key, mark as Secret |
+   | `STRIPE_PRICE_MAKER` | the Maker price ID |
+   | `STRIPE_PRICE_SELLER` | the Seller price ID |
+
+6. Email sign-in, so a member can log in on a second device. Make a free account at https://resend.com,
+   add your domain (it shows a few DNS records; add them in Cloudflare → DNS), make an API key, then add:
+
+   | Name | Value |
+   |---|---|
+   | `RESEND_API_KEY` | the key, mark as Secret |
+   | `MAIL_FROM` | `Valencia Modelers <login@YOUR-DOMAIN>` |
+
+   You can skip this step at first: buying still works, the buyer just stays signed in only on the device
+   they paid on.
+7. Redeploy (Actions → Run workflow), then test: press "Choose Maker", pay with a real card or a 100% off
+   coupon you make in Stripe (Product catalogue → Coupons). You should land back on the site signed in.
+   Press "Manage" to cancel it again.
+
+Practise first without real money: Stripe has a **test mode** switch. Use the `sk_test_` key and test
+price IDs, and pay with card number `4242 4242 4242 4242`, any future date, any CVC.
+
+To change a price: make a new price on the Stripe product, put its ID in Cloudflare, and change the
+`price` number of that tier in `modelers.json` so the page shows the same amount.
+
+To choose which modeler is in which plan: change that modeler's `"tier"` in `modelers.json` to `free`,
+`maker` or `seller` (or set `"status": "hidden"` to take it off the site). Commit and push.
+
+Done when: a paid card unlocks Maker modelers, and cancelling in "Manage" locks them again within a day
+of the paid month ending.
+
 ---
 
 ## Part 2. What goes on MakerWorld vs what is members-only

@@ -5,5 +5,12 @@ PATREON_CLIENT_ID=
 PATREON_CLIENT_SECRET=
 PATREON_CAMPAIGN_ID=
 OWNER_EMAILS=clarkvalencia@gmail.com
+# Memberships bought on the site (MANUAL.md 1.7). Use Stripe TEST keys here.
+STRIPE_SECRET_KEY=
+STRIPE_PRICE_MAKER=
+STRIPE_PRICE_SELLER=
+# Email sign-in links (Resend)
+RESEND_API_KEY=
+MAIL_FROM=
 # Set to 1 to skip the membership gate while developing
 DEV_BYPASS=1

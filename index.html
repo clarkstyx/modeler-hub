@@ -32,7 +32,15 @@
         </div>
       </section>
 
+      <p class="notice ok" id="welcome" hidden>Thank you, your membership is active. Your modelers are unlocked below.</p>
+
       <div id="modelers" data-cards></div>
+
+      <section class="plans-head" id="plans">
+        <h2>Unlock every modeler</h2>
+        <p>Pay by card, cancel any time. Your plan unlocks the moment you pay.</p>
+      </section>
+      <div class="tiers" data-tiers></div>
     </main>
 
     <footer>
@@ -44,6 +52,7 @@
     <script type="module">
       import { boot } from '/src/site.js';
       boot();
+      if (new URLSearchParams(location.search).get('welcome')) document.getElementById('welcome').hidden = false;
     </script>
   </body>
 </html>

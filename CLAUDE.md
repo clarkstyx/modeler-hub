@@ -22,6 +22,8 @@ changes small, and verify in the browser.
   committed so sessions here know every modeler's conventions without cloning them.
 - `functions/` are Cloudflare Pages Functions (ES modules, Web Crypto only, no Node APIs).
   `_middleware.js` is the gate, `auth/*` is Patreon OAuth, `api/me.js` is the session lookup,
+  `api/checkout.js` + `auth/stripe.js` + `auth/email.js` + `api/portal.js` sell memberships on the site
+  through Stripe (`_lib/stripe.js`; nothing stored, Stripe is asked once a day; setup in MANUAL.md 1.7),
   `api/orders/*` is the craft-show order book (Cloudflare D1).
 - `show.json` + `docs/CRAFT_SHOW.md`: craft-show mode (QR → `/show/` tiles → modelers open without
   Patreon and get an "Order this design" button → `/orders/` for Clark). `_lib/show.js` and
@@ -33,7 +35,9 @@ changes small, and verify in the browser.
 
 ## Conventions
 
-- Tiers are `free` < `maker` < `seller` (levels 0/1/2). Gate by level, never by tier name.
+- Tiers are `free` < `maker` < `seller` (levels 0/1/2). Gate by level, never by tier name. A tier's
+  `price` and `perks` in `modelers.json` draw the plan cards; the charged amount is the Stripe price
+  (`STRIPE_PRICE_<TIER>`), so keep them the same.
 - Never commit secrets. Local secrets go in `.dev.vars`; production ones in the Cloudflare dashboard.
 - Every modeler is a Vite app with `npm run build`. If a new one is not, teach `pull.mjs` about it
   rather than special-casing it in the site.

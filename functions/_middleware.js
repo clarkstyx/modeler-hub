@@ -9,11 +9,13 @@
 //
 // Env vars (Cloudflare Pages → Settings → Environment variables):
 //   SESSION_SECRET   long random string, signs the cookies
+//   STRIPE_*         see _lib/stripe.js (memberships bought on the site)
 //   DEV_BYPASS       "1" to skip the gate (local dev only)
 
 import manifest from '../modelers.json';
 import show from '../show.json';
-import { COOKIE, readCookie, verifySession, signSession, cookieHeader } from './_lib/session.js';
+import { signSession, cookieHeader } from './_lib/session.js';
+import { currentSession } from './_lib/stripe.js';
 import { SHOW_COOKIE, isShowModeler, showEnabled, showCookieTtl, verifyShowCookie } from './_lib/show.js';
 
 const levelOf = (tier) => (manifest.tiers[tier] || manifest.tiers.free).level;
@@ -47,14 +49,22 @@ export async function onRequest({ request, env, next }) {
   if (!modeler) return new Response('No such modeler', { status: 404 });
   const need = levelOf(modeler.tier);
   const showing = isShowModeler(show, modeler.id) && (await verifyShowCookie(request, env.SESSION_SECRET));
-  const pass = async () => (showing ? addShowOverlay(await next(), modeler.id) : next());
+  if (need === 0 || env.DEV_BYPASS === '1' || showing) {
+    return showing ? addShowOverlay(await next(), modeler.id) : next();
+  }
 
-  if (need === 0 || env.DEV_BYPASS === '1' || showing) return pass();
-
-  const session = env.SESSION_SECRET ? await verifySession(readCookie(request, COOKIE), env.SESSION_SECRET) : null;
-  if (session && session.level >= need) return pass();
+  // A member who paid on the site is re-checked with Stripe once a day;
+  // setCookie is then the refreshed cookie to send back.
+  const { session, setCookie } = await currentSession(request, env, manifest.tiers);
+  const withCookie = (res) => {
+    if (!setCookie) return res;
+    const out = new Response(res.body, res);
+    out.headers.append('Set-Cookie', setCookie);
+    return out;
+  };
+  if (session && session.level >= need) return withCookie(await next());
 
   // Not allowed: send the browser to the login page, remember where it was going.
   const dest = `/login/?next=${encodeURIComponent(url.pathname)}&need=${modeler.tier}${session ? '&upgrade=1' : ''}`;
-  return Response.redirect(new URL(dest, url.origin).toString(), 302);
+  return withCookie(new Response(null, { status: 302, headers: { Location: new URL(dest, url.origin).toString() } }));
 }
