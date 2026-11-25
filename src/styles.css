@@ -22,7 +22,7 @@ h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; li
 .wrap { max-width: 1100px; margin: 0 auto; padding-inline: 20px; }
 
 .top { position: sticky; top: 0; z-index: 5; background: rgba(21, 23, 27, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 58px; }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; min-height: 58px; padding-block: 6px; }
 .brand { font-family: var(--font-display); font-weight: 700; letter-spacing: 0.01em; text-decoration: none; display: flex; align-items: center; gap: 10px; }
 .brand .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(229, 57, 47, 0.2); }
 nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
@@ -58,13 +58,34 @@ nav a:hover, nav a[aria-current] { color: var(--fg); background: var(--bg-2); }
 .card.locked { opacity: 0.85; }
 .card.locked h3::after { content: " 🔒"; font-size: 14px; }
 
-.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; padding-block: 20px 40px; }
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; padding-block: 20px 14px; }
+[data-etsy-line] { margin: 0 0 30px; }
 .tier { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 .tier.hot { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229, 57, 47, 0.12); }
 .tier .price { font-family: var(--font-display); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .tier .price small { font-size: 14px; color: var(--muted); font-weight: 500; }
 .tier ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 14px; display: grid; gap: 4px; }
 .tier ul li::marker { color: var(--accent-2); }
+.tier .btn { justify-content: center; margin-top: auto; }
+.tier .btn.current { color: var(--green); border-color: rgba(79, 192, 122, 0.4); cursor: default; }
+.tier .alt { font-size: 13px; color: var(--muted); text-align: center; }
+.plans-head { padding-top: 34px; display: grid; gap: 6px; }
+.plans-head h2 { font-size: 26px; }
+.plans-head p { margin: 0; color: var(--muted); }
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; padding: 0; margin: 0 0 30px; list-style: none; counter-reset: step; }
+.steps li { counter-increment: step; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; color: var(--muted); font-size: 14px; }
+.steps li::before { content: counter(step, decimal-leading-zero); display: block; font-family: var(--font-display); font-weight: 700; color: var(--accent-2); margin-bottom: 4px; }
+.steps li b { color: var(--fg); display: block; }
+.notice { border: 1px solid rgba(243, 180, 58, 0.45); color: var(--gold); background: rgba(243, 180, 58, 0.08); border-radius: 9px; padding: 10px 14px; font-size: 14px; margin: 0; }
+.notice.ok { border-color: rgba(79, 192, 122, 0.4); color: var(--green); background: rgba(79, 192, 122, 0.08); }
+.field { display: flex; gap: 8px; flex-wrap: wrap; }
+.field input { flex: 1; min-width: 180px; padding: 9px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font: inherit; }
+.field input:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 1px; }
+.or { color: var(--muted); font-size: 13px; text-align: center; margin: 0; }
+.faq { max-width: 760px; display: grid; gap: 8px; padding-bottom: 20px; }
+.faq details { background: var(--bg-2); border: 1px solid var(--line); border-radius: 9px; padding: 12px 16px; }
+.faq summary { cursor: pointer; font-weight: 600; }
+.faq p { color: var(--muted); margin: 8px 0 0; font-size: 14px; }
 
 .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; max-width: 520px; margin-block: 40px; display: grid; gap: 14px; }
 .panel .err { color: var(--gold); font-size: 14px; margin: 0; }

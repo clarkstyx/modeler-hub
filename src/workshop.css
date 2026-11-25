@@ -1,0 +1,128 @@
+/* The Workshop (/workshop/): a warm lit room on top of the hub's dark page.
+   layout: head (name, rank, mode) · room (helper + benches) · shelf · job board
+   overlays: dialogs, the full-screen "make" view, toast, confetti */
+.ws-page {
+  --wood: #b98a55;
+  --wood-dark: #8a6238;
+  --wall: #2a2622;
+  --wall-2: #332d27;
+  --cream: #f6efe2;
+}
+
+.ws-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 14px; padding-block: 28px 16px; }
+.ws-eyebrow { margin: 0 0 4px; color: var(--gold); font-size: 12.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.ws-name { all: unset; cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 5vw, 40px); line-height: 1.1; overflow-wrap: anywhere; }
+.ws-name::after { content: " ✎"; font-size: 0.5em; color: var(--muted); }
+.ws-name:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 4px; border-radius: 6px; }
+.ws-status { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.ws-rank { font-weight: 700; font-size: 14px; color: #15171b; background: var(--gold); padding: 6px 12px; border-radius: 999px; }
+.ws-mode { display: flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.ws-mode button { all: unset; cursor: pointer; padding: 7px 14px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.ws-mode button[aria-pressed="true"] { background: var(--bg-2); color: var(--fg); }
+.ws-mode button:focus-visible { outline: 2px solid var(--accent-2); outline-offset: -2px; }
+
+/* the room */
+.room { position: relative; border-radius: 18px; overflow: hidden; border: 1px solid var(--line); padding: 20px 16px 26px;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(243, 180, 58, 0.16), transparent 60%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.05) 1.5px, transparent 2px) 0 0 / 22px 22px,
+    linear-gradient(var(--wall-2), var(--wall)); }
+.room::after { content: ""; position: absolute; inset: auto 0 0 0; height: 18px; background: repeating-linear-gradient(90deg, var(--wood-dark) 0 78px, #7a5530 78px 80px); }
+.room-wall { position: absolute; inset: 0; pointer-events: none; }
+.perk.lights { position: absolute; inset: 6px 0 auto 0; height: 14px; background: radial-gradient(circle, var(--gold) 4px, transparent 5px) 0 0 / 46px 14px repeat-x; filter: drop-shadow(0 0 6px rgba(243, 180, 58, 0.8)); }
+.perk.tools { position: absolute; right: 18px; top: 26px; width: 92px; height: 54px; opacity: 0.7;
+  background:
+    linear-gradient(#c9ced8, #c9ced8) 8px 6px / 6px 40px no-repeat,
+    linear-gradient(#c9ced8, #c9ced8) 0 6px / 22px 9px no-repeat,
+    linear-gradient(var(--wood), var(--wood)) 42px 4px / 8px 46px no-repeat,
+    linear-gradient(#c9ced8, #c9ced8) 70px 4px / 5px 30px no-repeat,
+    linear-gradient(var(--accent), var(--accent)) 66px 32px / 13px 20px no-repeat; }
+.perk.trophy { position: absolute; left: 50%; top: 22px; width: 34px; height: 40px; translate: -50% 0;
+  background:
+    radial-gradient(circle at 50% 0, var(--gold) 16px, transparent 17px) 0 0 / 34px 22px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 14px 20px / 6px 12px no-repeat,
+    linear-gradient(var(--gold), var(--gold)) 6px 32px / 22px 8px no-repeat;
+  filter: drop-shadow(0 0 8px rgba(243, 180, 58, 0.6)); }
+.perk[hidden] { display: none; }
+
+.helper { position: relative; display: flex; align-items: center; gap: 12px; margin-bottom: 18px; max-width: 620px; }
+.spool { flex: none; animation: bob 3.2s ease-in-out infinite; }
+.bubble { margin: 0; background: var(--cream); color: #1f1b16; padding: 12px 16px; border-radius: 16px 16px 16px 4px; font-size: 16px; font-weight: 600; line-height: 1.35; }
+@keyframes bob { 50% { translate: 0 -5px; } }
+
+.benches { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.bench { all: unset; box-sizing: border-box; cursor: pointer; display: grid; justify-items: center; gap: 0; padding: 10px 8px 12px; border-radius: 14px; transition: translate 0.15s, background 0.15s; }
+.bench:hover, .bench:focus-visible { background: rgba(255, 255, 255, 0.06); translate: 0 -3px; }
+.bench:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.bench-sign { background: var(--cream); color: #1f1b16; font-family: var(--font-display); font-weight: 700; font-size: 14.5px; padding: 5px 10px; border-radius: 7px; text-align: center; white-space: nowrap; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); margin-bottom: 8px; }
+.bench-prop { display: grid; place-items: end center; height: 72px; filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.4)); }
+.bench-top { width: 100%; height: 34px; border-radius: 6px 6px 3px 3px;
+  background:
+    linear-gradient(var(--wood), var(--wood)) top / 100% 12px no-repeat,
+    linear-gradient(var(--wood-dark), var(--wood-dark)) 10% 12px / 9px 22px no-repeat,
+    linear-gradient(var(--wood-dark), var(--wood-dark)) 90% 12px / 9px 22px no-repeat; }
+.bench-count { margin-top: 6px; font-size: 13px; color: #cfc6b8; text-align: center; }
+.bench.used .bench-count { color: var(--green); font-weight: 600; }
+
+/* shelf + job board */
+.ws-block { padding-block: 30px 0; }
+.ws-block-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.ws-block-head h2 { font-size: 22px; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; padding: 16px; border-radius: var(--radius); border: 1px solid var(--line); border-bottom: 10px solid var(--wood-dark); background: var(--bg-2); }
+.shelf-empty { margin: 0; color: var(--muted); grid-column: 1 / -1; padding: 14px 4px; }
+.design { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.design-pic { aspect-ratio: 4 / 3; border-radius: 10px; background: #1b1d22; border: 1px solid var(--line); display: grid; place-items: center; overflow: hidden; }
+.design-pic img { width: 100%; height: 100%; object-fit: cover; }
+.design h3 { font-size: 16px; overflow-wrap: anywhere; }
+.design p { margin: 0; font-size: 13px; }
+.design-foot { display: flex; flex-wrap: wrap; gap: 6px; }
+.design-foot .btn { padding: 7px 10px; font-size: 13px; }
+.btn.quiet { background: transparent; color: var(--muted); }
+
+.jobs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.job { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+.job h3 { font-size: 15.5px; }
+.job p { margin: 2px 0 0; font-size: 13.5px; }
+.sticker { width: 40px; height: 40px; border-radius: 50%; border: 2px dashed #3a3f49; display: grid; place-items: center; font-size: 22px; color: #15171b; }
+.job.done .sticker { border: 0; background: var(--gold); rotate: -10deg; box-shadow: 0 0 0 4px rgba(243, 180, 58, 0.2); }
+.job-have { font-size: 13.5px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.job.done .job-have { color: var(--green); }
+
+/* dialogs */
+.ws-dialog { width: min(520px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); border: 1px solid var(--line); border-radius: 18px; background: var(--bg-2); color: var(--fg); padding: 22px; }
+.ws-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+.ws-dialog h2 { font-size: 22px; padding-right: 34px; }
+.ws-dialog p { margin: 6px 0 12px; }
+.ws-dialog label { display: block; font-weight: 600; font-size: 14px; margin-top: 10px; }
+.ws-dialog input { width: 100%; margin: 6px 0 14px; padding: 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); font: inherit; font-size: 16px; }
+.ws-dialog img { display: block; width: 100%; max-height: 200px; object-fit: contain; border-radius: 10px; background: #1b1d22; border: 1px solid var(--line); margin-top: 12px; }
+.ws-dialog img[hidden] { display: none; }
+.ws-x { position: absolute; right: 12px; top: 10px; background: none; border: 0; color: var(--muted); font-size: 28px; line-height: 1; cursor: pointer; padding: 4px 8px; }
+.ws-err { color: var(--gold); font-size: 14px; margin: -6px 0 12px; }
+.btn.big { width: 100%; justify-content: center; padding: 13px; font-size: 16px; }
+.picks { display: grid; gap: 10px; }
+.pick { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.pick > div { flex: 1 1 220px; min-width: 0; }
+.pick h3 { font-size: 16px; }
+.pick p { margin: 3px 0 0; font-size: 13.5px; }
+.pick.locked { opacity: 0.75; }
+
+/* making: the modeler fills the screen under a slim bar */
+.make { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column; background: var(--bg); }
+.make[hidden] { display: none; }
+body.making { overflow: hidden; }
+.make-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--line); background: var(--bg-2); }
+.make-title { flex: 1; min-width: 0; font-family: var(--font-display); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+.make-bar .btn { white-space: nowrap; }
+.make-hint { margin: 0; padding: 7px 12px; background: var(--cream); color: #1f1b16; font-size: 14px; font-weight: 600; text-align: center; }
+.make-hint[hidden] { display: none; }
+#make-frame { flex: 1; width: 100%; border: 0; background: #16181d; }
+@media (max-width: 520px) { .make-title { display: none; } .make-bar { justify-content: space-between; } }
+
+.ws-toast { position: fixed; left: 50%; top: 64px; translate: -50% 0; z-index: 2147483600; max-width: calc(100vw - 24px); background: var(--cream); color: #1f1b16; font-weight: 700; padding: 12px 18px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: center; }
+.ws-toast[hidden] { display: none; }
+.confetti { position: fixed; inset: 0; z-index: 2147483500; pointer-events: none; overflow: hidden; }
+.confetti i { position: absolute; top: -14px; width: 9px; height: 14px; border-radius: 2px; animation: fall 2.1s ease-in forwards; }
+@keyframes fall { to { translate: var(--drift) 105vh; rotate: 540deg; } }
+@media (prefers-reduced-motion: reduce) { .spool { animation: none; } .bench { transition: none; } }
+@media (max-width: 420px) { .bench-sign { font-size: 13px; padding-inline: 7px; } }

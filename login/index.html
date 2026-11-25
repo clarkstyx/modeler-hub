@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Log in · Valencia Modelers</title>
+    <title>Log in · Let's Make Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;600&display=swap" />
     <link rel="stylesheet" href="/src/styles.css" />
@@ -16,18 +16,28 @@
           <a href="/">Modelers</a>
           <a href="/pricing/">Pricing</a>
           <a data-makerworld href="#" target="_blank" rel="noopener">MakerWorld</a>
+          <a data-etsy href="#" target="_blank" rel="noopener">Etsy</a>
         </nav>
       </div>
     </header>
 
     <main class="wrap">
       <section class="panel">
-        <h1>Members only</h1>
-        <p class="muted" id="why">This modeler is part of a membership tier.</p>
-        <p class="err" id="err" hidden></p>
-        <a class="btn primary" id="login" href="/auth/login">Log in with Patreon</a>
-        <a class="btn" href="/pricing/">See plans</a>
-        <p class="muted">Not a member yet? Join on Patreon first, then log in here with the same account.</p>
+        <h1 id="title">Log in</h1>
+        <p class="muted" id="why">Members: type the email you paid with and we will send you a sign-in link.</p>
+        <p class="notice" id="err" hidden></p>
+        <p class="notice ok" id="sent" hidden>If that email has a membership, a sign-in link is on its way. It works for 15 minutes. Check your spam folder too.</p>
+        <form class="field" method="post" action="/auth/email">
+          <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Email address" />
+          <input type="hidden" name="next" id="next" value="/" />
+          <button class="btn primary" type="submit">Email me a link</button>
+        </form>
+        <div id="patreon" hidden>
+          <p class="or">or, if you joined on Patreon</p>
+          <a class="btn" id="login" href="/auth/login">Log in with Patreon</a>
+        </div>
+        <p class="or">Not a member yet?</p>
+        <a class="btn" id="plans" href="/pricing/" style="justify-content: center">See the plans</a>
       </section>
     </main>
 
@@ -38,20 +48,33 @@
       </div>
     </footer>
     <script type="module">
+      import manifest from '/modelers.json';
       import { fillChrome } from '/src/site.js';
       fillChrome();
       const q = new URLSearchParams(location.search);
       const next = q.get('next') || '/';
       document.getElementById('login').href = '/auth/login?next=' + encodeURIComponent(next);
+      document.getElementById('next').value = next;
+      document.getElementById('plans').href = '/pricing/?next=' + encodeURIComponent(next);
+      // The Patreon button only shows once the Patreon page is filled in (modelers.json → site.patreonUrl).
+      document.getElementById('patreon').hidden = manifest.site.patreonUrl.includes('REPLACE_ME');
       const need = q.get('need');
+      const plan = manifest.tiers[need] ? manifest.tiers[need].label : need;
       const why = document.getElementById('why');
-      if (q.get('upgrade')) why.textContent = `Your current tier does not include this modeler. It needs the ${need} tier.`;
-      else if (need) why.textContent = `This modeler is in the ${need} tier.`;
+      if (need) document.getElementById('title').textContent = 'Members only';
+      if (q.get('upgrade')) why.textContent = `Your plan does not include this modeler. It needs the ${plan} plan.`;
+      else if (need) why.textContent = `This modeler is part of the ${plan} plan. Already a member? Type the email you paid with and we will send you a sign-in link.`;
+      if (q.get('sent')) document.getElementById('sent').hidden = false;
       const errors = {
-        state: 'The login link expired. Please try again.',
+        state: 'The login link expired. Please ask for a new one.',
         token: 'Patreon did not accept the login. Please try again.',
         identity: 'Could not read your Patreon membership. Please try again.',
-        notier: 'You are logged in to Patreon but not a member of this page yet. Join a tier, then log in again.',
+        notier: 'You are logged in, but there is no active membership yet. Choose a plan, then log in again.',
+        nomember: 'There is no active membership for that email. Choose a plan to get access.',
+        email: 'That does not look like an email address. Please check it.',
+        mail: 'The sign-in email could not be sent. Please try again in a minute.',
+        mailsetup: 'Email sign-in is not switched on yet. Please contact us and we will sort it out.',
+        checkout: 'We could not confirm that payment. If you were charged, type your email below to sign in.',
       };
       const e = q.get('error');
       if (e) { const el = document.getElementById('err'); el.textContent = errors[e] || 'Login failed.'; el.hidden = false; }
