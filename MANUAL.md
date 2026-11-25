@@ -19,7 +19,7 @@ MakerWorld (free, limited)  →  modeler-hub site (free tier)  →  Patreon Make
 ### 1.1 Pick the brand (You, 20 min)
 
 - One name used everywhere: site, Patreon, MakerWorld profile, TikTok/Instagram/YouTube.
-  The repo currently says "Valencia Modelers"; change it in `modelers.json` → `site.name` if you want another.
+  The repo currently says "Let's Make" (domain letsmake.ca); change it in `modelers.json` → `site.name` if you want another.
 - Buy the domain (Cloudflare Registrar is easiest since the site is on Cloudflare anyway).
 - Make a simple logo: a square icon that reads at 32 px. Claude can make an SVG if you describe it.
 
@@ -36,7 +36,7 @@ Done when: you have a domain and a name you will not change.
    > multi-colour 3MF ready for the AMS. Free versions live on MakerWorld; members get the full tools,
    > uploads, batch plates and a licence to sell what they print. New modeler every month.
 4. Register an API client at https://www.patreon.com/portal/registration/register-clients
-   - Name: your brand. Redirect URIs: `https://YOUR-DOMAIN/auth/callback` and `http://localhost:8788/auth/callback`.
+   - Name: your brand. Redirect URIs: `https://letsmake.ca/auth/callback` and `http://localhost:8788/auth/callback`.
    - Copy **Client ID** and **Client Secret**. Keep the secret private.
 5. Find your **campaign id**: open your creator dashboard, the number in URLs like `.../campaigns/1234567` is it.
    (If you cannot find it, ask Claude: "find my Patreon campaign id with the creator access token".)
@@ -51,7 +51,7 @@ Done when: you have Client ID, Client Secret, campaign id, and the two tiers are
 
    | Name | Value |
    |---|---|
-   | `SITE_URL` | `https://YOUR-DOMAIN` (no trailing slash) |
+   | `SITE_URL` | `https://letsmake.ca` (no trailing slash) |
    | `SESSION_SECRET` | any long random string (40+ characters), mark as Secret |
    | `PATREON_CLIENT_ID` | from 1.2 |
    | `PATREON_CLIENT_SECRET` | from 1.2, mark as Secret |
@@ -74,7 +74,7 @@ Done when: the project exists, variables are saved, the domain is attached.
 3. Actions tab → "Pull modelers, build, deploy" → Run workflow. First run takes 10 to 15 minutes
    (it builds all eleven modelers).
 
-Done when: the workflow is green and `https://YOUR-DOMAIN` shows the cards.
+Done when: the workflow is green and `https://letsmake.ca` shows the cards.
 
 ### 1.5 Test the gate (You, 15 min)
 
@@ -92,6 +92,53 @@ Done when: free, Maker and Seller behave differently.
 
 In `modelers.json`: `site.patreonUrl`, `site.makerworldProfile`. Commit and push; the site redeploys.
 
+### 1.7 Sell memberships on the site itself (You, 45 min)
+
+The "Choose Maker / Choose Seller" buttons take a card payment through Stripe and unlock the site the
+moment the payment goes through. No Patreon account needed. Patreon keeps working next to it; you can
+use either or both. Stripe keeps about 2.9% + 30¢ per payment and pays the rest to your bank.
+
+1. Make an account at https://stripe.com and finish "Activate payments" (business details, bank account).
+2. Product catalogue → Add product, twice:
+   - **Maker**: recurring, monthly, $4.
+   - **Seller**: recurring, monthly, $12.
+   Open each product and copy its **price ID** (starts with `price_`).
+3. Developers → API keys → copy the **Secret key** (starts with `sk_live_`). Keep it private.
+4. Settings → Billing → Customer portal → turn it on (lets members cancel, switch plan, change card).
+5. Cloudflare → your Pages project → Settings → Environment variables → Production. Add:
+
+   | Name | Value |
+   |---|---|
+   | `STRIPE_SECRET_KEY` | the secret key, mark as Secret |
+   | `STRIPE_PRICE_MAKER` | the Maker price ID |
+   | `STRIPE_PRICE_SELLER` | the Seller price ID |
+
+6. Email sign-in, so a member can log in on a second device. Make a free account at https://resend.com,
+   add your domain (it shows a few DNS records; add them in Cloudflare → DNS), make an API key, then add:
+
+   | Name | Value |
+   |---|---|
+   | `RESEND_API_KEY` | the key, mark as Secret |
+   | `MAIL_FROM` | `Let's Make <login@letsmake.ca>` |
+
+   You can skip this step at first: buying still works, the buyer just stays signed in only on the device
+   they paid on.
+7. Redeploy (Actions → Run workflow), then test: press "Choose Maker", pay with a real card or a 100% off
+   coupon you make in Stripe (Product catalogue → Coupons). You should land back on the site signed in.
+   Press "Manage" to cancel it again.
+
+Practise first without real money: Stripe has a **test mode** switch. Use the `sk_test_` key and test
+price IDs, and pay with card number `4242 4242 4242 4242`, any future date, any CVC.
+
+To change a price: make a new price on the Stripe product, put its ID in Cloudflare, and change the
+`price` number of that tier in `modelers.json` so the page shows the same amount.
+
+To choose which modeler is in which plan: change that modeler's `"tier"` in `modelers.json` to `free`,
+`maker` or `seller` (or set `"status": "hidden"` to take it off the site). Commit and push.
+
+Done when: a paid card unlocks Maker modelers, and cancelling in "Manage" locks them again within a day
+of the paid month ending.
+
 ---
 
 ## Part 2. What goes on MakerWorld vs what is members-only
@@ -102,7 +149,7 @@ nobody can accuse you of crippling the free version. Give MakerWorld a genuinely
 two-colour version of each modeler so it gets boosted. Every MakerWorld description starts with:
 
 > Free version. Full modeler with uploads, more fonts, batch plates and instant preview at
-> https://YOUR-DOMAIN/m/<id>/
+> https://letsmake.ca/m/<id>/
 
 ### The split, per modeler
 
@@ -133,7 +180,7 @@ Two extra rules:
    that modeler's repo:
    > Write an OpenSCAD mirror of this modeler for MakerWorld's Parametric Model Maker with only these
    > features: [paste the "MakerWorld free version" cell]. Use `color()` blocks so the 3MF has one part per
-   > colour, MakerWorld's built-in fonts, and put a comment at the top linking to https://YOUR-DOMAIN/m/<id>/.
+   > colour, MakerWorld's built-in fonts, and put a comment at the top linking to https://letsmake.ca/m/<id>/.
    > Test it with `openscad` headless and give me a render.
 2. **Set the defaults so the auto-thumbnail looks great**: a real name, two contrasting colours, nothing
    clipped. The thumbnail is 80 % of whether anyone clicks.

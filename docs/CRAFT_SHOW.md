@@ -46,10 +46,10 @@ Redeploy once after adding variables (Deployments → Retry, or push anything).
 
 ### 3. Check it on your phone
 
-1. Open `https://YOUR-DOMAIN/show/`. Tiles appear. Tap one: the modeler opens **without** a login
+1. Open `https://letsmake.ca/show/`. Tiles appear. Tap one: the modeler opens **without** a login
    and has a red **Order this design** button at the bottom.
 2. Place a test order. You get a number like `VM001`.
-3. Open `https://YOUR-DOMAIN/orders/`, paste the `ORDERS_KEY`. The order is there with its
+3. Open `https://letsmake.ca/orders/`, paste the `ORDERS_KEY`. The order is there with its
    preview picture. Press **Mark paid**, then **Cancel** it so it does not count.
 
 If step 1 sends you to the login page, `SESSION_SECRET` is missing. If step 2 says "orders
@@ -57,7 +57,7 @@ database is not connected", step 1 above was not finished.
 
 ### 4. Print the sign
 
-Open `https://YOUR-DOMAIN/show/sign/` on a computer, press **Print this sign** (letter or A4,
+Open `https://letsmake.ca/show/sign/` on a computer, press **Print this sign** (letter or A4,
 margins minimum). The QR code points at `/show/`. Print two: one for the table, one at eye level.
 
 ## Decisions still open (confirm before Saturday)
