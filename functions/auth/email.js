@@ -7,7 +7,7 @@
 //
 // Env:
 //   RESEND_API_KEY   re_…
-//   MAIL_FROM        e.g. "Valencia Modelers <login@yourdomain.com>" (a domain verified in Resend)
+//   MAIL_FROM        e.g. "Let's Make <login@letsmake.ca>" (a domain verified in Resend)
 
 import manifest from '../../modelers.json';
 import { signSession, verifySession } from '../_lib/session.js';
