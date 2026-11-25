@@ -258,6 +258,16 @@
       "tier": "maker",
       "status": "live",
       "makerworld": ""
+    },
+    {
+      "id": "nordic-studio",
+      "name": "Nordic Studio",
+      "repo": "clarkstyx/wreath",
+      "tagline": "Nordic wreaths with pine, wheat or eucalyptus, a hanging centerpiece and your family name.",
+      "category": "Seasonal",
+      "tier": "maker",
+      "status": "live",
+      "makerworld": ""
     }
   ]
 }
