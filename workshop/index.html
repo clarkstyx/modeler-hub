@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Workshop · Valencia Modelers</title>
+    <meta name="description" content="Your own little 3D-print workshop: pick a bench, design something with your name on it, fill your shelf and earn stickers." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/workshop.css" />
+  </head>
+  <body class="ws-page">
+    <header class="top">
+      <div class="wrap">
+        <a class="brand" href="/"><span class="dot"></span><span data-site-name>Modelers</span></a>
+        <nav>
+          <a href="/">Modelers</a>
+          <a href="/workshop/" aria-current="page">Workshop</a>
+          <a href="/pricing/">Pricing</a>
+          <span data-account></span>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="ws-head">
+        <div>
+          <p class="ws-eyebrow">The Workshop</p>
+          <h1><button type="button" class="ws-name" id="shop-name" title="Rename your workshop"></button></h1>
+        </div>
+        <div class="ws-status">
+          <span class="ws-rank" id="rank"></span>
+          <div class="ws-mode" role="group" aria-label="How much help">
+            <button type="button" data-mode="kid">Beginner</button>
+            <button type="button" data-mode="maker">Maker</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="room" id="room" aria-label="Your workshop">
+        <div class="room-wall" aria-hidden="true">
+          <div class="perk lights" data-perk="2"></div>
+          <div class="perk tools" data-perk="1"></div>
+          <div class="perk trophy" data-perk="3"></div>
+        </div>
+        <div class="helper">
+          <div class="spool" id="spool" aria-hidden="true"></div>
+          <p class="bubble" id="tip" aria-live="polite"></p>
+        </div>
+        <div class="benches" id="benches"></div>
+      </section>
+
+      <section class="ws-block" id="shelf-block">
+        <div class="ws-block-head">
+          <h2>My shelf</h2>
+          <span class="muted" id="shelf-count"></span>
+        </div>
+        <div class="shelf" id="shelf"></div>
+      </section>
+
+      <section class="ws-block" id="jobs-block">
+        <div class="ws-block-head">
+          <h2>Job board</h2>
+          <span class="muted" id="jobs-count"></span>
+        </div>
+        <div class="jobs" id="jobs"></div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>© <span data-year></span> <span data-site-name></span></span>
+        <span>Your workshop is saved on this device only.</span>
+      </div>
+    </footer>
+
+    <!-- Pick what to make at a bench -->
+    <dialog class="ws-dialog" id="bench-dialog" aria-labelledby="bench-title">
+      <button type="button" class="ws-x" data-close aria-label="Close">×</button>
+      <h2 id="bench-title"></h2>
+      <p class="muted" id="bench-says"></p>
+      <div class="picks" id="bench-picks"></div>
+    </dialog>
+
+    <!-- First visit, and renaming -->
+    <dialog class="ws-dialog" id="name-dialog" aria-labelledby="name-title">
+      <form method="dialog" id="name-form">
+        <h2 id="name-title">Name your workshop</h2>
+        <p class="muted">This is your place. Make things, fill your shelf, earn stickers.</p>
+        <label for="name-input">Workshop name</label>
+        <input id="name-input" type="text" maxlength="24" autocomplete="off" placeholder="Sam's Print Shop" />
+        <button class="btn primary big" type="submit">Open the workshop</button>
+      </form>
+    </dialog>
+
+    <!-- Naming a design before it goes on the shelf -->
+    <dialog class="ws-dialog" id="save-dialog" aria-labelledby="save-title">
+      <form method="dialog" id="save-form">
+        <button type="button" class="ws-x" data-close aria-label="Close">×</button>
+        <h2 id="save-title">Put it on your shelf</h2>
+        <img id="save-shot" alt="Picture of your design" hidden />
+        <p class="muted" id="save-noshot" hidden>No picture this time, but the design still goes on your shelf.</p>
+        <label for="save-input">What do you call it?</label>
+        <input id="save-input" type="text" maxlength="30" autocomplete="off" placeholder="Keychain for Mia" />
+        <p class="ws-err" id="save-err" hidden></p>
+        <button class="btn primary big" type="submit">Put it on my shelf</button>
+      </form>
+    </dialog>
+
+    <!-- The modeler itself, full screen, with the workshop bar on top -->
+    <div class="make" id="make" hidden>
+      <div class="make-bar">
+        <button type="button" class="btn" id="make-back">‹ Workshop</button>
+        <span class="make-title" id="make-title"></span>
+        <button type="button" class="btn primary" id="make-save">★ Put it on my shelf</button>
+      </div>
+      <p class="make-hint" id="make-hint" hidden></p>
+      <iframe id="make-frame" title="Designer"></iframe>
+    </div>
+
+    <div class="ws-toast" id="toast" role="status" hidden></div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+    <script type="module">
+      import { boot } from '/src/workshop.js';
+      boot();
+    </script>
+  </body>
+</html>
