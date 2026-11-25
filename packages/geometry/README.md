@@ -20,7 +20,7 @@ its own repository at any time. A modeler opts in by having a `src/shared/` fold
 
 ```bash
 # after editing anything in packages/geometry/src/
-npm run sync-shared        # copies into modelers/*/src/shared/
+npm run sync-shared        # copies into modelers/*/src/shared/ and designs/*/src/shared/
 npm test                   # fails if a copy was edited by hand or is missing
 ```
 

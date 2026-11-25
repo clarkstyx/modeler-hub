@@ -16,8 +16,10 @@ const check = process.argv.includes('--check');
 
 const header = (f) => `// GENERATED from packages/geometry/src/${f} by \`npm run sync-shared\` in the hub. Edit the source there, not this copy.\n`;
 const sources = readdirSync(SRC).filter((f) => f.endsWith('.ts')).sort();
-const targets = readdirSync(join(ROOT, 'modelers'))
-  .map((d) => join(ROOT, 'modelers', d, 'src/shared'))
+// Local modelers (modelers/<id>/) and fixed-file designs (designs/<id>/) both opt in with src/shared/.
+const targets = ['modelers', 'designs']
+  .filter((top) => existsSync(join(ROOT, top)))
+  .flatMap((top) => readdirSync(join(ROOT, top)).map((d) => join(ROOT, top, d, 'src/shared')))
   .filter((d) => existsSync(d));
 
 const problems = [];
