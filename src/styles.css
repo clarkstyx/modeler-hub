@@ -58,7 +58,8 @@ nav a:hover, nav a[aria-current] { color: var(--fg); background: var(--bg-2); }
 .card.locked { opacity: 0.85; }
 .card.locked h3::after { content: " 🔒"; font-size: 14px; }
 
-.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; padding-block: 20px 40px; }
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; padding-block: 20px 14px; }
+[data-etsy-line] { margin: 0 0 30px; }
 .tier { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
 .tier.hot { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(229, 57, 47, 0.12); }
 .tier .price { font-family: var(--font-display); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }

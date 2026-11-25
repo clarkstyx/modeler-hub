@@ -14,6 +14,7 @@ export function fillChrome() {
   document.querySelectorAll('[data-site-name]').forEach((el) => { el.textContent = site.name; });
   document.querySelectorAll('[data-patreon]').forEach((el) => { el.href = site.patreonUrl; });
   document.querySelectorAll('[data-makerworld]').forEach((el) => { el.href = site.makerworldProfile; });
+  document.querySelectorAll('[data-etsy]').forEach((el) => { if (site.etsyUrl) el.href = site.etsyUrl; else (el.closest('[data-etsy-line]') || el).remove(); });
   document.querySelectorAll('[data-email]').forEach((el) => { el.textContent = site.contactEmail; el.href = 'mailto:' + site.contactEmail; });
   document.querySelectorAll('[data-year]').forEach((el) => { el.textContent = new Date().getFullYear(); });
 }
